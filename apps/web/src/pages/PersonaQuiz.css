@@ -1,0 +1,220 @@
+.quiz-screen {
+  width: 100vw;
+  height: 100vh;
+  background: #0a0a0c;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  position: relative;
+}
+
+/* Progress dots */
+.quiz-progress {
+  display: flex;
+  gap: 10px;
+}
+
+.quiz-dot {
+  width: 12px;
+  height: 12px;
+  border: 2px solid #4b443d;
+  background: transparent;
+  transition: all 0.3s;
+}
+
+.quiz-dot-done {
+  background: #51b7a9;
+  border-color: #1f756e;
+}
+
+.quiz-dot-active {
+  background: #87d0c4;
+  border-color: #51b7a9;
+  box-shadow: 0 0 8px rgba(81,183,169,0.5);
+}
+
+/* Question card */
+.quiz-card {
+  width: 420px;
+  perspective: 1000px;
+}
+
+.quiz-card-inner {
+  background: rgba(255,254,248,0.95);
+  border: 4px solid #2b2723;
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.3);
+  padding: 32px 28px;
+  transition: transform 0.5s;
+  transform-style: preserve-3d;
+}
+
+.quiz-card-flip .quiz-card-inner {
+  transform: rotateY(90deg);
+}
+
+.quiz-question-num {
+  font-family: var(--font-pixel, monospace);
+  font-size: 8px;
+  color: #51b7a9;
+  margin-bottom: 16px;
+  letter-spacing: 2px;
+}
+
+.quiz-question {
+  font-size: 22px;
+  font-weight: 700;
+  color: #2b2723;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  background: #f9f7f0;
+  border: 3px solid #2b2723;
+  cursor: pointer;
+  font-size: 15px;
+  text-align: left;
+  transition: all 0.12s;
+  font-family: inherit;
+}
+
+.quiz-option:hover {
+  background: #51b7a9;
+  color: #fff;
+  box-shadow: 0 3px 0 #1f756e;
+}
+
+.quiz-option:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.quiz-option-key {
+  font-family: var(--font-pixel, monospace);
+  font-size: 12px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #2b2723;
+  flex-shrink: 0;
+  background: #e8d5a8;
+}
+
+.quiz-option:hover .quiz-option-key {
+  background: #1f756e;
+  color: #fff;
+  border-color: #fff;
+}
+
+/* Reveal phase */
+.quiz-reveal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.reveal-envelope {
+  width: 120px;
+  height: 80px;
+  background: #e8d5a8;
+  border: 4px solid #8b6914;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.animate-envelope {
+  animation: envelope-shake 0.6s ease;
+}
+
+@keyframes envelope-shake {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(-8deg); }
+  40% { transform: rotate(8deg); }
+  60% { transform: rotate(-4deg); }
+  80% { transform: rotate(4deg); }
+}
+
+.reveal-seal {
+  font-family: var(--font-pixel, monospace);
+  font-size: 10px;
+  color: #fff;
+  background: #51b7a9;
+  border: 2px solid #1f756e;
+  padding: 4px 10px;
+  border-radius: 50%;
+}
+
+.reveal-result {
+  text-align: center;
+}
+
+.animate-result {
+  animation: result-appear 0.6s ease;
+}
+
+@keyframes result-appear {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal-mbti {
+  font-family: var(--font-pixel, monospace);
+  font-size: 36px;
+  color: #51b7a9;
+  text-shadow: 3px 3px 0 #133f3d;
+  margin-bottom: 12px;
+}
+
+.reveal-name {
+  font-family: var(--font-pixel, monospace);
+  font-size: 14px;
+  color: #fffef8;
+  margin-bottom: 8px;
+}
+
+.reveal-desc {
+  font-size: 14px;
+  color: #a8a7a0;
+  max-width: 320px;
+  line-height: 1.6;
+}
+
+.reveal-enter {
+  font-family: var(--font-pixel, monospace);
+  font-size: 12px;
+  color: #fffef8;
+  background: #51b7a9;
+  border: 3px solid #1f756e;
+  padding: 14px 40px;
+  cursor: pointer;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 0 #133f3d;
+  animation: press-blink 1.2s step-end infinite;
+  transition: transform 0.1s;
+}
+
+.reveal-enter:hover {
+  background: #87d0c4;
+}
+
+.reveal-enter:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}

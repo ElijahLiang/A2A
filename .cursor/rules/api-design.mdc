@@ -1,0 +1,50 @@
+---
+description: API 接口设计规范
+globs: apps/api/src/routes/**/*.ts
+alwaysApply: false
+---
+
+# API 设计规范
+
+## URL 命名
+
+- 版本前缀: `/api/v1/`
+- 资源用复数名词: `/intents`, `/matches`, `/sessions`
+- 操作用动词后缀: `/matches/:id/confirm`, `/matches/:id/reject`
+
+## HTTP 方法语义
+
+| 方法 | 语义 | 幂等 |
+|------|------|------|
+| GET | 查询 | 是 |
+| POST | 创建/操作 | 否 |
+| PUT | 全量更新 | 是 |
+| PATCH | 部分更新 | 是 |
+| DELETE | 删除 | 是 |
+
+## 响应状态码
+
+- 200: 成功
+- 201: 创建成功
+- 400: 请求参数错误
+- 401: 未认证
+- 403: 无权限
+- 404: 资源不存在
+- 429: 请求频率超限
+- 500: 服务器内部错误
+
+## Schema 校验
+
+每个路由必须定义 Fastify JSON Schema:
+
+```typescript
+const schema = {
+  body: Type.Object({
+    raw_text: Type.String({ minLength: 1, maxLength: 500 }),
+    expires_in_hours: Type.Optional(Type.Number({ minimum: 1, maximum: 72 })),
+  }),
+  response: {
+    201: Type.Object({ id: Type.String(), status: Type.String() }),
+  },
+};
+```

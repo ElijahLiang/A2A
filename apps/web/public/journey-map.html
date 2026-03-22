@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A2A User Journey Map</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Noto Sans SC', sans-serif;
+  background: #0a0a0c;
+  color: #fffef8;
+  min-height: 100vh;
+  image-rendering: pixelated;
+}
+
+.journey {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 60px 40px;
+}
+
+/* Header */
+.journey-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.journey-badge {
+  display: inline-block;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: #51b7a9;
+  border: 2px solid #51b7a9;
+  padding: 6px 20px;
+  letter-spacing: 4px;
+  margin-bottom: 20px;
+}
+
+.journey-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 28px;
+  color: #51b7a9;
+  text-shadow: 3px 3px 0 #133f3d;
+  margin-bottom: 12px;
+}
+
+.journey-subtitle {
+  font-size: 16px;
+  color: #786f65;
+  letter-spacing: 2px;
+}
+
+/* Timeline */
+.timeline {
+  position: relative;
+  display: flex;
+  gap: 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 120px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: repeating-linear-gradient(90deg, #51b7a9 0, #51b7a9 12px, transparent 12px, transparent 20px);
+}
+
+.stage {
+  flex: 1;
+  position: relative;
+  padding: 0 8px;
+  min-width: 220px;
+}
+
+/* Stage number */
+.stage-num {
+  width: 48px;
+  height: 48px;
+  margin: 0 auto 16px;
+  background: #51b7a9;
+  border: 3px solid #1f756e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 16px;
+  color: #0a0a0c;
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+}
+
+.stage-icon {
+  font-size: 48px;
+  text-align: center;
+  margin-bottom: 16px;
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3));
+}
+
+/* Stage connector dot */
+.stage-dot {
+  width: 16px;
+  height: 16px;
+  margin: 0 auto 20px;
+  background: #fffef8;
+  border: 3px solid #51b7a9;
+  position: relative;
+  z-index: 2;
+}
+
+.stage-dot::after {
+  content: '';
+  position: absolute;
+  top: -4px; left: -4px; right: -4px; bottom: -4px;
+  border: 2px solid rgba(81,183,169,0.3);
+}
+
+/* Card */
+.stage-card {
+  background: rgba(255,254,248,0.06);
+  border: 3px solid #2b2723;
+  padding: 20px 16px;
+  position: relative;
+}
+
+.stage-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border: 1px solid rgba(81,183,169,0.15);
+  pointer-events: none;
+}
+
+.stage-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #51b7a9;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stage-desc {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #a8a7a0;
+  margin-bottom: 16px;
+}
+
+/* Actions list */
+.stage-actions {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stage-actions li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: #c8bfae;
+  line-height: 1.5;
+}
+
+.stage-actions li::before {
+  content: '>';
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: #51b7a9;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+/* Emotion bar */
+.emotion-section {
+  margin-top: 50px;
+  padding: 30px 0;
+  border-top: 3px dashed #2b2723;
+}
+
+.emotion-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #786f65;
+  margin-bottom: 20px;
+  letter-spacing: 2px;
+}
+
+.emotion-bar {
+  display: flex;
+  gap: 0;
+  height: 60px;
+  border: 3px solid #2b2723;
+  overflow: hidden;
+}
+
+.emotion-segment {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: #0a0a0c;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+  border-right: 2px solid rgba(0,0,0,0.15);
+  position: relative;
+}
+
+.emotion-segment span {
+  position: relative;
+  z-index: 1;
+}
+
+.emotion-segment::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.15), transparent);
+}
+
+/* Touchpoints */
+.touchpoints {
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.touchpoint {
+  padding: 14px 12px;
+  background: rgba(255,254,248,0.04);
+  border: 2px solid #2b2723;
+  text-align: center;
+}
+
+.touchpoint-label {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 6px;
+  color: #786f65;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.touchpoint-value {
+  font-size: 13px;
+  color: #87d0c4;
+  font-weight: 700;
+}
+
+/* Footer */
+.journey-footer {
+  margin-top: 60px;
+  text-align: center;
+  padding-top: 30px;
+  border-top: 3px solid #2b2723;
+}
+
+.journey-footer-text {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  color: #4b443d;
+  letter-spacing: 2px;
+}
+</style>
+</head>
+<body>
+
+<div class="journey">
+  <!-- Header -->
+  <div class="journey-header">
+    <div class="journey-badge">USER JOURNEY MAP</div>
+    <h1 class="journey-title">A2A 用户旅程地图</h1>
+    <p class="journey-subtitle">Avatar To Avatar · 从开机到线下见面的完整体验</p>
+  </div>
+
+  <!-- Timeline -->
+  <div class="timeline">
+
+    <!-- Stage 1 -->
+    <div class="stage">
+      <div class="stage-num">1</div>
+      <div class="stage-icon">🎮</div>
+      <div class="stage-dot"></div>
+      <div class="stage-card">
+        <div class="stage-title">开机 · 发现</div>
+        <div class="stage-desc">
+          像素开机动画亮起，"A2A" Logo 逐字浮现。用户被复古游戏风格吸引，按下 PRESS START。
+        </div>
+        <ul class="stage-actions">
+          <li>看到开机动画和扫描线效果</li>
+          <li>阅读"在像素小镇让AI替你交朋友"</li>
+          <li>按下 PRESS START 进入登录</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Stage 2 -->
+    <div class="stage">
+      <div class="stage-num">2</div>
+      <div class="stage-icon">🪪</div>
+      <div class="stage-dot"></div>
+      <div class="stage-card">
+        <div class="stage-title">登录 · 通行证</div>
+        <div class="stage-desc">
+          地图模糊背景营造沉浸感。像素风"小镇通行证"卡片验证身份，手机号+验证码快速登录。
+        </div>
+        <ul class="stage-actions">
+          <li>输入手机号获取验证码</li>
+          <li>看到"TOWN PASS"通行证视觉</li>
+          <li>验证成功后进入人格测试</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Stage 3 -->
+    <div class="stage">
+      <div class="stage-num">3</div>
+      <div class="stage-icon">🧠</div>
+      <div class="stage-dot"></div>
+      <div class="stage-card">
+        <div class="stage-title">测试 · 认领分身</div>
+        <div class="stage-desc">
+          5道卡片翻转问答确定MBTI类型。信封揭晓动画后认领专属Agent分身，获得性格描述。
+        </div>
+        <ul class="stage-actions">
+          <li>回答5道二选一性格问题</li>
+          <li>卡片翻转动画过渡每道题</li>
+          <li>信封拆开揭晓你的Agent分身</li>
+          <li>确认后正式进入小镇</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Stage 4 -->
+    <div class="stage">
+      <div class="stage-num">4</div>
+      <div class="stage-icon">🏘️</div>
+      <div class="stage-dot"></div>
+      <div class="stage-card">
+        <div class="stage-title">探索 · 像素小镇</div>
+        <div class="stage-desc">
+          俯视角像素地图展开。9座建筑承载全部功能，NPC Agent自主行走，AI对话气泡实时冒出。
+        </div>
+        <ul class="stage-actions">
+          <li>浏览像素地图上的9座建筑</li>
+          <li>观察NPC Agent在路径上行走</li>
+          <li>看到Agent间的AI对话气泡</li>
+          <li>点击建筑发布社交意图</li>
+          <li>点击Agent小人与其AI对话</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Stage 5 -->
+    <div class="stage">
+      <div class="stage-num">5</div>
+      <div class="stage-icon">💌</div>
+      <div class="stage-dot"></div>
+      <div class="stage-card">
+        <div class="stage-title">连接 · 约定见面</div>
+        <div class="stage-desc">
+          点击Agent小人弹出信封拆开动画，进入AI聊天界面。与Agent实时对话，约定时间地点。
+        </div>
+        <ul class="stage-actions">
+          <li>点击小人触发拆信动画</li>
+          <li>与Agent进行多轮AI对话</li>
+          <li>讨论感兴趣的活动</li>
+          <li>约定具体时间和地点</li>
+          <li>收到邮局确认通知</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Emotion curve -->
+  <div class="emotion-section">
+    <div class="emotion-title">EMOTION CURVE 情绪曲线</div>
+    <div class="emotion-bar">
+      <div class="emotion-segment" style="background:#87d0c4"><span>好奇</span></div>
+      <div class="emotion-segment" style="background:#b7e2d9"><span>安心</span></div>
+      <div class="emotion-segment" style="background:#51b7a9"><span>惊喜!</span></div>
+      <div class="emotion-segment" style="background:#faad14"><span>兴奋!!</span></div>
+      <div class="emotion-segment" style="background:#52c41a"><span>期待!!!</span></div>
+    </div>
+  </div>
+
+  <!-- Touchpoints -->
+  <div class="touchpoints">
+    <div class="touchpoint">
+      <div class="touchpoint-label">渠道</div>
+      <div class="touchpoint-value">Web 浏览器</div>
+    </div>
+    <div class="touchpoint">
+      <div class="touchpoint-label">交互方式</div>
+      <div class="touchpoint-value">点击建筑 / 小人</div>
+    </div>
+    <div class="touchpoint">
+      <div class="touchpoint-label">AI 驱动</div>
+      <div class="touchpoint-value">DeepSeek V3</div>
+    </div>
+    <div class="touchpoint">
+      <div class="touchpoint-label">核心产出</div>
+      <div class="touchpoint-value">线下见面方案</div>
+    </div>
+    <div class="touchpoint">
+      <div class="touchpoint-label">设计风格</div>
+      <div class="touchpoint-value">Pixelium 像素风</div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="journey-footer">
+    <div class="journey-footer-text">A2A STANFORD TOWN · USER JOURNEY MAP · POWERED BY DEEPSEEK</div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,47 @@
+---
+description: FastAPI Agent Runtime Python 编码规范
+globs: apps/agent/**/*.py
+alwaysApply: false
+---
+
+# Python Agent 规范 (FastAPI)
+
+## 项目约定
+
+- Python 3.12+，使用 type hints
+- 包管理使用 uv + pyproject.toml
+- 格式化: ruff format，检查: ruff check
+- 异步优先: 所有 I/O 操作使用 async/await
+
+## LLM 调用规范
+
+```python
+# ✅ 通过 LLM Gateway 调用，统一管理重试和降级
+result = await llm_gateway.call(
+    model="gpt-4o",
+    messages=messages,
+    response_format="json",
+    max_tokens=800
+)
+
+# ❌ 不要直接调用 OpenAI SDK
+client = OpenAI()
+client.chat.completions.create(...)
+```
+
+## Prompt 管理
+
+- Prompt 模板放在 `src/llm/prompts/` 下，使用 .txt 或 .jinja2
+- 不要在代码中硬编码大段 Prompt
+- 所有 Prompt 必须包含安全准则层
+
+## Agent 对话输入必须经过安全清洗
+
+```python
+message = await sanitize_agent_input(raw_message)
+```
+
+## 配置管理
+
+- 使用 pydantic-settings 管理环境变量
+- 敏感信息从环境变量读取，禁止硬编码

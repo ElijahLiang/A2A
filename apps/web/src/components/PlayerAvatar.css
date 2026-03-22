@@ -1,0 +1,55 @@
+.player-avatar {
+  z-index: 5;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+
+.player-sprite {
+  display: grid;
+  justify-items: center;
+  gap: 0;
+  animation: avatar-hop 2s steps(2, end) infinite;
+}
+
+.sprite-head {
+  width: 18px;
+  height: 16px;
+  background: #f2d2af;
+  border: var(--px-bit) solid var(--color-border);
+}
+
+.sprite-body {
+  width: 26px;
+  height: 22px;
+  margin-top: -4px;
+  background: #32615c;
+  border: var(--px-bit) solid var(--color-border);
+}
+
+.sprite-feet {
+  width: 24px;
+  height: 12px;
+  margin-top: -4px;
+  background: #2f4c67;
+  border: var(--px-bit) solid var(--color-border);
+}
+
+.player-bubble {
+  padding: 8px 10px;
+  background: var(--color-panel);
+  border: var(--pixel-border);
+  box-shadow: var(--pixel-shadow);
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .player-bubble {
+    display: none;
+  }
+}

@@ -1,0 +1,282 @@
+.boot-screen {
+  width: 100vw;
+  height: 100vh;
+  background: #0a0a0c;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Background ── */
+.boot-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  animation: bg-fade-in 2.5s ease 0.2s forwards;
+}
+
+.boot-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+@keyframes bg-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── Scanlines overlay ── */
+.boot-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.04) 2px,
+    rgba(0, 0, 0, 0.04) 4px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+
+/* ── Content layer — top section ── */
+.boot-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  z-index: 5;
+  position: relative;
+  padding-top: 6vh;
+}
+
+/* ── Logo ── */
+.boot-logo {
+  display: flex;
+  gap: 8px;
+}
+
+.logo-char {
+  font-family: var(--font-pixel, monospace);
+  font-size: 56px;
+  color: #fffef8;
+  text-shadow:
+    0 0 24px rgba(81, 183, 169, 0.7),
+    0 0 60px rgba(81, 183, 169, 0.35),
+    3px 3px 0 rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  animation: char-appear 0.4s ease forwards;
+}
+
+.logo-delay-1 {
+  animation-delay: 0.2s;
+  color: #51b7a9;
+  text-shadow:
+    0 0 24px rgba(81, 183, 169, 0.7),
+    0 0 60px rgba(81, 183, 169, 0.35),
+    3px 3px 0 rgba(0, 0, 0, 0.6);
+}
+
+.logo-delay-2 {
+  animation-delay: 0.4s;
+}
+
+@keyframes char-appear {
+  from { opacity: 0; transform: translateY(-20px) scale(0.5); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Subtitle ── */
+.boot-subtitle {
+  font-family: var(--font-pixel, monospace);
+  font-size: 10px;
+  color: rgba(255, 254, 248, 0.9);
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+.animate-fade {
+  animation: fade-glow 0.8s ease forwards;
+}
+
+@keyframes fade-glow {
+  from { opacity: 0; filter: blur(8px); }
+  to   { opacity: 1; filter: blur(0); }
+}
+
+/* ── Tagline typewriter ── */
+.boot-tagline {
+  font-size: 13px;
+  color: rgba(255, 254, 248, 0.8);
+  letter-spacing: 2px;
+  border-right: 2px solid #51b7a9;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+  animation: typewrite 1.5s steps(16) forwards, blink-cursor 0.6s step-end infinite;
+}
+
+@keyframes typewrite {
+  to { width: 17em; }
+}
+
+@keyframes blink-cursor {
+  50% { border-color: transparent; }
+}
+
+/* ══════════════════════════════════════════
+   Door Button — positioned in lower-center
+   ══════════════════════════════════════════ */
+.boot-door-btn {
+  position: absolute;
+  left: 50%;
+  bottom: 12vh;
+  transform: translateX(-50%);
+  z-index: 6;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 0;
+  opacity: 0;
+  animation: door-enter 1.2s ease forwards;
+  transition: transform 0.3s ease;
+}
+
+.boot-door-btn:hover {
+  transform: translateX(-50%) scale(1.08);
+}
+
+.boot-door-btn:hover .door-img {
+  filter: brightness(1.4) drop-shadow(0 0 36px rgba(81, 183, 169, 0.8));
+}
+
+.boot-door-btn:hover .door-hint {
+  opacity: 1;
+  color: #51b7a9;
+}
+
+.boot-door-btn:active {
+  transform: translateX(-50%) scale(0.95);
+}
+
+@keyframes door-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(40px) scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+.door-img {
+  width: 120px;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.5))
+          drop-shadow(0 0 16px rgba(81, 183, 169, 0.3));
+  animation: door-breathe 2.5s ease-in-out infinite;
+  transition: filter 0.3s ease;
+}
+
+@keyframes door-breathe {
+  0%, 100% {
+    opacity: 0.8;
+    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.5))
+            drop-shadow(0 0 8px rgba(81, 183, 169, 0.2));
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.4))
+            drop-shadow(0 0 28px rgba(81, 183, 169, 0.6));
+  }
+}
+
+.door-hint {
+  font-family: var(--font-pixel, monospace);
+  font-size: 11px;
+  color: rgba(255, 254, 248, 0.7);
+  letter-spacing: 3px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+  opacity: 0.8;
+  animation: hint-blink 1.4s step-end infinite;
+  transition: opacity 0.3s, color 0.3s;
+}
+
+@keyframes hint-blink {
+  0%, 60%  { opacity: 0.8; }
+  61%, 100% { opacity: 0.3; }
+}
+
+/* ── Door opening animation ── */
+.door-opening {
+  pointer-events: none;
+  animation: door-open 1.2s ease forwards !important;
+}
+
+.door-opening .door-img {
+  animation: door-glow-burst 1.2s ease forwards !important;
+}
+
+.door-opening .door-hint {
+  animation: none !important;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+@keyframes door-open {
+  0%   { transform: translateX(-50%) scale(1); opacity: 1; }
+  30%  { transform: translateX(-50%) scale(1.2); opacity: 1; }
+  100% { transform: translateX(-50%) scale(5); opacity: 0; filter: blur(8px); }
+}
+
+@keyframes door-glow-burst {
+  0%   { filter: drop-shadow(0 0 8px rgba(81, 183, 169, 0.3)); opacity: 1; }
+  30%  { filter: drop-shadow(0 0 50px rgba(81, 183, 169, 0.9)) brightness(1.8); opacity: 1; }
+  100% { filter: drop-shadow(0 0 100px rgba(255, 255, 255, 1)) brightness(5); opacity: 0; }
+}
+
+/* ── Screen white-out (class-based, no :has()) ── */
+.boot-whiteout::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #fffef8;
+  z-index: 100;
+  opacity: 0;
+  animation: screen-whiteout 1.2s ease 0.4s forwards;
+  pointer-events: none;
+}
+
+@keyframes screen-whiteout {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Footer ── */
+.boot-footer {
+  position: absolute;
+  bottom: 16px;
+  display: flex;
+  gap: 24px;
+  font-family: var(--font-pixel, monospace);
+  font-size: 7px;
+  color: rgba(255, 254, 248, 0.25);
+  letter-spacing: 1px;
+  z-index: 5;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}

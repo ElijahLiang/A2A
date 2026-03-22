@@ -1,0 +1,276 @@
+.letter-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26,25,24,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fade-in 0.2s ease;
+  backdrop-filter: blur(3px);
+}
+
+.letter-container {
+  position: relative;
+  width: 400px;
+  perspective: 800px;
+}
+
+/* ── Envelope ── */
+.letter-envelope {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  transition: transform 0.5s ease, opacity 0.3s ease;
+}
+
+.envelope-body {
+  position: absolute;
+  inset: 0;
+  background: #e8d5a8;
+  border: 4px solid #8b6914;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 1;
+}
+
+.envelope-stamp {
+  position: absolute;
+  top: 10px; right: 10px;
+  width: 36px; height: 36px;
+  background: #51b7a9;
+  border: 3px solid #1f756e;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-pixel, monospace);
+  font-size: 7px; color: #fff;
+}
+
+.envelope-to {
+  font-family: var(--font-pixel, monospace);
+  font-size: 8px; color: #4a3728;
+}
+
+.envelope-from {
+  font-size: 16px; font-weight: 700; color: #4a3728;
+}
+
+.envelope-flap {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 100px;
+  background: #d4c090;
+  border: 4px solid #8b6914; border-bottom: none;
+  clip-path: polygon(0 0, 50% 100%, 100% 0);
+  transform-origin: top center;
+  transition: transform 0.5s ease;
+  z-index: 2;
+}
+
+/* ── Chat paper (replaces static letter) ── */
+.letter-paper {
+  position: absolute;
+  top: 20px; left: 6px; right: 6px;
+  background: #fffef5;
+  border: 3px solid #2b2723;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+  opacity: 0;
+  transform: translateY(40px);
+  transition: transform 0.5s ease 0.2s, opacity 0.3s ease 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.letter-chat-paper {
+  height: 480px;
+}
+
+/* ── Phases ── */
+.letter-phase-envelope .envelope-flap { transform: rotateX(0deg); }
+.letter-phase-opening .envelope-flap { transform: rotateX(180deg); }
+
+.letter-phase-opening .letter-paper,
+.letter-phase-chat .letter-paper {
+  opacity: 1;
+  transform: translateY(-100px);
+}
+
+.letter-phase-chat .letter-envelope {
+  opacity: 0;
+  transform: translateY(80px) scale(0.8);
+  pointer-events: none;
+}
+
+/* ── Header ── */
+.letter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14px 14px 10px;
+  flex-shrink: 0;
+}
+
+.letter-avatar-row {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.letter-avatar {
+  width: 48px; height: 48px;
+  border: 3px solid #2b2723;
+  background: #b7e2d9;
+  position: relative; overflow: hidden;
+}
+
+.letter-name {
+  font-family: var(--font-pixel, monospace);
+  font-size: 11px; color: #1f756e; margin-bottom: 3px;
+}
+
+.letter-status {
+  font-family: var(--font-pixel, monospace);
+  font-size: 7px; color: #786f65;
+}
+
+.letter-close {
+  font-family: var(--font-pixel, monospace);
+  font-size: 10px; width: 24px; height: 24px;
+  background: none; border: 2px solid #c8bfae;
+  color: #786f65; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.letter-close:hover { background: #f5222d; color: #fff; border-color: #cf1322; }
+
+.letter-divider {
+  height: 2px; flex-shrink: 0;
+  background: repeating-linear-gradient(90deg, #c8bfae 0, #c8bfae 6px, transparent 6px, transparent 12px);
+  margin: 0 14px;
+}
+
+/* ── Chat messages ── */
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-msg {
+  display: flex;
+  flex-direction: column;
+  max-width: 80%;
+}
+
+.chat-msg-agent {
+  align-self: flex-start;
+}
+
+.chat-msg-user {
+  align-self: flex-end;
+}
+
+.chat-msg-bubble {
+  padding: 8px 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  border: 2px solid #2b2723;
+  word-break: break-word;
+}
+
+.chat-msg-agent .chat-msg-bubble {
+  background: #e0f5f0;
+  border-color: #87d0c4;
+  border-radius: 0 8px 8px 8px;
+}
+
+.chat-msg-user .chat-msg-bubble {
+  background: #fffef5;
+  border-color: #c8bfae;
+  border-radius: 8px 0 8px 8px;
+}
+
+.chat-msg-time {
+  font-family: var(--font-pixel, monospace);
+  font-size: 6px;
+  color: #a8a7a0;
+  margin-top: 3px;
+}
+
+.chat-msg-agent .chat-msg-time { text-align: left; }
+.chat-msg-user .chat-msg-time { text-align: right; }
+
+/* Typing indicator */
+.chat-typing {
+  display: flex; gap: 4px; padding: 10px 16px;
+}
+
+.typing-dot {
+  width: 6px; height: 6px;
+  background: #51b7a9;
+  border: 1px solid #1f756e;
+  animation: typing-bounce 1s infinite;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+}
+
+/* ── Input bar ── */
+.chat-input-bar {
+  display: flex;
+  gap: 6px;
+  padding: 10px 14px;
+  border-top: 2px solid #d9d8d0;
+  flex-shrink: 0;
+  background: #f9f7f0;
+}
+
+.chat-input {
+  flex: 1;
+  font-size: 13px;
+  padding: 8px 10px;
+  border: 2px solid #2b2723;
+  background: #fffef8;
+  outline: none;
+  font-family: inherit;
+}
+
+.chat-input:focus {
+  border-color: #51b7a9;
+  box-shadow: 0 0 0 2px rgba(81,183,169,0.2);
+}
+
+.chat-input::placeholder { color: #a8a7a0; }
+
+.chat-send-btn {
+  font-family: var(--font-pixel, monospace);
+  font-size: 9px;
+  padding: 8px 16px;
+  background: #51b7a9;
+  color: #fff;
+  border: 2px solid #1f756e;
+  cursor: pointer;
+  transition: background 0.1s;
+  white-space: nowrap;
+}
+
+.chat-send-btn:hover:not(:disabled) { background: #87d0c4; }
+.chat-send-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* Scrollbar for chat */
+.chat-messages::-webkit-scrollbar { width: 6px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: #c8bfae; border-radius: 0; }
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

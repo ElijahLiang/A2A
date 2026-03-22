@@ -1,0 +1,21 @@
+.town-map-page {
+  /* position: fixed + overflow:auto 让地图可滚动，不受 body overflow:hidden 影响 */
+  position: fixed;
+  inset: 0;
+  overflow: auto;
+  background: linear-gradient(180deg, #d8eee7 0%, #b7ddd0 32%, #9ac992 32%, #79ad63 100%);
+}
+
+.town-map-backdrop {
+  position: fixed;
+  inset: 0;
+  background: inherit;
+  z-index: 0;
+}
+
+.town-map-inner {
+  position: relative;
+  z-index: 1;
+  min-width: 1240px;
+  padding: 16px 20px calc(var(--toolbar-height) + 24px);
+}

@@ -1,0 +1,49 @@
+---
+description: React Native 移动端开发规范
+globs: apps/mobile/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# React Native 规范 (Expo)
+
+## 项目约定
+
+- 使用 Expo 管理构建，避免直接修改原生代码
+- 状态管理: Zustand (客户端状态) + React Query (服务端状态)
+- 导航: expo-router (file-based routing)
+- 样式: StyleSheet.create，不使用内联样式对象
+
+## 组件规范
+
+```tsx
+// ✅ 函数组件 + 类型导出
+interface MatchCardProps {
+  match: Match;
+  onConfirm: (id: string) => void;
+}
+
+export function MatchCard({ match, onConfirm }: MatchCardProps) {
+  return (...);
+}
+
+// ❌ 不用 React.FC，不用 default export
+const MatchCard: React.FC = () => { ... };
+export default MatchCard;
+```
+
+## 文件命名
+
+- 组件: PascalCase (`MatchCard.tsx`)
+- hooks: camelCase 带 use 前缀 (`useMatches.ts`)
+- stores: camelCase 带 Store 后缀 (`matchStore.ts`)
+- 工具函数: camelCase (`formatTime.ts`)
+
+## API 调用
+
+```tsx
+// ✅ 通过 React Query hooks
+const { data, isLoading } = useMatches();
+
+// ❌ 不要在组件中直接 fetch
+useEffect(() => { fetch('/api/matches')... }, []);
+```

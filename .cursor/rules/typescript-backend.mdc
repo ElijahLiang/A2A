@@ -1,0 +1,51 @@
+---
+description: Fastify 后端 TypeScript 编码规范
+globs: apps/api/**/*.ts
+alwaysApply: false
+---
+
+# TypeScript 后端规范 (Fastify)
+
+## 项目约定
+
+- 使用 Fastify 而非 Express
+- 路由文件放 `routes/`，业务逻辑放 `services/`，数据访问放 `repositories/`
+- 所有 API 返回统一响应格式
+
+## 统一响应格式
+
+```typescript
+// 成功
+{ ok: true, data: T }
+
+// 失败
+{ ok: false, error: { code: string, message: string } }
+```
+
+## 路由定义
+
+```typescript
+// ✅ 使用 Fastify 插件模式
+export default async function userRoutes(app: FastifyInstance) {
+  app.get('/users/:id', { schema: getUserSchema }, getUserHandler);
+}
+
+// ❌ 不要用 Express 风格
+app.get('/users/:id', (req, res) => { ... });
+```
+
+## 错误处理
+
+```typescript
+// ✅ 使用自定义 AppError
+throw new AppError('USER_NOT_FOUND', 'User does not exist', 404);
+
+// ❌ 不要直接 throw 字符串或裸 Error
+throw new Error('not found');
+```
+
+## 数据库查询
+
+- 使用参数化查询，禁止拼接 SQL
+- 复杂查询封装在 Repository 层
+- 批量操作使用事务

@@ -1,0 +1,227 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Press+Start+2P&display=swap');
+
+/* A2A · Pixelium Stanford Town */
+
+:root {
+  --px-bit: 4px;
+
+  /* Pixelium OKlab Teal */
+  --px-teal-1: #eef8f6;
+  --px-teal-2: #d8efe9;
+  --px-teal-3: #b7e2d9;
+  --px-teal-4: #87d0c4;
+  --px-teal-5: #51b7a9;
+  --px-teal-6: #2c968b;
+  --px-teal-7: #1f756e;
+  --px-teal-8: #195a55;
+  --px-teal-9: #133f3d;
+  --px-teal-10: #0b2525;
+
+  /* Neutrals */
+  --px-paper-1: #fcfcf8;
+  --px-paper-2: #f3f0e8;
+  --px-paper-3: #dfd9cb;
+  --px-paper-4: #c8bfae;
+  --px-ink-1: #786f65;
+  --px-ink-2: #4b443d;
+  --px-ink-3: #2b2723;
+  --px-ink-4: #171513;
+
+  /* Accent */
+  --px-gold-5: #d8b04f;
+  --px-gold-7: #a6802d;
+  --px-rose-5: #d66683;
+  --px-rose-7: #ab4e67;
+  --px-sky-5: #5c9ad6;
+  --px-sky-7: #4274a3;
+  --px-lime-5: #87bc53;
+  --px-lime-7: #5d8e35;
+
+  /* Map colors */
+  --map-grass-1: #b9dc86;
+  --map-grass-2: #8dc45b;
+  --map-grass-3: #6ea342;
+  --map-path-1: #d8c78d;
+  --map-path-2: #b99f63;
+  --map-water-1: #87bdd9;
+  --map-water-2: #5f93b0;
+  --map-water-3: #3d6884;
+  --map-roof-1: #d86f49;
+  --map-roof-2: #ab4f31;
+  --map-wall-1: #f5e9cf;
+  --map-wall-2: #e0cca6;
+  --map-shadow: rgba(17, 21, 19, 0.26);
+
+  /* Semantic */
+  --color-bg: var(--px-paper-2);
+  --color-panel: var(--px-paper-1);
+  --color-panel-muted: #f4f8f5;
+  --color-border: var(--px-ink-3);
+  --color-border-soft: var(--px-paper-4);
+  --color-text: var(--px-ink-3);
+  --color-text-muted: var(--px-ink-1);
+  --color-text-inverse: var(--px-paper-1);
+  --color-primary: var(--px-teal-6);
+  --color-primary-strong: var(--px-teal-8);
+  --color-primary-soft: var(--px-teal-3);
+  --color-danger: var(--px-rose-5);
+  --color-danger-strong: var(--px-rose-7);
+  --color-success: var(--px-lime-5);
+  --color-success-strong: var(--px-lime-7);
+  --color-notice: var(--px-sky-5);
+  --color-notice-strong: var(--px-sky-7);
+  --color-warm: var(--px-gold-5);
+  --color-warm-strong: var(--px-gold-7);
+
+  /* Typography */
+  --font-pixel: 'Fusion Pixel 12px Proportional', 'Zpix', 'Press Start 2P', monospace;
+  --font-body: 'Noto Sans SC', 'Fusion Pixel 12px Proportional', 'Zpix', sans-serif;
+
+  /* Layout */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 32px;
+  --space-8: 40px;
+  --toolbar-height: 68px;
+  --dialog-width: min(720px, calc(100vw - 32px));
+
+  --pixel-border: var(--px-bit) solid var(--color-border);
+  --pixel-border-soft: var(--px-bit) solid var(--color-border-soft);
+  --pixel-shadow: calc(var(--px-bit) * 2) calc(var(--px-bit) * 2) 0 var(--map-shadow);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+body,
+#root {
+  margin: 0;
+  min-height: 100vh;
+}
+
+body {
+  font-family: var(--font-body);
+  background:
+    linear-gradient(180deg, #d9efe9 0%, #b5dbce 48%, #95c4b1 100%);
+  color: var(--color-text);
+  overflow: hidden;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  border: 0;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--px-paper-2);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--px-teal-5);
+  border: 2px solid var(--px-ink-3);
+}
+
+::selection {
+  background: var(--px-teal-5);
+  color: var(--color-text-inverse);
+}
+
+@keyframes pixel-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(calc(var(--px-bit) * -1));
+  }
+}
+
+@keyframes pixel-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes panel-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes dialog-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes cloud-drift {
+  from {
+    transform: translateX(-12px);
+  }
+  to {
+    transform: translateX(12px);
+  }
+}
+
+@keyframes water-shimmer {
+  0%,
+  100% {
+    background-position: 0 0, 0 0;
+  }
+  50% {
+    background-position: 8px 4px, -8px 0;
+  }
+}
+
+@keyframes avatar-hop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}

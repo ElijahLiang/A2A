@@ -1,0 +1,117 @@
+.building {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  align-content: start;
+  gap: var(--space-2);
+  background: transparent;
+  cursor: pointer;
+  padding: 4px;
+  transition: transform 120ms steps(2, end);
+}
+
+.building:hover,
+.building-active {
+  transform: translateY(-6px);
+  z-index: 6;
+}
+
+.building-body {
+  position: relative;
+  width: min(100%, 200px);
+  height: min(100%, 180px);
+  display: grid;
+  place-items: center;
+}
+
+.building-body-img {
+  border: none;
+  background: none;
+  box-shadow: none;
+}
+
+.building-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(4px 4px 0 rgba(0,0,0,0.28));
+}
+
+.building-roof {
+  display: none;
+}
+
+.building-icon {
+  position: relative;
+  z-index: 1;
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 1;
+}
+
+.building-badge {
+  position: absolute;
+  right: -8px;
+  top: -12px;
+  min-width: 30px;
+  min-height: 30px;
+  display: grid;
+  place-items: center;
+  padding: 0 6px;
+  background: var(--color-panel);
+  border: var(--pixel-border);
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  color: var(--color-primary-strong);
+  text-transform: uppercase;
+}
+
+.building-label {
+  opacity: 0;
+  transform: translateY(-4px);
+  min-width: 130px;
+  padding: 8px 12px;
+  background: rgba(23, 21, 19, 0.92);
+  border: var(--pixel-border);
+  text-align: left;
+  transition: all 120ms steps(2, end);
+  pointer-events: none;
+}
+
+.building:hover .building-label,
+.building-active .building-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.building-label strong,
+.building-label span {
+  display: block;
+}
+
+.building-label strong {
+  margin-bottom: 4px;
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  color: var(--color-text-inverse);
+}
+
+.building-label span {
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(252, 252, 248, 0.78);
+}
+
+@media (max-width: 1100px) {
+  .building-label {
+    display: none;
+  }
+
+  .building-body {
+    width: min(100%, 140px);
+    height: min(100%, 130px);
+  }
+}
