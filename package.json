@@ -11,11 +11,14 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
     "db:up": "docker compose -f infra/docker-compose.dev.yml up -d",
     "db:down": "docker compose -f infra/docker-compose.dev.yml down",
-    "db:migrate": "pnpm --filter @a2a/api run migrate"
+    "db:migrate": "node -e \"console.log('apps/api 尚未落地，暂不支持迁移命令')\""
   },
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=9.0.0"
   },
-  "packageManager": "pnpm@9.15.0"
+  "packageManager": "pnpm@9.15.0",
+  "devDependencies": {
+    "turbo": "^2.8.20"
+  }
 }
