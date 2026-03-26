@@ -1,0 +1,912 @@
+# A2A (Avatar To Avatar) — Cursor Composer 开发规范
+
+> 本文件是 Cursor Composer 的系统提示词。所有代码生成、修改、重构必须遵守以下规范。
+
+---
+
+## 一、项目概况
+
+这是一个像素风格的线下社交撮合平台，用户通过 AI Agent（数字分身）在像素小镇中进行前置社交，最终促成线下真实会面。
+
+### 技术栈
+
+| 层级 | 技术 | 版本 |
+|------|------|------|
+| 前端框架 | React | 19.x |
+| 语言 | TypeScript | 5.9 |
+| 构建 | Vite | 8.x |
+| 路由 | react-router-dom | 7.x |
+| 样式 | 纯 CSS（设计系统 Token） | — |
+| 后端 | FastAPI (Python) | 0.115 |
+| AI 模型 | DeepSeek-V3.2 via OpenAI SDK | — |
+| 包管理 | pnpm (monorepo) | 9.x |
+| 编排 | Turborepo | — |
+
+### 当前路由
+
+```
+/ → Landing（启动页，门动画）
+/login → Login（手机号 + 验证码）
+/quiz → PersonaQuiz（5 题 MBTI 测试 → 分配 Agent）
+/town → TownMap（主地图 1200×780，9 栋建筑，5 个 AI Agent）
+```
+
+---
+
+## 二、系统架构
+
+### 2.1 整体架构图
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                         用户浏览器 (React SPA)                       │
+│                                                                     │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐           │
+│  │ Landing  │→ │  Login   │→ │  Quiz    │→ │ TownMap  │ ← 主场景  │
+│  └──────────┘  └──────────┘  └──────────┘  └────┬─────┘           │
+│                                                  │                  │
+│                          ┌───────────────────────┼──────────┐       │
+│                          ▼                       ▼          ▼       │
+│                    ┌──────────┐          ┌──────────┐ ┌─────────┐  │
+│                    │ PixelMap │          │ Mailbox  │ │ Toolbar │  │
+│                    │ (地图画布)│          │ (邮箱)   │ │ (工具栏) │  │
+│                    └────┬─────┘          └────┬─────┘ └────┬────┘  │
+│                         │                     │            │        │
+│             ┌───────────┼───────────┐         │     ┌──────┼──────┐│
+│             ▼           ▼           ▼         ▼     ▼      ▼      ▼│
+│        ┌────────┐ ┌──────────┐ ┌────────┐ ┌─────┐ Token  集邮册 小屋│
+│        │Building│ │AgentSprit│ │CatSprit│ │信件  │ 余额   入口  入口│
+│        │ 建筑群 │ │  NPC精灵 │ │ 猫咪   │ │列表  │                  │
+│        └───┬────┘ └──────────┘ └────────┘ └──┬──┘                  │
+│            │                                  │                     │
+│     ┌──────┼──────────┐              ┌────────┼────────┐           │
+│     ▼      ▼          ▼              ▼        ▼        ▼           │
+│  Intent  PostOffice  TownSquare    回信     私聊    确认约定        │
+│  Dialog  Dialog      Dialog      (Agent代聊)                       │
+│ (活动表单)(邮局)      (广场/许愿池)                                  │
+│                                                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│                     状态管理层 (React Context)                       │
+│  ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────┐      │
+│  │ AuthContext │ │TokenContext│ │MailContext  │ │GameContext  │      │
+│  │ 登录态+Agent│ │余额+流水   │ │信件+邮箱状态│ │邮戳+小屋+赛季│      │
+│  └──────┬─────┘ └──────┬─────┘ └──────┬─────┘ └──────┬─────┘      │
+│         └──────────────┴──────────────┴──────────────┘             │
+│                                │                                    │
+├────────────────────────────────┼────────────────────────────────────┤
+│                         服务层 (services/)                          │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐              │
+│  │agentApi  │ │activityApi│ │ mailApi  │ │ gameApi  │              │
+│  │Agent对话  │ │活动CRUD   │ │信件收发   │ │邮戳/小屋  │              │
+│  └─────┬────┘ └─────┬────┘ └─────┬────┘ └─────┬────┘              │
+│        └────────────┴────────────┴─────────────┘                   │
+│                              │                                      │
+│                        HTTP / REST                                  │
+└──────────────────────────────┼──────────────────────────────────────┘
+                               │
+┌──────────────────────────────┼──────────────────────────────────────┐
+│                     FastAPI 后端 (apps/agent/)                      │
+│                              │                                      │
+│  ┌───────────────────────────┼──────────────────────────┐          │
+│  │                     API Routes                        │          │
+│  │  /api/agents    /api/events   /api/dialog             │          │
+│  │  /api/activity  /api/mail     /api/meetup             │          │
+│  │  /api/stamps    /api/home     /api/season             │          │
+│  │  /api/wish      /api/friends  /api/verify             │          │
+│  └───────────────────────────┬──────────────────────────┘          │
+│                              │                                      │
+│  ┌───────────┐  ┌────────────┴────────────┐  ┌──────────┐         │
+│  │ Agent AI  │  │    Business Logic        │  │ Storage  │         │
+│  │ DeepSeek  │  │ 匹配/Token/邮戳/赛季     │  │ SQLite / │         │
+│  │ V3.2      │  │ 会面验证/爽约处理         │  │ JSON     │         │
+│  └───────────┘  └─────────────────────────┘  └──────────┘         │
+└────────────────────────────────────────────────────────────────────┘
+```
+
+### 2.2 工程目录（完整目标结构）
+
+> `[已有]` = 当前已存在  `[待建]` = 需要新建
+
+```
+apps/web/src/
+├── App.tsx                          [已有] 路由 + AuthContext 消费
+├── main.tsx                         [已有] React 入口
+│
+├── contexts/                        [待建] 全局状态 Context
+│   ├── AuthContext.tsx               [待建] 登录态 + Agent 选择（从 App.tsx 迁移）
+│   ├── TokenContext.tsx              [待建] Token 余额 + 流水记录
+│   ├── MailContext.tsx               [待建] 信件列表 + 邮箱开关状态
+│   └── GameContext.tsx               [待建] 邮戳 + 小屋 + 赛季 + 好友
+│
+├── pages/                           [已有]
+│   ├── Landing.tsx / .css           [已有] 启动页
+│   ├── Login.tsx / .css             [已有] 登录页
+│   ├── PersonaQuiz.tsx / .css       [已有] 人格测试
+│   ├── TownMap.tsx / .css           [已有] 主地图页（所有组件的容器）
+│   ├── StampBook.tsx / .css         [待建] 集邮册页面
+│   └── PixelHome.tsx / .css         [待建] 像素小屋页面
+│
+├── components/                      [已有]
+│   ├── PixelMap.tsx / .css          [已有] 地图画布（建筑 + NPC + 猫咪）
+│   ├── Building.tsx / .css          [已有] 单个建筑组件
+│   ├── AgentSprite.tsx              [已有] NPC 精灵（自动巡游 + 对话气泡）
+│   ├── SpriteCharacter.tsx / .css   [已有] 精灵渲染（图层叠加）
+│   ├── PlayerAvatar.tsx / .css      [已有] 玩家头像
+│   ├── LetterDialog.tsx / .css      [已有] 与 NPC 的信件/聊天弹窗
+│   ├── MapDialog.tsx                [已有] 通用弹窗容器
+│   ├── MapToolbar.tsx / .css        [已有] 底部工具栏 → 需扩展 Token/集邮册/小屋入口
+│   ├── Mailbox.tsx / .css           [待建] 邮箱组件（开口/关闭状态 + 信件列表）
+│   ├── MailLetter.tsx / .css        [待建] 单封信件（手撕信封 + 详情 + 操作）
+│   ├── CatSprite.tsx / .css         [待建] 广场猫咪精灵
+│   ├── FriendList.tsx / .css        [待建] 好友列表面板
+│   ├── SeasonPanel.tsx / .css       [待建] 赛季信息面板
+│   ├── TokenDisplay.tsx / .css      [待建] Token 余额显示 + 浮动动画
+│   └── dialogs/                     [已有]
+│       ├── HomeDialog.tsx           [已有] 我的小屋弹窗
+│       ├── IntentDialog.tsx         [已有] 活动发布表单 → 需重构为 ActivityFormDialog
+│       ├── PostOfficeDialog.tsx     [已有] 邮局弹窗
+│       ├── TownSquareDialog.tsx     [已有] 广场弹窗 → 需扩展许愿池
+│       ├── MeetupDialog.tsx         [待建] 会面验证 + 结算弹窗
+│       └── StampUnlockDialog.tsx    [待建] 邮戳解锁动画弹窗
+│
+├── data/                            [已有]
+│   ├── agents.ts                    [已有] Agent 定义 + 精灵图层
+│   ├── buildings.ts                 [待建] 建筑配置（从 TownMap.tsx 抽离）
+│   ├── cats.ts                      [待建] 猫咪种类定义
+│   ├── stamps.ts                    [待建] 邮戳模板定义
+│   ├── furniture.ts                 [待建] 家具定义 + 解锁条件
+│   └── seasons.ts                   [待建] 赛季配置
+│
+├── hooks/                           [已有]
+│   ├── useAgentEvents.ts            [已有] 轮询 Agent 对话事件
+│   ├── useAgentWalker.ts            [已有] Agent 巡游路径
+│   ├── useToken.ts                  [待建] 消费 TokenContext 的便捷 hook
+│   ├── useMail.ts                   [待建] 消费 MailContext 的便捷 hook
+│   └── useGame.ts                   [待建] 消费 GameContext 的便捷 hook
+│
+├── services/                        [已有]
+│   ├── agentApi.ts                  [已有] Agent 对话 API（已实现）
+│   ├── activityApi.ts               [待建] 活动 CRUD API
+│   ├── mailApi.ts                   [待建] 信件收发 API
+│   ├── gameApi.ts                   [待建] 邮戳/小屋/赛季 API
+│   └── storage.ts                   [待建] localStorage 封装（离线降级）
+│
+├── types/                           [待建]
+│   └── index.ts                     [待建] 全局共享类型定义
+│
+└── styles/                          [已有]
+    ├── global.css                   [已有] CSS Token 变量 + @keyframes
+    └── components.css               [已有] 基础组件样式
+```
+
+### 2.3 数据模型定义
+
+> 所有 TypeScript 接口统一在 `src/types/index.ts` 中定义，各文件从此处导入。
+
+```typescript
+// ============ 用户 & Agent ============
+
+interface User {
+  id: string                    // UUID
+  phone: string                 // 手机号（脱敏）
+  bio: string                   // 一句话介绍
+  avatarColor: 'blue' | 'green' // 小人颜色
+  agentName: string             // 绑定的 Agent 名称
+  createdAt: number             // 注册时间戳
+}
+
+// ============ Token ============
+
+interface TokenRecord {
+  id: string
+  type: 'earn' | 'spend'
+  amount: number                // 正数=获得，负数=消耗
+  reason: TokenReason
+  relatedId?: string            // 关联的活动/邮戳/赛季ID
+  timestamp: number
+}
+
+const TOKEN_REASONS = {
+  // 获取
+  REGISTER_BONUS: 'register_bonus',       // +3 注册
+  MEETUP_SUCCESS: 'meetup_success',       // +1 会面成功
+  PHOTO_TAKEN: 'photo_taken',             // +2 合影
+  WISH_COMPLETE: 'wish_complete',         // +1 完成心愿
+  SEASON_TASK: 'season_task',             // +1~3 赛季任务
+  LOGIN_STREAK: 'login_streak',           // +1 连续3天
+  NOSHOW_COMPENSATE: 'noshow_compensate', // +1 被爽约补偿
+  // 消耗
+  PUBLISH_DUO: 'publish_duo',             // -1 发布2人
+  PUBLISH_GROUP: 'publish_group',         // -2 发布3~5人
+  PUBLISH_OPEN: 'publish_open',           // -3 发布不限
+  WISH_SUBMIT: 'wish_submit',             // -1 投入心愿
+  FURNITURE_BUY: 'furniture_buy',         // -5 兑换家具
+  VENUE_UNLOCK: 'venue_unlock',           // -3 解锁场馆
+  NOSHOW_PENALTY: 'noshow_penalty',       // -1 爽约扣罚
+  EXPIRED_REFUND: 'expired_refund',       // +退还 超时退款
+} as const
+
+type TokenReason = typeof TOKEN_REASONS[keyof typeof TOKEN_REASONS]
+
+// ============ 活动 ============
+
+type ActivityStatus = 'recruiting' | 'matched' | 'confirmed' | 'completed' | 'expired' | 'cancelled'
+
+interface Activity {
+  id: string
+  publisherId: string
+  venueId: string               // 关联建筑 ID
+  activityType: string          // study/dining/sports/...
+  description: string
+  time: string                  // 时间标签
+  location: string
+  groupSize: '2' | '3-5' | 'unlimited'
+  mood: string                  // 心情色值 hex
+  note?: string                 // 备注
+  status: ActivityStatus
+  tokenCost: number
+  applicants: string[]          // 申请者 userId[]
+  confirmedUsers: string[]      // 确认的用户 userId[]
+  createdAt: number
+  expiresAt: number             // 创建后 48h
+}
+
+// ============ 信件 ============
+
+type LetterStatus = 'unread' | 'read' | 'replied' | 'archived' | 'expired'
+
+interface Letter {
+  id: string
+  activityId: string
+  fromUserId: string
+  toUserId: string
+  content: string
+  mood?: string                 // 心情色值
+  round: number                 // 第几轮（1~3）
+  status: LetterStatus
+  createdAt: number
+  expiresAt: number             // 48h 自动归档
+}
+
+// ============ 会面 ============
+
+type MeetupStatus = 'pending' | 'verified' | 'noshow_one' | 'noshow_both' | 'completed'
+
+interface Meetup {
+  id: string
+  activityId: string
+  participants: string[]        // userId[]
+  scheduledTime: number
+  location: string
+  verifyMethod: 'qrcode' | 'gps' | 'nfc'
+  status: MeetupStatus
+  verifiedAt?: number
+  photoId?: string              // 合影 ID
+}
+
+// ============ 邮戳 ============
+
+type StampGrade = 'bronze' | 'silver' | 'gold' | 'rainbow'
+
+interface Stamp {
+  id: string
+  ownerId: string
+  venueId: string
+  activityType: string
+  partnerId: string
+  grade: StampGrade
+  earnedAt: number
+  meetupId: string
+  isSeasonal: boolean
+  seasonId?: string
+}
+
+// ============ 小屋 ============
+
+interface FurnitureItem {
+  id: string
+  name: string
+  unlockCondition: string       // 解锁条件描述
+  unlockCheck: string           // 解锁检查函数名
+  effect?: string               // 功能效果描述
+  sprite: string                // 精灵图路径
+}
+
+interface PixelHome {
+  ownerId: string
+  level: number                 // 1~10
+  furniture: string[]           // 已解锁的 furnitureId[]
+  visitors: number              // 串门访客数
+}
+
+// ============ 好友 ============
+
+interface Friend {
+  userId: string
+  friendId: string
+  addedAt: number
+  source: 'meetup' | 'wish'    // 通过会面/许愿池添加
+}
+
+// ============ 许愿池 ============
+
+type WishStatus = 'floating' | 'picked' | 'in_progress' | 'completed' | 'rejected' | 'expired'
+
+interface Wish {
+  id: string
+  authorId: string
+  content: string
+  status: WishStatus
+  pickerId?: string
+  completedAt?: number
+  createdAt: number
+}
+
+// ============ 赛季 ============
+
+interface Season {
+  id: string
+  name: string                  // 如"运动月"
+  theme: string
+  startDate: number
+  endDate: number
+  tasks: SeasonTask[]
+  limitedStamps: string[]       // 限定邮戳 ID
+  limitedCats: string[]         // 限定猫咪 ID
+  limitedFurniture: string      // 限定家具 ID
+}
+
+interface SeasonTask {
+  id: string
+  description: string
+  target: number                // 目标值
+  reward: { token: number; stampId?: string; title?: string }
+}
+
+// ============ 猫咪 ============
+
+type CatType = 'orange' | 'black' | 'white' | 'calico' | 'hidden'
+
+interface SquareCat {
+  id: string
+  type: CatType
+  activityType: string          // 携带的活动类型
+  carriedActivityId?: string    // 携带的具体活动 ID
+  position: { row: number; col: number }
+  appearsAt: number
+  expiresAt: number
+}
+```
+
+### 2.4 状态管理架构
+
+```
+                        App.tsx
+                          │
+                ┌─────────┴─────────┐
+                ▼                   ▼
+         AuthProvider          BrowserRouter
+              │                     │
+         TokenProvider              │
+              │                     │
+         MailProvider               │
+              │                     │
+         GameProvider               │
+              │                     │
+              └──────────┬──────────┘
+                         ▼
+                      <Routes>
+```
+
+**每个 Context 的职责边界（严格隔离）：**
+
+| Context | 管理的数据 | 对外暴露的 action |
+|---------|----------|------------------|
+| AuthContext | user, agentName, loggedIn | login, logout, updateBio |
+| TokenContext | balance, history[] | earn(amount, reason), spend(amount, reason), canAfford(cost) |
+| MailContext | letters[], mailboxOpen, unreadCount | fetchMail, sendLetter, archiveLetter, setRead |
+| GameContext | stamps[], home, friends[], season, wishes[] | addStamp, unlockFurniture, addFriend, pickWish |
+
+**Context 实现模板（每个 Context 都按此模式）：**
+
+```tsx
+// contexts/TokenContext.tsx
+
+import { createContext, useContext, useReducer, type ReactNode } from 'react'
+
+// 1. 定义 State
+interface TokenState {
+  balance: number
+  history: TokenRecord[]
+}
+
+// 2. 定义 Action
+type TokenAction =
+  | { type: 'EARN'; amount: number; reason: TokenReason; relatedId?: string }
+  | { type: 'SPEND'; amount: number; reason: TokenReason; relatedId?: string }
+  | { type: 'INIT'; balance: number; history: TokenRecord[] }
+
+// 3. Reducer（纯函数）
+function tokenReducer(state: TokenState, action: TokenAction): TokenState {
+  switch (action.type) {
+    case 'EARN': { /* ... */ }
+    case 'SPEND': { /* ... */ }
+    case 'INIT': { /* ... */ }
+  }
+}
+
+// 4. Context + Provider
+const TokenContext = createContext<{...} | null>(null)
+
+export function TokenProvider({ children }: { children: ReactNode }) {
+  const [state, dispatch] = useReducer(tokenReducer, initialState)
+  // localStorage 持久化
+  // 对外暴露 earn / spend / canAfford
+  return <TokenContext.Provider value={...}>{children}</TokenContext.Provider>
+}
+
+// 5. 消费 hook
+export function useToken() {
+  const ctx = useContext(TokenContext)
+  if (!ctx) throw new Error('useToken must be used within TokenProvider')
+  return ctx
+}
+```
+
+### 2.5 数据流 & 通信
+
+```
+用户操作                    前端状态                      后端 API                     存储
+──────                    ──────                      ─────                       ────
+
+点击场馆→发布活动
+  │
+  ├─→ TokenContext.spend(-1) ──→ POST /api/activity ──→ 存入 DB
+  │                                                     │
+  ├─→ MailContext 清空          ← 活动 ID 返回 ←────────┘
+  │
+  └─→ 播放盖章动画（纯前端）
+
+
+收到回信（轮询）
+  │
+  ├─→ GET /api/mail?since=xxx ──→ 查询新信件
+  │         │
+  │         └──→ MailContext.fetchMail() ──→ 更新 letters[]
+  │                                         unreadCount +1
+  │                                         邮箱图标切换关闭
+  │
+  └─→ 邮箱出现红点（纯前端）
+
+
+会面验证成功
+  │
+  ├─→ POST /api/meetup/verify ──→ 验证逻辑（GPS/QR/NFC）
+  │         │
+  │         └── 返回 meetupResult
+  │
+  ├─→ TokenContext.earn(+1, 'meetup_success')
+  ├─→ GameContext.addStamp(stampData)
+  ├─→ 播放握手动画
+  │
+  └─→ 如合影: TokenContext.earn(+2, 'photo_taken')
+              GameContext.unlockFurniture(检查条件)
+```
+
+### 2.6 离线降级策略
+
+**当前阶段（MVP）后端可能未运行**，前端必须具备完整的离线降级能力：
+
+```typescript
+// services/storage.ts — localStorage 封装
+
+const STORAGE_KEYS = {
+  AUTH: 'a2a-town-auth',
+  AGENT: 'a2a-my-agent',
+  TOKEN: 'a2a-token-state',
+  MAIL: 'a2a-mail-state',
+  GAME: 'a2a-game-state',
+} as const
+
+export function loadState<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key)
+    return raw ? JSON.parse(raw) : fallback
+  } catch {
+    return fallback
+  }
+}
+
+export function saveState(key: string, value: unknown): void {
+  localStorage.setItem(key, JSON.stringify(value))
+}
+```
+
+**规则：**
+- 每个 Context 在 `useReducer` 初始化时从 `localStorage` 读取
+- 每次 `dispatch` 后通过 `useEffect` 写回 `localStorage`
+- API 调用失败时降级为纯本地操作（不阻断用户流程）
+- 后端上线后数据以后端为准，本地作为缓存
+
+### 2.7 API 接口约定
+
+**所有 API 调用封装在 `services/*.ts` 中，组件不直接 `fetch`。**
+
+```typescript
+// 统一请求封装 — services/request.ts [待建]
+const API_BASE = 'http://127.0.0.1:8000'
+
+interface ApiResponse<T> {
+  code: number           // 0=成功
+  data: T
+  message?: string
+}
+
+export async function request<T>(
+  path: string,
+  options?: RequestInit
+): Promise<T | null> {
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      headers: { 'Content-Type': 'application/json' },
+      ...options,
+    })
+    const json: ApiResponse<T> = await res.json()
+    if (json.code !== 0) throw new Error(json.message)
+    return json.data
+  } catch {
+    console.warn(`API 调用失败: ${path}，使用本地降级`)
+    return null
+  }
+}
+```
+
+**后端 API 路由规划：**
+
+| 方法 | 路径 | 用途 | 请求体 | 返回 |
+|------|------|------|-------|------|
+| GET | /api/agents | 获取所有 Agent | — | AgentInfo[] |
+| GET | /api/events?since=N | 轮询对话事件 | — | DialogEvent[] |
+| POST | /api/dialog | 触发 Agent 对话 | {agent1, agent2, scene} | DialogEvent |
+| POST | /api/activity | 发布活动 | Activity (不含 id) | {id} |
+| GET | /api/activity/:venueId | 获取场馆活动列表 | — | Activity[] |
+| PATCH | /api/activity/:id/close | 关闭招募 | — | ok |
+| GET | /api/mail?userId=X&since=N | 拉取信件 | — | Letter[] |
+| POST | /api/mail | 发送信件 | Letter (不含 id) | {id} |
+| PATCH | /api/mail/:id/read | 标记已读 | — | ok |
+| POST | /api/meetup/confirm | 确认约定 | {activityId, userId} | Meetup |
+| POST | /api/meetup/verify | 验证会面 | {meetupId, method, proof} | MeetupResult |
+| POST | /api/meetup/photo | 上传合影 | {meetupId} | {photoId, tokenEarned} |
+| GET | /api/stamps?userId=X | 获取邮戳 | — | Stamp[] |
+| GET | /api/home/:userId | 获取小屋数据 | — | PixelHome |
+| POST | /api/wish | 投入心愿 | {content} | {id} |
+| GET | /api/wish/random | 捞取心愿 | — | Wish |
+| POST | /api/wish/:id/complete | 确认完成 | — | ok |
+| GET | /api/friends?userId=X | 好友列表 | — | Friend[] |
+| POST | /api/friends | 添加好友 | {friendId, source} | ok |
+| GET | /api/season/current | 当前赛季 | — | Season |
+| GET | /api/cats | 广场猫咪 | — | SquareCat[] |
+
+---
+
+## 三、开发指南（按任务执行）
+
+### 3.0 开发顺序 & 依赖关系
+
+```
+任务依赖图（→ 表示"必须先完成"）：
+
+types/index.ts ──────→ 所有任务都依赖此文件
+contexts/AuthContext ─→ 从 App.tsx 抽离，所有任务依赖
+services/storage.ts ──→ 所有 Context 依赖
+services/request.ts ──→ 所有 API 调用依赖
+
+Phase 1 内部依赖：
+  1.0 基础设施 → 1.1 Token → 1.2 活动发布 → 1.3 邮箱 → 1.4 会面结算
+                    ↑                           ↑
+                    └───── 1.3 邮箱需要检查余额 ──┘
+
+Phase 2 依赖 Phase 1：
+  1.4 完成 → 2.1 集邮册（需要邮戳数据）
+  1.4 完成 → 2.2 像素小屋（需要会面数据）
+  2.1 + 2.2 → 2.3 赛季系统
+
+Phase 3 依赖 Phase 1 + 2：
+  1.3 完成 → 3.1 许愿池
+  1.2 完成 → 3.2 广场猫咪
+  1.4 完成 → 3.3 好友系统
+  1.3 完成 → 3.4 Agent 代聊
+```
+
+### 3.1 任务 1.0：基础设施搭建（最先做）
+
+**目标：** 建立类型系统、存储层、请求层、Context 骨架。
+
+**步骤：**
+
+1. 创建 `src/types/index.ts`，将上述所有 interface 写入
+2. 创建 `src/services/storage.ts`，实现 `loadState` / `saveState`
+3. 创建 `src/services/request.ts`，实现统一请求封装
+4. 创建 `src/contexts/AuthContext.tsx`：
+   - 将 `App.tsx` 中的 `loggedIn` / `myAgent` / `handleLogout` 迁移至此
+   - App.tsx 改为消费 `useAuth()`
+5. 在 `App.tsx` 顶层包裹 `<AuthProvider>`
+6. 创建 `src/data/buildings.ts`，将 `TownMap.tsx` 中的 `BUILDINGS` 和 `INTENT_BUILDINGS` 抽离
+
+**改动文件：** App.tsx, TownMap.tsx
+**新建文件：** types/index.ts, services/storage.ts, services/request.ts, contexts/AuthContext.tsx, data/buildings.ts
+**验证：** 页面功能与改动前完全一致，无报错
+
+### 3.2 任务 1.1：Token 系统
+
+**目标：** Token 余额管理 + UI 显示 + 变动动画。
+
+**步骤：**
+
+1. 创建 `src/contexts/TokenContext.tsx`：
+   - State: `{ balance: 3, history: [] }`
+   - Actions: `EARN`, `SPEND`, `INIT`
+   - 持久化到 `localStorage(a2a-token-state)`
+   - 暴露: `balance`, `history`, `earn()`, `spend()`, `canAfford()`
+2. 在 `App.tsx` 的 `<AuthProvider>` 内部包裹 `<TokenProvider>`
+3. 创建 `src/components/TokenDisplay.tsx` + `.css`：
+   - 显示硬币图标 + 当前余额数字
+   - `earn` 时播放绿色 `+N` 上浮动画
+   - `spend` 时播放红色 `-N` 下沉动画
+   - 动画用 CSS `@keyframes token-float` 定义在 `global.css`
+4. 在 `MapToolbar.tsx` 中引入 `<TokenDisplay />`，放在时间左侧
+
+**改动文件：** App.tsx, MapToolbar.tsx, global.css
+**新建文件：** contexts/TokenContext.tsx, components/TokenDisplay.tsx, components/TokenDisplay.css
+**验证：** 工具栏出现硬币+数字"3"，浏览器控制台手动调 `earn(1)` 看到动画
+
+### 3.3 任务 1.2：活动发布表单
+
+**目标：** 重构现有 IntentDialog，加入 Token 消耗 + 心情选择 + 信封动画。
+
+**步骤：**
+
+1. 在 `IntentDialog.tsx` 基础上扩展（**不新建文件，直接改**）：
+   - 引入 `useToken()` hook
+   - 添加人数选择（`2人` / `3~5人` / `不限`），当前已有但缺少 Token 计算
+   - 添加心情色环组件（内联实现，一个 `<input type="range">` 映射到 HSL 色相）
+   - 提交前调用 `canAfford(cost)` 检查余额
+   - 余额不足时按钮禁用，显示提示文案
+   - 提交时调用 `spend(cost, reason)`
+2. 添加信封盖章动画：
+   - 提交后显示信封 SVG，信封中心盖上红色圆章
+   - 章盖完后信封向右上飞出屏幕
+   - 动画 `@keyframes stamp-seal` + `@keyframes letter-flyout` 加到 `global.css`
+3. 创建 `src/services/activityApi.ts`：
+   - `publishActivity(data)` → POST /api/activity（失败时仅本地记录）
+
+**改动文件：** IntentDialog.tsx, global.css
+**新建文件：** services/activityApi.ts
+**验证：** 点击场馆 → 填表 → 余额 3 发布 2 人活动后变 2 → 看到盖章飞出动画
+
+### 3.4 任务 1.3：邮箱系统
+
+**目标：** 完整的信件收发流程。
+
+**步骤：**
+
+1. 创建 `src/contexts/MailContext.tsx`：
+   - State: `{ letters: [], unreadCount: 0 }`
+   - 轮询 `GET /api/mail`，失败时用 mock 数据
+   - 暴露: `letters`, `unreadCount`, `sendReply()`, `archiveLetter()`
+2. 在 `App.tsx` 包裹 `<MailProvider>`
+3. 创建 `src/components/Mailbox.tsx` + `.css`：
+   - 固定定位在 TownMap 右下角（邮箱旁边留好友入口位置）
+   - 无信: 邮箱开口图标；有信: 邮箱关闭图标 + 红色数字角标
+   - 点击展开信件列表（最多 5 封），半屏面板从右侧滑入
+4. 创建 `src/components/MailLetter.tsx` + `.css`：
+   - 信封初始态: 封口闭合
+   - 手撕交互: `onPointerDown` + `onPointerMove` 检测 Y 轴拖拽距离 > 80px 触发撕开
+   - 撕开后显示信件内容: 左上 Avatar、中部留言+心情色块、底部时间地点
+   - 底部操作栏: 「回信」「私聊」按钮 + 左滑丢弃（滑动 > 50% 宽度归档）
+   - 第 3 轮显示: 「确认约定」「婉拒」强制二选一
+5. 创建 `src/services/mailApi.ts`
+6. 在 `TownMap.tsx` 中引入 `<Mailbox />`
+
+**改动文件：** App.tsx, TownMap.tsx
+**新建文件：** contexts/MailContext.tsx, components/Mailbox.tsx, components/Mailbox.css, components/MailLetter.tsx, components/MailLetter.css, services/mailApi.ts
+**验证：** 地图右下出现邮箱图标 → 有 mock 信件时关闭态 → 点击展开列表 → 撕信封 → 查看内容 → 回信
+
+### 3.5 任务 1.4：会面验证 & 结算
+
+**目标：** 约定确认 → 会面验证 → 奖励发放完整流程。
+
+**步骤：**
+
+1. 创建 `src/contexts/GameContext.tsx`：
+   - State: `{ stamps: [], home: {初始}, friends: [], currentSeason: null }`
+   - 暴露: `addStamp()`, `unlockFurniture()`, `addFriend()`, `checkUnlocks()`
+2. 创建 `src/components/dialogs/MeetupDialog.tsx` + `.css`：
+   - 3 个阶段视图，用 `step` state 切换:
+     - Step 1「等待会面」: 地点 + 倒计时 + 二维码按钮
+     - Step 2「验证中」: 扫码界面 / GPS 检测（MVP 用按钮模拟）
+     - Step 3「结算」: 握手动画 → 邮戳展示 → Token +1 → 合影选择 → 加好友选择
+   - 握手动画: 两个小人从左右进入画面，中间握手，星星特效
+   - 合影: 两小人并排站，像素风边框，倒计时 3-2-1 闪光，存入 GameContext
+3. 结算结束后跳回 TownMap
+
+**改动文件：** App.tsx, TownMap.tsx
+**新建文件：** contexts/GameContext.tsx, components/dialogs/MeetupDialog.tsx, components/dialogs/MeetupDialog.css
+**验证：** 从信件确认约定 → 进入等待 → 点击模拟验证 → 握手动画 → 邮戳 → Token +1 → 合影 → Token +2
+
+### 3.6 后续 Phase 任务
+
+Phase 2 和 Phase 3 的具体步骤在对应任务启动时再细化。每个任务遵循相同模式:
+1. 先确认依赖的 Context/Service 是否就绪
+2. 定义数据结构（如果 `types/index.ts` 尚缺）
+3. 实现 UI 组件
+4. 接入 Context 和 API
+5. 添加动画
+6. 验证
+
+---
+
+## 四、编码规范（必须遵守）
+
+### 4.1 样式规范
+
+**禁止使用 Tailwind、CSS-in-JS、styled-components。** 本项目使用纯 CSS + 设计系统 Token。
+
+```css
+/* ✅ 正确：使用设计 Token 变量 */
+.my-component {
+  padding: var(--space-3);
+  border: var(--border-base) solid var(--px-teal-7);
+  box-shadow: var(--shadow-pixel);
+  font-family: var(--font-pixel);
+  animation: dialog-pop var(--dur-normal) var(--ease-pixel);
+}
+
+/* ❌ 错误：硬编码值 */
+.my-component {
+  padding: 12px;
+  border: 2px solid #51b7a9;
+  box-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+}
+```
+
+**像素风格强制规则：**
+- `border-radius: 0` — 所有组件方角，除非设计文档明确指定
+- `box-shadow` 只用硬阴影（offset-x, offset-y, 0px）— 禁止 blur
+- 动画使用 `steps()` 缓动 — 禁止 `ease-in-out` 等平滑曲线
+- 字体优先 `var(--font-pixel)`，正文用 `var(--font-body)`
+
+**设计 Token 参考文件：**
+- `src/styles/global.css` — 所有 CSS 变量定义
+- `src/styles/components.css` — 按钮、输入框等基础组件样式
+- `A2A_Design_System_Spec.md` — 完整设计规范
+
+### 4.2 组件规范
+
+```tsx
+// ✅ 标准组件结构
+import './MyComponent.css'
+
+interface MyComponentProps {
+  value: string
+  onChange: (v: string) => void
+}
+
+export function MyComponent({ value, onChange }: MyComponentProps) {
+  return <div className="my-component">...</div>
+}
+```
+
+**规则：**
+- 函数组件 + 具名导出（`export function`），不用 `export default`
+- Props 用 interface 定义，命名为 `XxxProps`
+- 每个组件一个同名 `.css` 文件，放在同目录
+- 不用 `React.FC`，不用 forwardRef 除非必要
+- 状态管理用 React Context + useReducer，不引入 Redux/Zustand/Jotai
+
+### 4.3 文件命名
+
+```
+页面：     PascalCase.tsx + PascalCase.css    → pages/StampBook.tsx
+组件：     PascalCase.tsx + PascalCase.css    → components/Mailbox.tsx
+弹窗组件： PascalCase.tsx + .css              → components/dialogs/MeetupDialog.tsx
+Context：  PascalCase.tsx                     → contexts/TokenContext.tsx
+Hooks：   camelCase.ts                        → hooks/useToken.ts
+数据：    camelCase.ts                        → data/agents.ts
+服务：    camelCase.ts                        → services/agentApi.ts
+类型：    index.ts                            → types/index.ts
+```
+
+### 4.4 动画规范
+
+```css
+/* 所有新动画必须定义在 global.css 的 @keyframes 区域 */
+--dur-instant: 80ms;
+--dur-fast: 120ms;
+--dur-normal: 200ms;
+--dur-slow: 400ms;
+--dur-scene: 1200ms;
+
+--ease-pixel: steps(2, end);    /* 像素跳帧 */
+--ease-snap: steps(1, end);     /* 瞬间切换 */
+--ease-smooth: ease;            /* 仅用于非像素元素 */
+```
+
+**z-index 层级（不可冲突）：**
+```
+--z-map: 1;
+--z-cat: 5;           /* 猫咪精灵 */
+--z-toolbar: 10;
+--z-mailbox: 50;      /* 邮箱面板 */
+--z-modal: 100;
+--z-meetup: 150;      /* 会面结算 */
+--z-letter: 2000;
+--z-toast: 3000;      /* Token 浮动数字 */
+```
+
+### 4.5 TypeScript 规范
+
+- 严格模式（`strict: true`）已开启
+- 禁止 `any`，用 `unknown` 代替后收窄
+- 接口优先于 type alias（除非需要联合类型）
+- 枚举用 `as const` 对象代替 `enum`
+- 所有共享类型从 `types/index.ts` 导入
+
+### 4.6 Git 规范
+
+```
+feat(scope): 新功能
+fix(scope): 修复
+refactor(scope): 重构
+style(scope): 样式
+chore(scope): 杂务
+
+scope = web | agent | design | infra
+```
+
+---
+
+## 五、设计参考资源
+
+| 文档 | 路径 | 用途 |
+|------|------|------|
+| 产品需求文档 | `PRD.md` | 功能需求、数据模型、API 接口 |
+| 设计系统规范 | `A2A_Design_System_Spec.md` | 颜色、字体、组件样式规范 |
+| 交互事件清单 | `design/interaction-events.md` | 完整用户流程、状态机、奖励系统 |
+| 全局样式 Token | `apps/web/src/styles/global.css` | CSS 变量定义 |
+| 组件基础样式 | `apps/web/src/styles/components.css` | 按钮、输入框样式类 |
+| Figma Token | `design/figma/tokens.tokens.json` | 设计变量 JSON |
+| 精灵图提示词 | `design/lovart-generation-prompts.md` | AI 生成像素素材的提示词 |
+
+---
+
+## 六、Composer 工作流程
+
+### 每次任务开始时
+
+1. 先阅读本文件确认规范和架构
+2. 确认前置任务已完成（检查依赖关系图）
+3. 阅读 `design/interaction-events.md` 确认交互细节
+4. 阅读 `A2A_Design_System_Spec.md` 确认视觉规范
+5. 阅读相关已有代码，理解当前实现
+6. 再开始编码
+
+### 编码原则
+
+- **一次只做一个任务**，不要跨任务修改
+- **先改后加**：优先修改已有文件，不要随意新建
+- **最小改动**：只改必要的代码，不要"顺手"重构不相关的部分
+- **样式隔离**：新组件的样式写在自己的 `.css` 文件里，全局 Token 只在 `global.css` 中添加
+- **不要删除**已有功能或注释掉已有代码，除非任务明确要求
+- **不要安装新依赖**，除非任务明确要求且无法用现有技术实现
+- **类型先行**：开始写组件前，先确认 `types/index.ts` 中有所需类型
+- **降级优先**：API 调用必须有 try-catch，失败时不阻断用户操作
+
+### 输出格式
+
+每次完成任务后，简要说明：
+1. 改了什么文件（列出路径）
+2. 新增了什么文件（列出路径）
+3. 如何验证（浏览器中的操作步骤）
+4. 是否有遗留问题需要下一步处理
+5. 下一个建议执行的任务编号

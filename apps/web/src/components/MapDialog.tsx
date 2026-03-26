@@ -6,9 +6,11 @@ type MapDialogProps = {
   subtitle?: string
   onClose: () => void
   children: ReactNode
+  /** 发布意图等：底部半屏 slide-up（ui-interaction-spec） */
+  layout?: 'center' | 'bottom-sheet'
 }
 
-export function MapDialog({ title, icon, subtitle, onClose, children }: MapDialogProps) {
+export function MapDialog({ title, icon, subtitle, onClose, children, layout = 'center' }: MapDialogProps) {
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose()
@@ -18,9 +20,13 @@ export function MapDialog({ title, icon, subtitle, onClose, children }: MapDialo
     return () => window.removeEventListener('keydown', handleEscape)
   }, [onClose])
 
+  const overlayClass =
+    layout === 'bottom-sheet' ? 'map-dialog-overlay map-dialog-overlay--bottom-sheet' : 'map-dialog-overlay'
+  const panelClass = layout === 'bottom-sheet' ? 'map-dialog map-dialog--bottom-sheet' : 'map-dialog'
+
   return (
-    <div className="map-dialog-overlay" onClick={onClose}>
-      <section className="map-dialog" onClick={(event) => event.stopPropagation()}>
+    <div className={overlayClass} onClick={onClose}>
+      <section className={panelClass} onClick={(event) => event.stopPropagation()}>
         <header className="map-dialog-header">
           <div>
             <div className="map-dialog-title">

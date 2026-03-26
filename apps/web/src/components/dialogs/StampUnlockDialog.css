@@ -1,0 +1,79 @@
+.stamp-unlock-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-modal) + 5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: rgba(10, 12, 11, 0.5);
+}
+
+.stamp-unlock-panel {
+  max-width: 320px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  text-align: center;
+  animation: stamp-unlock-pop var(--dur-normal) var(--ease-pixel) forwards;
+}
+
+.stamp-unlock-title {
+  margin: 0;
+  font-family: var(--font-pixel);
+  font-size: var(--text-sm);
+  color: var(--color-primary-strong);
+}
+
+.stamp-unlock-seal {
+  width: 112px;
+  height: 112px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: var(--border-thick) solid var(--color-border);
+  box-shadow: var(--pixel-shadow);
+}
+
+.stamp-unlock-seal--bronze {
+  background: #c4a574;
+}
+
+.stamp-unlock-seal--silver {
+  background: #c8d0d4;
+}
+
+.stamp-unlock-seal--gold {
+  background: var(--px-gold-5);
+}
+
+.stamp-unlock-seal--rainbow {
+  background: linear-gradient(135deg, var(--px-rose-5), var(--px-sky-5), var(--px-lime-5));
+}
+
+.stamp-unlock-seal-grade {
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  color: var(--px-ink-3);
+}
+
+.stamp-unlock-seal--rainbow .stamp-unlock-seal-grade {
+  color: var(--color-text-inverse);
+}
+
+.stamp-unlock-seal-venue {
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  color: var(--px-ink-3);
+}
+
+.stamp-unlock-desc {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}

@@ -1,0 +1,195 @@
+.mailbox-cluster {
+  position: fixed;
+  right: calc(12px + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--toolbar-height) + 16px + env(safe-area-inset-bottom, 0px));
+  z-index: 15;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: var(--space-3);
+  pointer-events: none;
+}
+
+.mailbox-cluster > * {
+  pointer-events: auto;
+}
+
+.mailbox-friend-slot {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--pixel-border-soft);
+  background: rgba(252, 252, 248, 0.85);
+  box-shadow: var(--pixel-shadow);
+  opacity: 0.85;
+  cursor: pointer;
+  padding: 0;
+}
+
+.mailbox-friend-slot:hover {
+  opacity: 1;
+}
+
+.mailbox-friend-icon {
+  font-size: var(--text-xl);
+  filter: grayscale(0.4);
+}
+
+.mailbox-wrap {
+  position: relative;
+}
+
+.mailbox-trigger {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--pixel-border);
+  background: var(--px-paper-0);
+  box-shadow: var(--pixel-shadow);
+  cursor: pointer;
+}
+
+.mailbox-trigger:hover {
+  box-shadow: calc(var(--px-bit) * 2) calc(var(--px-bit) * 2) 0 var(--map-shadow);
+}
+
+/* ui-interaction-spec §5：无信开口 / 有信闭合略深 + 微动 */
+.mailbox-trigger--empty .mailbox-icon {
+  filter: brightness(1.06);
+  transform: translateY(1px);
+}
+
+.mailbox-trigger--full .mailbox-icon {
+  filter: brightness(0.92);
+  animation: pixel-bounce 2.2s steps(2, end) infinite;
+}
+
+.mailbox-icon {
+  font-size: var(--text-2xl);
+  line-height: 1;
+  display: block;
+}
+
+.mailbox-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  color: var(--color-text-inverse);
+  background: var(--color-danger-strong);
+  border: var(--border-thin) solid var(--color-border);
+}
+
+.mailbox-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: calc(var(--toolbar-height) + env(safe-area-inset-bottom, 0px));
+  width: min(50vw, 420px);
+  max-width: 100%;
+  background: rgba(252, 252, 248, 0.98);
+  border-left: var(--pixel-border);
+  box-shadow: calc(var(--px-bit) * -3) 0 0 rgba(0, 0, 0, 0.12);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  animation: mailbox-slide-in var(--dur-normal) var(--ease-pixel) forwards;
+}
+
+.mailbox-panel-header {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: var(--pixel-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.mailbox-panel-title {
+  font-family: var(--font-pixel);
+  font-size: var(--text-sm);
+  color: var(--color-primary-strong);
+}
+
+.mailbox-panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+}
+
+.mailbox-empty {
+  margin: var(--space-6) auto;
+  font-size: var(--text-md);
+  color: var(--color-text-muted);
+}
+
+.mailbox-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.mailbox-list-item {
+  width: 100%;
+  text-align: left;
+  padding: var(--space-3);
+  border: var(--pixel-border);
+  background: var(--color-panel);
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: var(--space-1) var(--space-2);
+}
+
+.mailbox-list-item:hover {
+  background: var(--px-paper-2);
+}
+
+.mailbox-list-from {
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  color: var(--color-text);
+}
+
+.mailbox-list-status {
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  color: var(--color-text-muted);
+}
+
+.mailbox-list-status.is-unread {
+  color: var(--color-danger-strong);
+}
+
+.mailbox-list-preview {
+  grid-column: 1 / -1;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .mailbox-panel {
+    width: 100%;
+  }
+}

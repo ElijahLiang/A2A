@@ -1,0 +1,7 @@
+{
+  "name": "A2A Design System",
+  "id": "a2a-design-system-tokens",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma", "dev"]
+}

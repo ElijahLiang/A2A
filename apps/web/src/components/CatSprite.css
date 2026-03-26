@@ -1,0 +1,46 @@
+.cat-sprite {
+  position: relative;
+  /* 高于建筑 (z-index 4–6)，低于 Agent 精灵 (20)，保证可点、可走可见 */
+  z-index: 15;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 2px 2px;
+  margin: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.12s steps(2, end);
+}
+
+.cat-sprite:hover .cat-sprite-face {
+  filter: drop-shadow(var(--pixel-shadow)) brightness(1.12);
+  transform: translateY(-2px);
+}
+
+.cat-sprite:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.cat-sprite-face {
+  font-size: 28px;
+  line-height: 1;
+  filter: drop-shadow(var(--pixel-shadow));
+  animation: cat-bob 2s var(--ease-pixel) infinite;
+}
+
+.cat-sprite-tag {
+  margin-top: 2px;
+  padding: 1px 4px;
+  font-family: var(--font-pixel);
+  font-size: 6px;
+  color: var(--color-text-inverse);
+  background: var(--px-ink-3);
+  border: var(--border-thin) solid var(--color-border);
+}

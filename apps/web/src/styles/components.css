@@ -1,4 +1,6 @@
-/* Pixelium shared components */
+/* Pixelium shared components — all values reference design tokens from global.css */
+
+/* ── Button ────────────────────────────────────────────────────────────── */
 
 .pixel-btn {
   display: inline-flex;
@@ -8,16 +10,16 @@
   min-height: 44px;
   padding: 0 var(--space-5);
   font-family: var(--font-pixel);
-  font-size: 10px;
+  font-size: var(--text-base);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
   border: var(--pixel-border);
   box-shadow: var(--px-bit) var(--px-bit) 0 rgba(23, 21, 19, 0.18);
   transition:
-    transform 120ms steps(2, end),
-    background-color 120ms linear,
-    box-shadow 120ms linear;
+    transform var(--dur-fast) var(--ease-pixel),
+    background-color var(--dur-fast) var(--ease-linear),
+    box-shadow var(--dur-fast) var(--ease-linear);
 }
 
 .pixel-btn:hover {
@@ -41,7 +43,7 @@
 }
 
 .pixel-btn-primary:hover {
-  background: var(--px-teal-5);
+  background: var(--color-primary-hover);
 }
 
 .pixel-btn-secondary {
@@ -61,8 +63,10 @@
 .pixel-btn-small {
   min-height: 36px;
   padding: 0 var(--space-4);
-  font-size: 8px;
+  font-size: var(--text-sm);
 }
+
+/* ── Form controls ─────────────────────────────────────────────────────── */
 
 .pixel-input,
 .pixel-select,
@@ -94,11 +98,13 @@
   display: block;
   margin-bottom: var(--space-2);
   font-family: var(--font-pixel);
-  font-size: 8px;
+  font-size: var(--text-sm);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-text-muted);
 }
+
+/* ── Badge ─────────────────────────────────────────────────────────────── */
 
 .pixel-badge {
   display: inline-flex;
@@ -106,8 +112,8 @@
   gap: var(--space-1);
   padding: 6px 10px;
   font-family: var(--font-pixel);
-  font-size: 7px;
-  border: var(--px-bit) solid transparent;
+  font-size: var(--text-xs);
+  border: var(--border-thick) solid transparent;
 }
 
 .pixel-badge-green {
@@ -129,9 +135,9 @@
 }
 
 .pixel-badge-purple {
-  background: #9777c9;
+  background: var(--color-accent);
   color: var(--color-text-inverse);
-  border-color: #6c50a3;
+  border-color: var(--color-accent-strong);
 }
 
 .pixel-badge-red {
@@ -146,6 +152,8 @@
   border-color: var(--color-primary);
 }
 
+/* ── Progress bar ──────────────────────────────────────────────────────── */
+
 .pixel-progress {
   overflow: hidden;
   height: 20px;
@@ -156,10 +164,17 @@
 .pixel-progress-fill {
   height: 100%;
   background:
-    linear-gradient(90deg, rgba(255, 255, 255, 0.28) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0.28) 75%, transparent 75%, transparent 100%),
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.28) 25%, transparent 25%, transparent 50%,
+      rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0.28) 75%,
+      transparent 75%, transparent 100%
+    ),
     var(--color-primary);
   background-size: 16px 16px, auto;
 }
+
+/* ── Avatar ────────────────────────────────────────────────────────────── */
 
 .pixel-avatar {
   display: inline-flex;
@@ -179,6 +194,8 @@
   font-size: 34px;
 }
 
+/* ── Card / dialog box ─────────────────────────────────────────────────── */
+
 .pixel-card,
 .dialog-box {
   background: var(--color-panel);
@@ -194,6 +211,8 @@
   padding: var(--space-5);
 }
 
+/* ── Typography helpers ────────────────────────────────────────────────── */
+
 .dialog-box-title,
 .section-title,
 .page-title {
@@ -204,26 +223,28 @@
 
 .dialog-box-title {
   margin-bottom: var(--space-4);
-  font-size: 10px;
+  font-size: var(--text-base);
   color: var(--color-primary-strong);
 }
 
 .section-title {
   margin-bottom: var(--space-3);
-  font-size: 8px;
+  font-size: var(--text-sm);
   color: var(--color-text-muted);
 }
 
 .page-title {
-  font-size: 12px;
+  font-size: var(--text-md);
   color: var(--color-primary-strong);
 }
 
 .page-subtitle {
   font-family: var(--font-pixel);
-  font-size: 8px;
+  font-size: var(--text-sm);
   color: var(--color-text-muted);
 }
+
+/* ── Layout helpers ────────────────────────────────────────────────────── */
 
 .dialog-stack {
   display: grid;
@@ -246,7 +267,7 @@
   display: block;
   margin-bottom: var(--space-2);
   font-family: var(--font-pixel);
-  font-size: 8px;
+  font-size: var(--text-sm);
   color: var(--color-primary-strong);
 }
 
@@ -260,8 +281,10 @@
   padding: 6px 10px;
   background: var(--px-paper-2);
   border: var(--pixel-border-soft);
-  font-size: 13px;
+  font-size: var(--text-lg);
 }
+
+/* ── Agent chat (town map dialogs) ─────────────────────────────────────── */
 
 .agent-chat-box {
   display: grid;
@@ -288,26 +311,37 @@
 
 .icebreaker-box {
   padding: var(--space-3);
-  background: #f4df9f;
+  background: var(--px-gold-5);
   border: var(--pixel-border);
   line-height: 1.7;
 }
 
+/* ── Page container ────────────────────────────────────────────────────── */
+
 .page-container {
-  width: min(1120px, calc(100vw - 32px));
+  width: var(--page-width);
   margin: 0 auto;
 }
+
+/* ── Map dialog (overlay + panel) ──────────────────────────────────────── */
 
 .map-dialog-overlay {
   position: fixed;
   inset: 0;
   display: grid;
   place-items: center;
-  padding: 16px;
+  padding: var(--space-4);
   background: rgba(11, 37, 37, 0.56);
   backdrop-filter: blur(3px);
-  z-index: 50;
-  animation: panel-rise 140ms linear;
+  z-index: var(--z-overlay);
+  animation: panel-rise var(--dur-enter) var(--ease-linear);
+}
+
+.map-dialog-overlay--bottom-sheet {
+  place-items: end center;
+  align-content: end;
+  padding: 0 var(--space-4) 0;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .map-dialog {
@@ -316,8 +350,18 @@
   overflow: auto;
   background: var(--color-panel);
   border: var(--pixel-border);
-  box-shadow: 0 0 0 var(--px-bit) var(--px-paper-3), calc(var(--px-bit) * 3) calc(var(--px-bit) * 3) 0 rgba(11, 37, 37, 0.35);
-  animation: dialog-pop 150ms linear;
+  box-shadow:
+    0 0 0 var(--px-bit) var(--px-paper-3),
+    calc(var(--px-bit) * 3) calc(var(--px-bit) * 3) 0 rgba(11, 37, 37, 0.35);
+  animation: dialog-pop var(--dur-normal) var(--ease-linear);
+}
+
+.map-dialog--bottom-sheet {
+  width: var(--dialog-width);
+  max-height: 50vh;
+  border-radius: 0;
+  border-bottom: none;
+  animation: map-dialog-sheet-up var(--dur-slow) steps(4, end) forwards;
 }
 
 .map-dialog-header {
@@ -326,8 +370,7 @@
   justify-content: space-between;
   gap: var(--space-4);
   padding: var(--space-4) var(--space-5);
-  background:
-    linear-gradient(180deg, var(--px-teal-2), var(--px-teal-3));
+  background: linear-gradient(180deg, var(--px-teal-2), var(--px-teal-3));
   border-bottom: var(--pixel-border);
 }
 
@@ -336,13 +379,13 @@
   align-items: center;
   gap: var(--space-3);
   font-family: var(--font-pixel);
-  font-size: 10px;
+  font-size: var(--text-base);
   color: var(--color-primary-strong);
 }
 
 .map-dialog-subtitle {
   margin-top: var(--space-1);
-  font-size: 13px;
+  font-size: var(--text-lg);
   color: var(--color-text-muted);
 }
 
@@ -354,7 +397,7 @@
   background: var(--color-panel);
   color: var(--color-text);
   font-family: var(--font-pixel);
-  font-size: 10px;
+  font-size: var(--text-base);
   cursor: pointer;
 }
 
@@ -376,6 +419,8 @@
   padding: 0 var(--space-5) var(--space-5);
 }
 
+/* ── Choice row ────────────────────────────────────────────────────────── */
+
 .choice-row {
   display: flex;
   flex-wrap: wrap;
@@ -385,6 +430,8 @@
 .choice-btn {
   min-width: 88px;
 }
+
+/* ── Status list ───────────────────────────────────────────────────────── */
 
 .status-list {
   display: grid;
@@ -408,6 +455,8 @@
 .status-item-title {
   font-weight: 700;
 }
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
   .pixel-btn {

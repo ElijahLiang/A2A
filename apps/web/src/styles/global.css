@@ -1,11 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Press+Start+2P&display=swap');
 
-/* A2A · Pixelium Stanford Town */
+/* A2A · Pixelium Stanford Town — Design System */
 
 :root {
+  /* ── Pixel grid unit ──────────────────────── */
   --px-bit: 4px;
 
-  /* Pixelium OKlab Teal */
+  /* ── Color Palette ────────────────────────── */
+
+  /* Teal (primary) */
   --px-teal-1: #eef8f6;
   --px-teal-2: #d8efe9;
   --px-teal-3: #b7e2d9;
@@ -17,7 +20,8 @@
   --px-teal-9: #133f3d;
   --px-teal-10: #0b2525;
 
-  /* Neutrals */
+  /* Paper / Ink (neutrals) */
+  --px-paper-0: #fffef8;   /* warm white — canonical paper color */
   --px-paper-1: #fcfcf8;
   --px-paper-2: #f3f0e8;
   --px-paper-3: #dfd9cb;
@@ -36,6 +40,13 @@
   --px-sky-7: #4274a3;
   --px-lime-5: #87bc53;
   --px-lime-7: #5d8e35;
+  --px-purple-5: #9777c9;
+  --px-purple-7: #6c50a3;
+
+  /* Special surfaces */
+  --px-envelope: #e8d5a8;       /* warm parchment for letter/envelope */
+  --px-envelope-border: #8b6914; /* envelope ink border */
+  --px-dark-1: #0a0a0c;          /* boot screen / dark overlay bg */
 
   /* Map colors */
   --map-grass-1: #b9dc86;
@@ -52,7 +63,7 @@
   --map-wall-2: #e0cca6;
   --map-shadow: rgba(17, 21, 19, 0.26);
 
-  /* Semantic */
+  /* ── Semantic Colors ──────────────────────── */
   --color-bg: var(--px-paper-2);
   --color-panel: var(--px-paper-1);
   --color-panel-muted: #f4f8f5;
@@ -60,8 +71,9 @@
   --color-border-soft: var(--px-paper-4);
   --color-text: var(--px-ink-3);
   --color-text-muted: var(--px-ink-1);
-  --color-text-inverse: var(--px-paper-1);
+  --color-text-inverse: var(--px-paper-0);
   --color-primary: var(--px-teal-6);
+  --color-primary-hover: var(--px-teal-5);
   --color-primary-strong: var(--px-teal-8);
   --color-primary-soft: var(--px-teal-3);
   --color-danger: var(--px-rose-5);
@@ -72,12 +84,23 @@
   --color-notice-strong: var(--px-sky-7);
   --color-warm: var(--px-gold-5);
   --color-warm-strong: var(--px-gold-7);
+  --color-accent: var(--px-purple-5);
+  --color-accent-strong: var(--px-purple-7);
 
-  /* Typography */
+  /* ── Typography ───────────────────────────── */
   --font-pixel: 'Fusion Pixel 12px Proportional', 'Zpix', 'Press Start 2P', monospace;
   --font-body: 'Noto Sans SC', 'Fusion Pixel 12px Proportional', 'Zpix', sans-serif;
 
-  /* Layout */
+  /* Font size scale */
+  --text-xs:   7px;
+  --text-sm:   8px;
+  --text-base: 10px;
+  --text-md:   12px;
+  --text-lg:   14px;
+  --text-xl:   16px;
+  --text-2xl:  20px;
+
+  /* ── Spacing ──────────────────────────────── */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -86,12 +109,48 @@
   --space-6: 24px;
   --space-7: 32px;
   --space-8: 40px;
+
+  /* ── Layout ───────────────────────────────── */
   --toolbar-height: 68px;
   --dialog-width: min(720px, calc(100vw - 32px));
+  --page-width: min(1120px, calc(100vw - 32px));
+  /* 逻辑尺寸 1200×780；实际宽度随视口（见 PixelMap 缩放层） */
+  --map-width: min(1200px, calc(100vw - 24px));
+  --map-height: calc(var(--map-width) * 780 / 1200);
 
-  --pixel-border: var(--px-bit) solid var(--color-border);
-  --pixel-border-soft: var(--px-bit) solid var(--color-border-soft);
+  /* ── Borders ──────────────────────────────── */
+  /* Rule: use --border-base for most UI; --border-thick for map/card frames */
+  --border-thin: 2px;
+  --border-base: 3px;
+  --border-thick: var(--px-bit); /* 4px */
+
+  --pixel-border: var(--border-thick) solid var(--color-border);
+  --pixel-border-soft: var(--border-thick) solid var(--color-border-soft);
   --pixel-shadow: calc(var(--px-bit) * 2) calc(var(--px-bit) * 2) 0 var(--map-shadow);
+
+  /* ── Z-index layers ───────────────────────── */
+  --z-map:     1;
+  --z-toolbar: 10;
+  --z-scanline: 10;
+  --z-overlay: 50;
+  --z-modal:   100;
+  --z-letter:  2000;
+  --z-guide:   10000;
+
+  /* ── Animation ────────────────────────────── */
+  /* Duration */
+  --dur-instant: 80ms;
+  --dur-fast:    120ms;
+  --dur-normal:  200ms;
+  --dur-slow:    400ms;
+  --dur-enter:   140ms;
+  --dur-scene:   1200ms;
+
+  /* Easing */
+  --ease-pixel:  steps(2, end);   /* pixel-art style stepped motion */
+  --ease-snap:   steps(1, end);   /* instant state flip */
+  --ease-smooth: ease;            /* reserved for non-pixel UI (boot screen) */
+  --ease-linear: linear;
 }
 
 *,
@@ -110,6 +169,9 @@ body,
 #root {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  max-width: 100vw;
 }
 
 body {
@@ -117,7 +179,8 @@ body {
   background:
     linear-gradient(180deg, #d9efe9 0%, #b5dbce 48%, #95c4b1 100%);
   color: var(--color-text);
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 button,
@@ -155,30 +218,166 @@ a {
   color: var(--color-text-inverse);
 }
 
+/* ── Global Keyframes ─────────────────────────────────────────────────── */
+/* All animation keyframes live here. Components reference by name only.  */
+
+/* Map / sprite */
 @keyframes pixel-bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(calc(var(--px-bit) * -1));
-  }
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(calc(var(--px-bit) * -1)); }
 }
 
 @keyframes pixel-pulse {
-  0%,
-  100% {
-    opacity: 1;
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
+
+@keyframes avatar-hop {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+@keyframes cloud-drift {
+  from { transform: translateX(-12px); }
+  to   { transform: translateX(12px); }
+}
+
+@keyframes water-shimmer {
+  0%, 100% { background-position: 0 0, 0 0; }
+  50%      { background-position: 8px 4px, -8px 0; }
+}
+
+/* Panel / dialog entry */
+@keyframes panel-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dialog-pop {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Fade */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Boot screen */
+@keyframes bg-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes char-appear {
+  from { opacity: 0; transform: translateY(-20px) scale(0.5); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fade-glow {
+  from { opacity: 0; filter: blur(8px); }
+  to   { opacity: 1; filter: blur(0); }
+}
+
+@keyframes typewrite {
+  to { width: 17em; }
+}
+
+@keyframes blink-cursor {
+  50% { border-color: transparent; }
+}
+
+@keyframes hint-blink {
+  0%, 60%  { opacity: 0.8; }
+  61%, 100% { opacity: 0.3; }
+}
+
+@keyframes door-enter {
+  from { opacity: 0; transform: translateX(-50%) translateY(40px) scale(0.6); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+}
+
+@keyframes door-breathe {
+  0%, 100% {
+    opacity: 0.8;
+    filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.5))
+            drop-shadow(0 0 8px rgba(81, 183, 169, 0.2));
   }
   50% {
-    opacity: 0.45;
+    opacity: 1;
+    filter: drop-shadow(0 4px 24px rgba(0, 0, 0, 0.4))
+            drop-shadow(0 0 28px rgba(81, 183, 169, 0.6));
   }
 }
 
-@keyframes panel-rise {
+@keyframes door-open {
+  0%   { transform: translateX(-50%) scale(1); opacity: 1; }
+  30%  { transform: translateX(-50%) scale(1.2); opacity: 1; }
+  100% { transform: translateX(-50%) scale(5); opacity: 0; filter: blur(8px); }
+}
+
+@keyframes door-glow-burst {
+  0%   { filter: drop-shadow(0 0 8px rgba(81, 183, 169, 0.3)); opacity: 1; }
+  30%  { filter: drop-shadow(0 0 50px rgba(81, 183, 169, 0.9)) brightness(1.8); opacity: 1; }
+  100% { filter: drop-shadow(0 0 100px rgba(255, 255, 255, 1)) brightness(5); opacity: 0; }
+}
+
+@keyframes screen-whiteout {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Chat / letter */
+@keyframes typing-bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%           { transform: translateY(-6px); }
+}
+
+/* Token balance (toolbar) */
+@keyframes token-float {
+  from { opacity: 1; transform: translateX(-50%) translateY(0); }
+  to   { opacity: 0; transform: translateX(-50%) translateY(-22px); }
+}
+
+@keyframes token-sink {
+  from { opacity: 1; transform: translateX(-50%) translateY(0); }
+  to   { opacity: 0; transform: translateX(-50%) translateY(22px); }
+}
+
+/* Intent 发布 · 盖章 & 信封飞出 */
+@keyframes stamp-seal {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: scale(0) rotate(-18deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes letter-flyout {
+  from {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  to {
+    opacity: 0;
+    transform: translate(120%, -110%) rotate(12deg);
+  }
+}
+
+/* Intent 发布 · 三阶段（ui-interaction-spec §1） */
+@keyframes envelope-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(120%);
   }
   to {
     opacity: 1;
@@ -186,42 +385,181 @@ a {
   }
 }
 
-@keyframes dialog-pop {
+@keyframes stamp-impact {
+  0% {
+    transform: scale(2.5) rotate(-18deg);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(0.9) rotate(2deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(-6deg);
+    opacity: 1;
+  }
+}
+
+@keyframes stamp-shockwave {
+  from {
+    opacity: 0.6;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.2);
+  }
+}
+
+@keyframes envelope-recoil {
+  0% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(3px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes star-particle {
+  from {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--star-dx, 24px), var(--star-dy, -20px)) scale(0);
+  }
+}
+
+@keyframes letter-flyout-curve {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(120%, -110%) rotate(12deg) scale(0.65);
+  }
+}
+
+/* 新手引导（ui-interaction-spec §3） */
+@keyframes guide-highlight-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(216, 176, 79, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(216, 176, 79, 0);
+  }
+}
+
+@keyframes guide-mascot-enter {
   from {
     opacity: 0;
-    transform: scale(0.96);
+    transform: translateY(20px) scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes guide-bubble-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes map-dialog-sheet-up {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mailbox-slide-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Sub pages（集邮册 / 像素小屋等） */
+.sub-page {
+  min-height: 100vh;
+  padding: var(--space-5);
+  padding-bottom: var(--space-8);
+}
+
+.sub-page-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+}
+
+.sub-page-title {
+  margin: 0;
+  font-family: var(--font-pixel);
+  font-size: var(--text-md);
+  color: var(--color-primary-strong);
+}
+
+.sub-page-main {
+  width: 100%;
+}
+
+/* 路由懒加载占位 */
+.route-fallback {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #d9efe9 0%, #b5dbce 48%, #95c4b1 100%);
+}
+
+.route-fallback-dot {
+  width: 12px;
+  height: 12px;
+  background: var(--color-primary);
+  border: var(--border-thick) solid var(--color-border);
+  animation: pixel-pulse 1s steps(2, end) infinite;
+}
+
+/* 广场猫咪 */
+@keyframes cat-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* 邮戳解锁弹窗 */
+@keyframes stamp-unlock-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
   }
   to {
     opacity: 1;
     transform: scale(1);
-  }
-}
-
-@keyframes cloud-drift {
-  from {
-    transform: translateX(-12px);
-  }
-  to {
-    transform: translateX(12px);
-  }
-}
-
-@keyframes water-shimmer {
-  0%,
-  100% {
-    background-position: 0 0, 0 0;
-  }
-  50% {
-    background-position: 8px 4px, -8px 0;
-  }
-}
-
-@keyframes avatar-hop {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-6px);
   }
 }

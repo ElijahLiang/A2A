@@ -1,0 +1,219 @@
+.intent-longpress-hint {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.intent-mood-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.intent-mood-ring {
+  touch-action: none;
+  cursor: ew-resize;
+  padding: var(--space-1) 0;
+}
+
+.intent-stamp-btn {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.intent-mood-swatch {
+  width: 40px;
+  height: 40px;
+  border: var(--pixel-border);
+  box-shadow: var(--pixel-shadow);
+  flex-shrink: 0;
+}
+
+.intent-mood-range {
+  flex: 1;
+  min-width: 120px;
+  accent-color: var(--color-primary);
+}
+
+.intent-cost-hint {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.intent-cost-hint--warn {
+  color: var(--color-danger-strong);
+}
+
+/* ── 寄出三阶段（ui-interaction-spec §1） ───────────────────────────── */
+
+.intent-dialog-sending {
+  min-height: 200px;
+}
+
+.intent-send-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.intent-send-dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 12, 11, 0.42);
+  opacity: 0;
+  animation: fade-in var(--dur-fast) steps(2, end) forwards;
+}
+
+.intent-envelope-stage {
+  position: relative;
+  width: 200px;
+  height: 160px;
+  perspective: 800px;
+}
+
+.intent-envelope-bundle {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(var(--pixel-shadow));
+  transform-origin: center center;
+}
+
+.intent-send-overlay--stage-1 .intent-envelope-bundle {
+  animation: envelope-slide-in 0.3s steps(4, end) forwards;
+}
+
+.intent-send-overlay--stage-2 .intent-envelope-bundle,
+.intent-send-overlay--stage-3 .intent-envelope-bundle {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.intent-envelope-svg-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+}
+
+.intent-send-overlay--stage-2 .intent-envelope-svg-wrap {
+  animation: envelope-recoil 0.3s steps(3, end);
+}
+
+.intent-envelope-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.intent-shockwave {
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  width: 48px;
+  height: 48px;
+  margin: -24px 0 0 -24px;
+  border: var(--border-thick) solid var(--color-danger);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.intent-send-overlay--stage-2 .intent-shockwave {
+  animation: stamp-shockwave 0.35s steps(2, end) forwards;
+}
+
+.intent-stamp {
+  position: absolute;
+  left: 58%;
+  top: 48%;
+  width: 56px;
+  height: 56px;
+  margin-left: -28px;
+  margin-top: -28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0;
+  border: var(--border-thick) solid var(--color-danger-strong);
+  background: var(--color-danger);
+  color: var(--color-text-inverse);
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  line-height: 1.2;
+  text-align: center;
+  transform-origin: center center;
+  opacity: 0;
+  transform: scale(2.5) rotate(-18deg);
+}
+
+.intent-send-overlay--stage-2 .intent-stamp {
+  animation: stamp-impact 0.3s steps(3, end) forwards;
+}
+
+.intent-send-overlay--stage-3 .intent-envelope-bundle {
+  animation: letter-flyout-curve 0.82s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+}
+
+.intent-stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.intent-send-overlay--stage-3 .intent-stars {
+  opacity: 1;
+}
+
+.intent-star {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--px-gold-5);
+  border: var(--border-thin) solid var(--px-gold-7);
+  opacity: 0;
+  box-shadow: var(--pixel-shadow);
+}
+
+.intent-send-overlay--stage-3 .intent-star {
+  animation: star-particle 0.4s steps(3, end) forwards;
+}
+
+.intent-star--a {
+  left: 72%;
+  top: 18%;
+  --star-dx: 28px;
+  --star-dy: -24px;
+}
+
+.intent-star--b {
+  left: 84%;
+  top: 36%;
+  --star-dx: 22px;
+  --star-dy: -12px;
+  animation-delay: 0.05s;
+}
+
+.intent-star--c {
+  left: 68%;
+  top: 42%;
+  --star-dx: 32px;
+  --star-dy: -8px;
+  animation-delay: 0.1s;
+}
+
+.intent-star--d {
+  left: 78%;
+  top: 28%;
+  --star-dx: 18px;
+  --star-dy: -18px;
+  animation-delay: 0.08s;
+}

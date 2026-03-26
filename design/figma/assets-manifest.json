@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "A2A Figma 资产清单",
+  "description": "路径相对于 apps/web/public（Vite 根路径 /）。导入 Figma：拖入对应文件或粘贴为 Image fill。",
+  "mapCanvas": {
+    "logicalSizePx": { "width": 1200, "height": 780 },
+    "cssVars": ["--map-width", "--map-height"],
+    "background": "/map-bg.png"
+  },
+  "screens": [
+    { "id": "boot-bg", "path": "/boot-bg.png", "figmaFrame": "Screen / Boot Background" },
+    { "id": "boot-door", "path": "/boot-door.png", "figmaFrame": "Screen / Boot Door" }
+  ],
+  "buildings": [
+    { "id": "library", "path": "/buildings/library.png", "codeRef": "Building.tsx BUILDING_IMAGES" },
+    { "id": "post_office", "path": "/buildings/post_office.png", "codeRef": "Building.tsx" },
+    { "id": "restaurant", "path": "/buildings/restaurant.png", "codeRef": "Building.tsx" },
+    { "id": "town_square", "path": "/buildings/town_square.png", "codeRef": "Building.tsx" },
+    { "id": "cafe", "path": "/buildings/cafe.png", "codeRef": "Building.tsx" },
+    { "id": "gym", "path": "/buildings/gym.png", "codeRef": "Building.tsx" },
+    { "id": "cinema", "path": "/buildings/cinema.png", "codeRef": "Building.tsx" },
+    { "id": "arcade", "path": "/buildings/arcade.png", "codeRef": "Building.tsx" },
+    { "id": "home", "path": "/buildings/home.png", "codeRef": "Building.tsx" }
+  ],
+  "sprites": {
+    "layerOrder": ["body", "shoes", "pants", "shirt", "hair", "hat"],
+    "files": [
+      { "path": "/sprites/body.png", "role": "base" },
+      { "path": "/sprites/shoes.png", "role": "layer" },
+      { "path": "/sprites/pants.png", "role": "layer" },
+      { "path": "/sprites/shirt.png", "role": "layer" },
+      { "path": "/sprites/hair-bob.png", "role": "hair-variant" },
+      { "path": "/sprites/hair-dapper.png", "role": "hair-variant" },
+      { "path": "/sprites/hat-cowboy.png", "role": "hat-variant" }
+    ],
+    "codeRef": "apps/web/src/data/agents.ts TOWN_AGENTS.layers"
+  },
+  "vector": [
+    { "path": "/favicon.svg", "figmaUse": "Component / App Icon" },
+    { "path": "/icons.svg", "figmaUse": "Sprite sheet 或拆 Symbol" }
+  ],
+  "figmaPagesSuggested": [
+    "00 Foundations（Variables + Text styles）",
+    "01 Assets Raster（建筑 / 地图 / 开机）",
+    "02 Assets Sprites（角色分层，每图层一个 Component）",
+    "03 Components UI（对齐 components.css：pixel-btn、pixel-input…）",
+    "04 Screens（Boot、Login、Town 1200×780）"
+  ]
+}

@@ -1,0 +1,90 @@
+.stamp-book-page .sub-page-main {
+  max-width: var(--page-width);
+  margin: 0 auto;
+}
+
+.stamp-book-empty {
+  margin: var(--space-8) 0;
+  text-align: center;
+  font-size: var(--text-md);
+  color: var(--color-text-muted);
+  line-height: 1.7;
+}
+
+.stamp-book-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--space-4);
+}
+
+.stamp-book-card {
+  position: relative;
+  padding: var(--space-4);
+  border: var(--pixel-border);
+  background: var(--px-paper-0);
+  box-shadow: var(--pixel-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.stamp-book-grade {
+  align-self: flex-start;
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  border: var(--border-thin) solid var(--color-border);
+}
+
+.stamp-book-grade--bronze {
+  background: #c4a574;
+  color: var(--px-ink-3);
+}
+
+.stamp-book-grade--silver {
+  background: #c8d0d4;
+  color: var(--px-ink-3);
+}
+
+.stamp-book-grade--gold {
+  background: var(--px-gold-5);
+  color: var(--px-ink-3);
+}
+
+.stamp-book-grade--rainbow {
+  background: linear-gradient(135deg, var(--px-rose-5), var(--px-sky-5), var(--px-lime-5));
+  color: var(--color-text-inverse);
+}
+
+.stamp-book-venue {
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  color: var(--color-primary-strong);
+}
+
+.stamp-book-type,
+.stamp-book-partner {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.stamp-book-time {
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  color: var(--color-text-muted);
+}
+
+.stamp-book-tag {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  padding: 2px 6px;
+  font-family: var(--font-pixel);
+  font-size: 6px;
+  background: var(--color-accent);
+  color: var(--color-text-inverse);
+  border: var(--border-thin) solid var(--color-border);
+}

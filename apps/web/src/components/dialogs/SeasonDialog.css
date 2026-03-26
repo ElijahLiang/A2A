@@ -1,0 +1,86 @@
+.season-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-modal) + 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  padding-bottom: calc(var(--toolbar-height) + var(--space-4));
+  background: rgba(10, 12, 11, 0.5);
+}
+
+.season-panel {
+  width: min(440px, 100%);
+  max-height: min(80vh, 560px);
+  overflow: auto;
+}
+
+.season-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.season-title {
+  margin: 0;
+  font-family: var(--font-pixel);
+  font-size: var(--text-md);
+  color: var(--color-primary-strong);
+}
+
+.season-range {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.season-tasks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.season-task-row {
+  padding: var(--space-3);
+  border: var(--pixel-border-soft);
+  background: var(--color-panel-muted);
+}
+
+.season-task-desc {
+  font-size: var(--text-md);
+  margin-bottom: var(--space-2);
+}
+
+.season-task-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.season-task-progress .pixel-progress {
+  flex: 1;
+  min-height: 10px;
+}
+
+.season-task-num {
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.season-task-reward {
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-success-strong);
+}
+
+.season-foot {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}

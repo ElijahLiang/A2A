@@ -1,0 +1,64 @@
+.agent-proxy-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-modal) + 2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  padding-bottom: calc(var(--toolbar-height) + var(--space-4));
+  background: rgba(10, 12, 11, 0.6);
+}
+
+.agent-proxy-panel {
+  width: min(400px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  animation: panel-rise var(--dur-normal) var(--ease-pixel) forwards;
+}
+
+.agent-proxy-title {
+  margin: 0;
+  font-family: var(--font-pixel);
+  font-size: var(--text-md);
+  color: var(--color-primary-strong);
+}
+
+.agent-proxy-desc {
+  margin: 0;
+  font-size: var(--text-md);
+  line-height: 1.55;
+  color: var(--color-text);
+}
+
+.agent-proxy-desc strong {
+  color: var(--color-warm-strong);
+  font-weight: 600;
+}
+
+.agent-proxy-input {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.agent-proxy-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.agent-proxy-success {
+  margin: 0;
+  padding: var(--space-3);
+  border: var(--pixel-border-soft);
+  background: var(--color-panel-muted);
+  font-size: var(--text-md);
+  line-height: 1.5;
+  color: var(--color-success-strong);
+}
+
+.agent-proxy-done {
+  align-self: flex-end;
+}
