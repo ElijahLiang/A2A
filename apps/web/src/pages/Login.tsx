@@ -26,6 +26,7 @@ export function Login({ onLogin }: { onLogin: () => void }) {
   const handleLogin = () => {
     if (code.length < 4) return
     localStorage.setItem(STORAGE_KEYS.AVATAR_COLOR, avatarColor)
+    if (phone.length >= 11) localStorage.setItem(STORAGE_KEYS.PHONE, phone)
     onLogin()
   }
 

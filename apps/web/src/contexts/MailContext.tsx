@@ -11,7 +11,12 @@ import {
 import { useAuth } from './AuthContext'
 import { useGame } from './GameContext'
 import { loadState, saveState, STORAGE_KEYS } from '../services/storage'
-import { fetchMailRemote, markMailReadRemote, sendMailRemote } from '../services/mailApi'
+import {
+  acceptInviteRemote,
+  fetchMailRemote,
+  markMailReadRemote,
+  sendMailRemote,
+} from '../services/mailApi'
 import type { Letter } from '../types'
 
 type MailPersist = {
@@ -188,6 +193,7 @@ export function MailProvider({ children }: { children: ReactNode }) {
     (letterId: string) => {
       const letter = letters.find((l) => l.id === letterId)
       if (!letter) return
+      void acceptInviteRemote(userId, letterId)
       startMeetup({
         letterId,
         activityId: letter.activityId,
@@ -201,7 +207,7 @@ export function MailProvider({ children }: { children: ReactNode }) {
       )
       setMailboxOpen(false)
     },
-    [letters, startMeetup],
+    [letters, startMeetup, userId],
   )
 
   const declineMeetup = useCallback(

@@ -10,6 +10,8 @@ type AuthContextValue = {
   logout: () => void
   setAgentName: (name: string) => void
   updateBio: (bio: string) => void
+  /** V2：注册接口返回后写入 user_id、agent_name、phone、bio */
+  applyAfterRegister: (data: { userId: string; phone: string; bio: string; agentName: string }) => void
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -92,6 +94,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     )
   }, [agentName])
 
+  const applyAfterRegister = useCallback(
+    (data: { userId: string; phone: string; bio: string; agentName: string }) => {
+      setAgentNameState(data.agentName)
+      setUser((prev) => ({
+        id: data.userId,
+        phone: data.phone,
+        bio: data.bio,
+        avatarColor: prev?.avatarColor ?? 'blue',
+        agentName: data.agentName,
+        createdAt: prev?.createdAt ?? Date.now(),
+      }))
+    },
+    [],
+  )
+
   const value = useMemo(
     () => ({
       loggedIn,
@@ -101,8 +118,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logout,
       setAgentName,
       updateBio,
+      applyAfterRegister,
     }),
-    [loggedIn, agentName, user, login, logout, setAgentName, updateBio],
+    [loggedIn, agentName, user, login, logout, setAgentName, updateBio, applyAfterRegister],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

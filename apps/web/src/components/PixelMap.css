@@ -3,8 +3,13 @@
 .pixel-map-shell {
   position: relative;
   z-index: var(--z-map);
-  width: 100%;
-  max-width: min(var(--map-width), 100%);
+  /*
+   * 高度优先：shell 填满可用纵向空间，宽度超出视口时由 overflow:hidden 裁剪
+   * 宽屏（1200px+）自然全图展示；窄竖屏则居中裁剪，始终让地图占满屏幕高度
+   */
+  height: var(--map-available-h, calc(100dvh - 70px));
+  width: calc(var(--map-available-h, calc(100dvh - 70px)) * 1200 / 780);
+  max-width: 100%;          /* 宽屏不超过视口宽度 */
   margin: 0 auto;
   min-width: 0;
 }
@@ -32,9 +37,8 @@
 .pixel-map-viewport {
   position: relative;
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  aspect-ratio: 1200 / 780;
+  height: 100%;
+  aspect-ratio: unset;       /* 由 shell 统一控制宽高比，viewport 填满 shell */
   overflow: hidden;
   border: var(--pixel-border);
   box-shadow: 0 0 0 var(--border-thin) rgba(255, 255, 255, 0.2), var(--space-2) var(--space-2) 0 rgba(11, 37, 37, 0.18);

@@ -20,6 +20,7 @@ type PixelMapProps = {
   activeBuilding: BuildingId | null
   onBuildingClick: (buildingId: BuildingId) => void
   onCatClick?: (cat: SquareCat) => void
+  style?: React.CSSProperties
 }
 
 export const PixelMap = memo(function PixelMap({
@@ -28,6 +29,7 @@ export const PixelMap = memo(function PixelMap({
   activeBuilding,
   onBuildingClick,
   onCatClick,
+  style,
 }: PixelMapProps) {
   const bubbles = useAgentEvents()
   const [letterAgent, setLetterAgent] = useState<TownAgent | null>(null)
@@ -76,8 +78,12 @@ export const PixelMap = memo(function PixelMap({
     if (!el) return
     const update = () => {
       const w = el.clientWidth
-      if (w <= 0) return
-      setFitScale(w / MAP_W)
+      const h = el.clientHeight
+      if (w <= 0 || h <= 0) return
+      // 用 cover 逻辑：取 width/height 中较大的 scale，让地图填满 viewport
+      const scaleByW = w / MAP_W
+      const scaleByH = h / MAP_H
+      setFitScale(Math.max(scaleByW, scaleByH))
     }
     const ro = new ResizeObserver(update)
     ro.observe(el)
@@ -88,8 +94,7 @@ export const PixelMap = memo(function PixelMap({
   const isZoomed = camera.scale > 1.01
 
   return (
-    <div className={`pixel-map-shell ${isZoomed ? 'pixel-map-shell--zoomed' : ''}`}>
-      <div className="pixel-map-sign">A2A 小镇</div>
+    <div className={`pixel-map-shell ${isZoomed ? 'pixel-map-shell--zoomed' : ''}`} style={style}>
       <div ref={viewportRef} className="pixel-map-viewport">
         <div className="pixel-map-scale-inner" style={{ transform: `scale(${fitScale})` }}>
           <div

@@ -111,7 +111,7 @@
   --space-8: 40px;
 
   /* ── Layout ───────────────────────────────── */
-  --toolbar-height: 68px;
+  --toolbar-height: 70px;   /* 18px HUD 状态条 + 52px tab 栏 */
   --dialog-width: min(720px, calc(100vw - 32px));
   --page-width: min(1120px, calc(100vw - 32px));
   /* 逻辑尺寸 1200×780；实际宽度随视口（见 PixelMap 缩放层） */

@@ -1,5 +1,6 @@
 export const STORAGE_KEYS = {
   AUTH: 'a2a-town-auth',
+  PHONE: 'a2a-login-phone',
   AGENT: 'a2a-my-agent',
   AVATAR_COLOR: 'a2a-avatar-color',
   TOKEN: 'a2a-token-state',

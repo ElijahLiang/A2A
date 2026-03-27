@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import './LetterDialog.css'
+import { apiUrl } from '../config/apiBase'
 import type { TownAgent } from '../data/agents'
 
 interface ChatMessage {
@@ -12,8 +13,6 @@ interface LetterDialogProps {
   agent: TownAgent
   onClose: () => void
 }
-
-const API_BASE = 'http://127.0.0.1:8000'
 
 export function LetterDialog({ agent, onClose }: LetterDialogProps) {
   const [phase, setPhase] = useState<'envelope' | 'opening' | 'chat'>('envelope')
@@ -64,7 +63,7 @@ export function LetterDialog({ agent, onClose }: LetterDialogProps) {
     }))
 
     try {
-      const resp = await fetch(`${API_BASE}/api/chat`, {
+      const resp = await fetch(apiUrl('/api/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

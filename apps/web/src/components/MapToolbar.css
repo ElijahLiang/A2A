@@ -1,87 +1,203 @@
+/* ── MapToolbar · 底部导航栏 ──────────────────────────────── */
+
 .map-toolbar {
-  position: fixed;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
+  /* 作为 .town-map-page flex-column 的最后一个子项，不再 position:fixed */
+  flex-shrink: 0;
+  width: 100%;
+  background: rgba(252, 252, 248, 0.98);
+  border-top: var(--border-thick) solid var(--color-border);
+  box-shadow: 0 -2px 0 rgba(0, 0, 0, 0.06);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  will-change: transform;
+  transform: translateZ(0);
   z-index: var(--z-toolbar);
-  min-height: var(--toolbar-height);
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: var(--space-4);
-  padding: 12px var(--space-4);
-  background: rgba(252, 252, 248, 0.96); /* --px-paper-1 at 96% */
-  border: var(--pixel-border);
-  box-shadow: var(--pixel-shadow);
 }
 
-.map-toolbar-group {
+/* ── 极细 HUD 状态条 (16px) ─────────────────────────────── */
+.navbar-hud {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: 5px;
+  padding: 3px var(--space-4) 2px;
+  height: 18px;
+  border-bottom: 1px solid var(--px-paper-3);
 }
 
-.map-toolbar-center {
-  justify-content: center;
+.navbar-hud-dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  background: var(--color-success);
+  border: 2px solid var(--color-success-strong);
+  animation: pixel-pulse 1.4s steps(2, end) infinite;
 }
 
-.map-toolbar-logo,
-.map-toolbar-chip,
-.map-toolbar-time,
-.map-toolbar-status {
+.navbar-hud-text {
   font-family: var(--font-pixel);
+  font-size: 6px;
+  color: var(--color-text-muted);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.map-toolbar-logo {
-  font-size: var(--text-base);
-  color: var(--color-primary-strong);
-}
+.navbar-hud-spacer { flex: 1; }
 
-.map-toolbar-chip {
-  padding: var(--space-2) 10px;
-  background: var(--px-teal-2);
-  border: var(--pixel-border);
-  font-size: var(--text-xs);
-}
-
-.map-toolbar-status {
-  display: inline-flex;
+.navbar-hud-token {
+  display: flex;
   align-items: center;
-  gap: var(--space-2);
-  font-size: var(--text-xs);
+  gap: 2px;
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  color: var(--color-warm-strong);
+}
+
+.navbar-hud-time {
+  font-family: var(--font-pixel);
+  font-size: 7px;
   color: var(--color-text-muted);
 }
 
-.map-toolbar-dot {
-  width: 10px;
-  height: 10px;
-  background: var(--color-success);
-  border: var(--px-bit) solid var(--color-success-strong);
-  animation: pixel-pulse 1.2s steps(2, end) infinite;
+/* ── Tab 栏 (52px) ──────────────────────────────────────── */
+.navbar-tabs {
+  display: flex;
+  align-items: stretch;
+  height: 52px;
 }
 
-.map-toolbar-time {
-  font-size: var(--text-sm);
+.navbar-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 0 2px 3px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--dur-instant) var(--ease-snap);
+}
+
+.navbar-tab--active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 22%;
+  right: 22%;
+  height: 3px;
+  background: var(--color-primary);
+}
+
+.navbar-tab--active { background: var(--px-teal-1); }
+.navbar-tab:active   { background: var(--px-teal-2); }
+
+/* ── 图标 ───────────────────────────────────────────────── */
+.navbar-tab-icon-wrap {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navbar-tab-icon {
+  font-size: 20px;
+  line-height: 1;
+  display: block;
+  filter: grayscale(0.2);
+  transition: filter var(--dur-instant) var(--ease-snap),
+              transform var(--dur-fast) var(--ease-pixel);
+}
+
+.navbar-tab--active .navbar-tab-icon {
+  filter: none;
+  transform: translateY(-2px);
+}
+
+/* ── 未读角标 ───────────────────────────────────────────── */
+.navbar-tab-badge {
+  position: absolute;
+  top: -3px;
+  right: -6px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-pixel);
+  font-size: 6px;
+  font-weight: bold;
+  color: #fff;
+  background: var(--color-danger-strong);
+  border: 2px solid var(--color-border);
+  animation: pixel-pulse 1.8s steps(2, end) infinite;
+}
+
+/* ── 标签 ───────────────────────────────────────────────── */
+.navbar-tab-label {
+  font-family: var(--font-pixel);
+  font-size: 6px;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  transition: color var(--dur-instant) var(--ease-snap);
+}
+
+.navbar-tab--active .navbar-tab-label {
+  color: var(--color-primary-strong);
+}
+
+/* ── "我的" 弹出菜单 ─────────────────────────────────────── */
+.navbar-me-menu {
+  position: fixed;
+  right: 12px;
+  bottom: calc(var(--toolbar-height) + 8px);
+  z-index: calc(var(--z-toolbar) + 5);
+  min-width: 148px;
+  background: var(--px-paper-0);
+  border: var(--pixel-border);
+  box-shadow: var(--pixel-shadow);
+  display: flex;
+  flex-direction: column;
+  animation: panel-rise var(--dur-fast) var(--ease-pixel) forwards;
+}
+
+.navbar-me-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: 10px var(--space-4);
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
   color: var(--color-text);
-}
-
-.map-toolbar-btn {
-  width: auto;
-}
-
-.map-toolbar-link {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--px-paper-3);
+  cursor: pointer;
   text-decoration: none;
-  color: inherit;
+  text-align: left;
+  white-space: nowrap;
+  transition: background var(--dur-instant) var(--ease-snap);
 }
 
-@media (max-width: 900px) {
-  .map-toolbar {
-    grid-template-columns: 1fr;
-    justify-items: stretch;
-  }
+.navbar-me-item:last-child { border-bottom: none; }
+.navbar-me-item:hover       { background: var(--px-teal-1); }
+.navbar-me-item--danger     { color: var(--color-danger-strong); }
 
-  .map-toolbar-group,
-  .map-toolbar-center {
-    justify-content: space-between;
-  }
+.navbar-me-divider {
+  height: 2px;
+  background: var(--px-paper-3);
+}
+
+/* ── 窄屏微调 ───────────────────────────────────────────── */
+@media (max-width: 360px) {
+  .navbar-tabs      { height: 48px; }
+  .navbar-tab-icon  { font-size: 18px; }
+  .navbar-tab-label { font-size: 5px; }
 }

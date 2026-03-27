@@ -1,60 +1,158 @@
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { TokenDisplay } from './TokenDisplay'
+import { useMail } from '../contexts/MailContext'
+import { useToken } from '../contexts/TokenContext'
+import { FriendList } from './FriendList'
+import type { BuildingId } from './Building'
 import './MapToolbar.css'
 
 type MapToolbarProps = {
+  activeBuilding: BuildingId | null
+  onOpenBuilding: (id: BuildingId) => void
+  onCloseBuilding: () => void
   onLogout: () => void
   onSeason?: () => void
 }
 
-const CLOCK_TICK_MS = 20000
+const CLOCK_TICK_MS = 20_000
 
-function formatClock(d: Date): { time: string; period: string } {
+function getPeriod(d: Date): string {
   const h = d.getHours()
-  const time = `${String(h).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
-  const period = h < 12 ? '上午巡视' : h < 18 ? '午后社交' : '夜间邀约'
-  return { time, period }
+  return h < 12 ? '上午' : h < 18 ? '午后' : '夜间'
 }
 
-export const MapToolbar = memo(function MapToolbar({ onLogout, onSeason }: MapToolbarProps) {
-  const [{ time, period }, setClock] = useState(() => formatClock(new Date()))
+function getTime(d: Date): string {
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+}
+
+type TabId = 'map' | 'mail' | 'square' | 'friends' | 'me'
+
+const TABS: { id: TabId; icon: string; label: string }[] = [
+  { id: 'map',     icon: '🏠', label: '小镇' },
+  { id: 'mail',    icon: '📮', label: '信箱' },
+  { id: 'square',  icon: '⛲', label: '广场' },
+  { id: 'friends', icon: '👥', label: '好友' },
+  { id: 'me',      icon: '👤', label: '我的' },
+]
+
+export const MapToolbar = memo(function MapToolbar({
+  activeBuilding,
+  onOpenBuilding,
+  onCloseBuilding,
+  onLogout,
+  onSeason,
+}: MapToolbarProps) {
+  const { unreadCount } = useMail()
+  const { balance } = useToken()
+  const [period, setPeriod] = useState(() => getPeriod(new Date()))
+  const [time, setTime]     = useState(() => getTime(new Date()))
+  const [friendOpen, setFriendOpen] = useState(false)
+  const [meOpen, setMeOpen] = useState(false)
+  const meRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const id = window.setInterval(() => setClock(formatClock(new Date())), CLOCK_TICK_MS)
+    const id = window.setInterval(() => {
+      const now = new Date()
+      setPeriod(getPeriod(now))
+      setTime(getTime(now))
+    }, CLOCK_TICK_MS)
     return () => clearInterval(id)
   }, [])
 
+  useEffect(() => {
+    if (!meOpen) return
+    const handler = (e: MouseEvent) => {
+      if (meRef.current && !meRef.current.contains(e.target as Node)) {
+        setMeOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [meOpen])
+
+  const activeTab: TabId | null =
+    friendOpen                           ? 'friends' :
+    meOpen                               ? 'me'      :
+    activeBuilding === 'post_office'     ? 'mail'    :
+    activeBuilding === 'town_square'     ? 'square'  :
+    activeBuilding                       ? null      : 'map'
+
+  const handleTab = (id: TabId) => {
+    setMeOpen(false)
+    setFriendOpen(false)
+    switch (id) {
+      case 'map':     onCloseBuilding(); break
+      case 'mail':    onOpenBuilding('post_office'); break
+      case 'square':  onOpenBuilding('town_square'); break
+      case 'friends': setFriendOpen(true); break
+      case 'me':      setMeOpen(v => !v); break
+    }
+  }
+
   return (
-    <footer className="map-toolbar">
-      <div className="map-toolbar-group">
-        <span className="map-toolbar-logo">A2A Town</span>
-        <span className="map-toolbar-chip">{period}</span>
-      </div>
-      <div className="map-toolbar-group map-toolbar-center">
-        <span className="map-toolbar-status">
-          <span className="map-toolbar-dot" />
-          Agent 状态正常 · 点击建筑在框内完成操作
-        </span>
-      </div>
-      <div className="map-toolbar-group map-toolbar-actions">
-        <TokenDisplay />
-        {onSeason ? (
-          <button type="button" className="pixel-btn pixel-btn-secondary pixel-btn-small map-toolbar-btn" onClick={onSeason}>
-            赛季
+    <>
+      <FriendList open={friendOpen} onClose={() => setFriendOpen(false)} />
+
+      {/* "我的" 弹出菜单 */}
+      {meOpen && (
+        <div className="navbar-me-menu" ref={meRef}>
+          <button className="navbar-me-item" onClick={() => { setMeOpen(false); onOpenBuilding('home') }}>
+            <span aria-hidden>👤</span>我的档案
           </button>
-        ) : null}
-        <Link to="/stamp-book" className="pixel-btn pixel-btn-secondary pixel-btn-small map-toolbar-link">
-          集邮
-        </Link>
-        <Link to="/pixel-home" className="pixel-btn pixel-btn-secondary pixel-btn-small map-toolbar-link">
-          小屋
-        </Link>
-        <span className="map-toolbar-time">{time}</span>
-        <button type="button" className="pixel-btn pixel-btn-secondary pixel-btn-small map-toolbar-btn" onClick={onLogout}>
-          离开小镇
-        </button>
-      </div>
-    </footer>
+          {onSeason && (
+            <button className="navbar-me-item" onClick={() => { setMeOpen(false); onSeason() }}>
+              <span aria-hidden>🌸</span>当前赛季
+            </button>
+          )}
+          <Link className="navbar-me-item" to="/stamp-book" onClick={() => setMeOpen(false)}>
+            <span aria-hidden>📬</span>集邮册
+          </Link>
+          <Link className="navbar-me-item" to="/pixel-home" onClick={() => setMeOpen(false)}>
+            <span aria-hidden>🏡</span>像素小屋
+          </Link>
+          <div className="navbar-me-divider" />
+          <button className="navbar-me-item navbar-me-item--danger" onClick={onLogout}>
+            <span aria-hidden>🚪</span>离开小镇
+          </button>
+        </div>
+      )}
+
+      {/* ── 底部导航栏 ── */}
+      <footer className="map-toolbar">
+        {/* 极细 HUD 状态条 */}
+        <div className="navbar-hud">
+          <span className="navbar-hud-dot" aria-hidden />
+          <span className="navbar-hud-text">Avatar 活跃 · {period}</span>
+          <span className="navbar-hud-spacer" />
+          <span className="navbar-hud-token" title="小镇代币">
+            <span aria-hidden>🪙</span>{balance}
+          </span>
+          <span className="navbar-hud-time">{time}</span>
+        </div>
+
+        {/* Tab 栏 */}
+        <nav className="navbar-tabs" aria-label="主导航">
+          {TABS.map(tab => (
+            <button
+              key={tab.id}
+              type="button"
+              className={`navbar-tab${activeTab === tab.id ? ' navbar-tab--active' : ''}`}
+              onClick={() => handleTab(tab.id)}
+              aria-current={activeTab === tab.id ? 'page' : undefined}
+            >
+              <span className="navbar-tab-icon-wrap" aria-hidden>
+                <span className="navbar-tab-icon">{tab.icon}</span>
+                {tab.id === 'mail' && unreadCount > 0 && (
+                  <span className="navbar-tab-badge">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </span>
+              <span className="navbar-tab-label">{tab.label}</span>
+            </button>
+          ))}
+        </nav>
+      </footer>
+    </>
   )
 })

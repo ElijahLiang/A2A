@@ -1,38 +1,44 @@
+/* ── TownMap Page ── flex-column，地图吃掉全部剩余空间 ── */
+
 .town-map-page {
-  /* position: fixed + overflow:auto 让地图可滚动，不受 body overflow:hidden 影响 */
   position: fixed;
   inset: 0;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   background: linear-gradient(180deg, #d8eee7 0%, #b7ddd0 32%, #9ac992 32%, #79ad63 100%);
 }
 
 .town-map-backdrop {
-  position: fixed;
+  position: absolute;
   inset: 0;
   background: inherit;
   z-index: 0;
 }
 
+/* 地图区域：flex:1 吃掉除底部 bar 之外所有高度 */
 .town-map-inner {
+  flex: 1;
+  min-height: 0;
   position: relative;
   z-index: 1;
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  box-sizing: border-box;
-  padding: clamp(var(--space-2), 2vw, var(--space-4)) clamp(var(--space-2), 3vw, var(--space-5))
-    calc(var(--toolbar-height) + clamp(var(--space-4), 3vw, var(--space-6)));
-  padding-left: max(clamp(var(--space-2), 3vw, var(--space-5)), env(safe-area-inset-left));
-  padding-right: max(clamp(var(--space-2), 3vw, var(--space-5)), env(safe-area-inset-right));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;          /* 地图贴顶，底部用背景色填充，无死空间 */
+  padding: 6px 8px 4px;
+  overflow: hidden;
 }
 
-.town-map-cat-toast {
-  position: fixed;
+/* ── 提示 Toast ────────────────────────────────────────── */
+.town-map-cat-toast,
+.town-map-hint-toast {
+  position: absolute;
   left: 50%;
-  bottom: calc(var(--toolbar-height) + 16px);
+  bottom: 12px;
   transform: translateX(-50%);
   z-index: calc(var(--z-modal) - 1);
-  max-width: min(420px, calc(100vw - 32px));
+  max-width: min(420px, calc(100% - 32px));
   padding: var(--space-3) var(--space-4);
   font-size: var(--text-md);
   line-height: 1.45;
@@ -41,27 +47,6 @@
 }
 
 @keyframes town-map-toast-in {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
-}
-
-/* ui-interaction-spec §3.5 首次点建筑降级提示 */
-.town-map-hint-toast {
-  position: fixed;
-  left: 50%;
-  bottom: calc(var(--toolbar-height) + 56px);
-  transform: translateX(-50%);
-  z-index: calc(var(--z-modal) - 2);
-  max-width: min(380px, calc(100vw - 32px));
-  padding: var(--space-3) var(--space-4);
-  font-size: var(--text-md);
-  line-height: 1.45;
-  pointer-events: none;
-  animation: town-map-toast-in 0.2s var(--ease-pixel) forwards;
+  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
