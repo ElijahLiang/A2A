@@ -1,8 +1,11 @@
+import type { HumanSpriteType } from './humanSprites'
+
 export interface TownAgent {
   id: string
   name: string
   status: string
   layers: string[]
+  spriteType?: HumanSpriteType
   startRow: number
   startCol: number
 }
@@ -19,6 +22,7 @@ export const TOWN_AGENTS: TownAgent[] = [
       '/sprites/shirt.png',
       '/sprites/hair-bob.png',
     ],
+    spriteType: 'female',
     startRow: 4,
     startCol: 3,
   },
@@ -33,6 +37,7 @@ export const TOWN_AGENTS: TownAgent[] = [
       '/sprites/shirt.png',
       '/sprites/hair-dapper.png',
     ],
+    spriteType: 'male',
     startRow: 8,
     startCol: 10,
   },
@@ -48,6 +53,7 @@ export const TOWN_AGENTS: TownAgent[] = [
       '/sprites/hair-dapper.png',
       '/sprites/hat-cowboy.png',
     ],
+    spriteType: 'male',
     startRow: 11,
     startCol: 6,
   },
@@ -62,6 +68,7 @@ export const TOWN_AGENTS: TownAgent[] = [
       '/sprites/shirt.png',
       '/sprites/hair-bob.png',
     ],
+    spriteType: 'female',
     startRow: 4,
     startCol: 12,
   },
@@ -78,6 +85,7 @@ export const PLAYER_AGENT: TownAgent = {
     '/sprites/shirt.png',
     '/sprites/hair-dapper.png',
   ],
+  spriteType: 'male',
   startRow: 8,
   startCol: 8,
 }

@@ -5,7 +5,6 @@ import { MapToolbar } from '../components/MapToolbar'
 import { PixelMap } from '../components/PixelMap'
 import { HomeDialog } from '../components/dialogs/HomeDialog'
 import { IntentDialog } from '../components/dialogs/IntentDialog'
-import { PostOfficeDialog } from '../components/dialogs/PostOfficeDialog'
 import { TownSquareDialog } from '../components/dialogs/TownSquareDialog'
 import { CatActivityDialog } from '../components/dialogs/CatActivityDialog'
 import { SeasonDialog } from '../components/dialogs/SeasonDialog'
@@ -85,27 +84,27 @@ export function TownMap({ onLogout }: { onLogout: () => void }) {
             </MapDialog>
           ) : activeBuilding === 'home' ? (
             <MapDialog
-              title="我的档案"
-              icon="👤"
-              subtitle="查看 Big Five 画像、性格标签与社交偏好"
+              title="公园"
+              icon="🌳"
+              subtitle="树荫、长椅与散步路线都在这里"
               onClose={closeDialog}
             >
               <HomeDialog />
             </MapDialog>
           ) : activeBuilding === 'post_office' ? (
             <MapDialog
-              title="信箱"
-              icon="📮"
-              subtitle="接收匹配通知，查看详细邀约报告"
+              title="许愿池"
+              icon="💧"
+              subtitle="在池边许愿，或捞起一条来自别人的心愿"
               onClose={closeDialog}
             >
-              <PostOfficeDialog />
+              <TownSquareDialog />
             </MapDialog>
           ) : (
             <MapDialog
-              title="城镇广场"
+              title="广场"
               icon="⛲"
-              subtitle="浏览全镇正在进行中的匹配与邀约"
+              subtitle="镇中心的公共广场，适合驻足、会面和看看动态"
               onClose={closeDialog}
             >
               <TownSquareDialog />

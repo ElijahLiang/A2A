@@ -9,10 +9,9 @@ import type { SquareCat } from '../types'
 import { CatSprite } from './CatSprite'
 import './PixelMap.css'
 
-const MAP_W = 1200
-const MAP_H = 780
-const GRID_COLS = 12
-const GRID_ROWS = 10
+const MAP_W = 1376
+const MAP_H = 768
+const TILE = 64
 
 type PixelMapProps = {
   buildings: BuildingConfig[]
@@ -35,7 +34,7 @@ export const PixelMap = memo(function PixelMap({
   const [letterAgent, setLetterAgent] = useState<TownAgent | null>(null)
   const [playerRow, setPlayerRow] = useState(PLAYER_AGENT.startRow)
   const [playerCol, setPlayerCol] = useState(PLAYER_AGENT.startCol)
-  const [camera, setCamera] = useState({ tx: 0, ty: 0, scale: 1 })
+  const [camera] = useState({ tx: 0, ty: 0, scale: 1 })
   const viewportRef = useRef<HTMLDivElement>(null)
   const [fitScale, setFitScale] = useState(1)
 
@@ -47,15 +46,8 @@ export const PixelMap = memo(function PixelMap({
   const handleBuildingClick = (id: BuildingId) => {
     const b = buildings.find((x) => x.id === id)
     if (b) {
-      const h = b.height ?? 2
-      const w = b.width ?? 2
-      const rowC = Math.min(GRID_ROWS, Math.max(1, b.row + Math.floor(h / 2)))
-      const colC = Math.min(GRID_COLS, Math.max(1, b.col + Math.floor(w / 2)))
-      const cellW = MAP_W / GRID_COLS
-      const cellH = MAP_H / GRID_ROWS
-      const cx = (colC - 0.5) * cellW
-      const cy = (rowC - 0.5) * cellH
-      setCamera({ tx: MAP_W / 2 - cx, ty: MAP_H / 2 - cy, scale: 1.38 })
+      const rowC = Math.max(1, Math.round((b.y - 24) / TILE))
+      const colC = Math.max(1, Math.round(b.x / TILE))
       setPlayerRow(rowC)
       setPlayerCol(colC)
     }
@@ -66,12 +58,6 @@ export const PixelMap = memo(function PixelMap({
     const b = bubbles.find((x) => x.agentName === name)
     return b ? { content: b.content, emotion: b.emotion } : null
   }
-
-  useEffect(() => {
-    if (activeBuilding === null) {
-      setCamera({ tx: 0, ty: 0, scale: 1 })
-    }
-  }, [activeBuilding])
 
   useEffect(() => {
     const el = viewportRef.current
@@ -91,10 +77,8 @@ export const PixelMap = memo(function PixelMap({
     return () => ro.disconnect()
   }, [])
 
-  const isZoomed = camera.scale > 1.01
-
   return (
-    <div className={`pixel-map-shell ${isZoomed ? 'pixel-map-shell--zoomed' : ''}`} style={style}>
+    <div className="pixel-map-shell" style={style}>
       <div ref={viewportRef} className="pixel-map-viewport">
         <div className="pixel-map-scale-inner" style={{ transform: `scale(${fitScale})` }}>
           <div

@@ -1,114 +1,108 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Pixelify+Sans:wght@400;700&family=Press+Start+2P&display=swap');
+@import './ds-tokens.css';
 
-/* A2A · Pixelium Stanford Town — Design System */
+/* A2A · 界面层在 ds-tokens（Generatedesignsystemfile）之上做别名与业务语义 */
 
 :root {
-  /* ── Pixel grid unit ──────────────────────── */
   --px-bit: 4px;
 
-  /* ── Color Palette ────────────────────────── */
+  /* 兼容旧名 → 设计系统令牌 */
+  --px-teal-1: var(--teal-1);
+  --px-teal-2: var(--teal-2);
+  --px-teal-3: var(--teal-3);
+  --px-teal-4: var(--teal-4);
+  --px-teal-5: var(--teal-5);
+  --px-teal-6: var(--teal-6);
+  --px-teal-7: var(--teal-7);
+  --px-teal-8: var(--teal-8);
+  --px-teal-9: var(--teal-9);
+  --px-teal-10: var(--teal-9);
 
-  /* Teal (primary) */
-  --px-teal-1: #eef8f6;
-  --px-teal-2: #d8efe9;
-  --px-teal-3: #b7e2d9;
-  --px-teal-4: #87d0c4;
-  --px-teal-5: #51b7a9;
-  --px-teal-6: #2c968b;
-  --px-teal-7: #1f756e;
-  --px-teal-8: #195a55;
-  --px-teal-9: #133f3d;
-  --px-teal-10: #0b2525;
+  --px-paper-0: var(--paper-0);
+  --px-paper-1: var(--paper-1);
+  --px-paper-2: var(--paper-2);
+  --px-paper-3: var(--paper-3);
+  --px-paper-4: var(--paper-4);
 
-  /* Paper / Ink (neutrals) */
-  --px-paper-0: #fffef8;   /* warm white — canonical paper color */
-  --px-paper-1: #fcfcf8;
-  --px-paper-2: #f3f0e8;
-  --px-paper-3: #dfd9cb;
-  --px-paper-4: #c8bfae;
-  --px-ink-1: #786f65;
-  --px-ink-2: #4b443d;
-  --px-ink-3: #2b2723;
+  --px-ink-1: var(--ink-1);
+  --px-ink-2: var(--ink-2);
+  --px-ink-3: var(--ink-3);
   --px-ink-4: #171513;
 
-  /* Accent */
-  --px-gold-5: #d8b04f;
-  --px-gold-7: #a6802d;
-  --px-rose-5: #d66683;
-  --px-rose-7: #ab4e67;
-  --px-sky-5: #5c9ad6;
+  --px-gold-5: var(--warning);
+  --px-gold-7: #c9932a;
+  --px-rose-5: var(--danger);
+  --px-rose-7: #c24d68;
+  --px-sky-5: var(--info);
   --px-sky-7: #4274a3;
-  --px-lime-5: #87bc53;
+  --px-lime-5: var(--success);
   --px-lime-7: #5d8e35;
-  --px-purple-5: #9777c9;
+  --px-purple-5: var(--purple-accent);
   --px-purple-7: #6c50a3;
 
-  /* Special surfaces */
-  --px-envelope: #e8d5a8;       /* warm parchment for letter/envelope */
-  --px-envelope-border: #8b6914; /* envelope ink border */
-  --px-dark-1: #0a0a0c;          /* boot screen / dark overlay bg */
+  --px-envelope: #e8d5a8;
+  --px-envelope-border: #8b6914;
+  --px-dark-1: #0a0a0c;
 
-  /* Map colors */
-  --map-grass-1: #b9dc86;
-  --map-grass-2: #8dc45b;
-  --map-grass-3: #6ea342;
-  --map-path-1: #d8c78d;
-  --map-path-2: #b99f63;
-  --map-water-1: #87bdd9;
-  --map-water-2: #5f93b0;
-  --map-water-3: #3d6884;
-  --map-roof-1: #d86f49;
-  --map-roof-2: #ab4f31;
-  --map-wall-1: #f5e9cf;
-  --map-wall-2: #e0cca6;
-  --map-shadow: rgba(17, 21, 19, 0.26);
+  /* 地图 CSS 变量（不替换 public 资源；供装饰/渐变） */
+  --map-grass-1: var(--map-grass);
+  --map-grass-2: var(--map-grass-dark);
+  --map-grass-3: var(--map-grass-darker);
+  --map-path-1: var(--map-path);
+  --map-path-2: #e0a066;
+  --map-water-1: var(--map-water);
+  --map-water-2: var(--map-water-dark);
+  --map-water-3: var(--map-water-darker);
+  --map-roof-1: var(--map-roof);
+  --map-roof-2: var(--map-roof-dark);
+  --map-wall-1: var(--map-wall);
+  --map-wall-2: var(--map-wall-dark);
+  --map-shadow: rgba(7, 7, 21, 0.22);
 
-  /* ── Semantic Colors ──────────────────────── */
-  --color-bg: var(--px-paper-2);
-  --color-panel: var(--px-paper-1);
-  --color-panel-muted: #f4f8f5;
-  --color-border: var(--px-ink-3);
-  --color-border-soft: var(--px-paper-4);
-  --color-text: var(--px-ink-3);
-  --color-text-muted: var(--px-ink-1);
-  --color-text-inverse: var(--px-paper-0);
-  --color-primary: var(--px-teal-6);
-  --color-primary-hover: var(--px-teal-5);
-  --color-primary-strong: var(--px-teal-8);
-  --color-primary-soft: var(--px-teal-3);
-  --color-danger: var(--px-rose-5);
+  /* 业务语义色 */
+  --color-bg: var(--paper-2);
+  --color-panel: var(--paper-1);
+  --color-panel-muted: color-mix(in srgb, var(--paper-1) 88%, var(--teal-1));
+  --color-border: var(--ink-3);
+  --color-border-soft: var(--paper-4);
+  --color-text: var(--ink-3);
+  --color-text-muted: var(--ink-1);
+  --color-text-inverse: var(--paper-0);
+  --color-primary: var(--teal-6);
+  --color-primary-hover: var(--teal-5);
+  --color-primary-strong: var(--teal-8);
+  --color-primary-soft: var(--teal-3);
+  --color-danger: var(--danger);
   --color-danger-strong: var(--px-rose-7);
-  --color-success: var(--px-lime-5);
+  --color-success: var(--success);
   --color-success-strong: var(--px-lime-7);
-  --color-notice: var(--px-sky-5);
+  --color-notice: var(--info);
   --color-notice-strong: var(--px-sky-7);
-  --color-warm: var(--px-gold-5);
+  --color-warm: var(--warning);
   --color-warm-strong: var(--px-gold-7);
-  --color-accent: var(--px-purple-5);
+  --color-accent: var(--purple-accent);
   --color-accent-strong: var(--px-purple-7);
 
-  /* ── Typography ───────────────────────────── */
-  --font-pixel: 'Fusion Pixel 12px Proportional', 'Zpix', 'Press Start 2P', monospace;
-  --font-body: 'Noto Sans SC', 'Fusion Pixel 12px Proportional', 'Zpix', sans-serif;
+  /* 字体：标题/按钮像素体；正文 Pixelify + 中文 Noto */
+  --font-pixel: 'Press Start 2P', 'Fusion Pixel 12px Proportional', 'Zpix', monospace;
+  --font-body: 'Pixelify Sans', 'Noto Sans SC', system-ui, sans-serif;
 
-  /* Font size scale */
-  --text-xs:   7px;
-  --text-sm:   8px;
-  --text-base: 10px;
-  --text-md:   12px;
-  --text-lg:   14px;
-  --text-xl:   16px;
-  --text-2xl:  20px;
+  --text-xs: var(--text-7px);
+  --text-sm: var(--text-8px);
+  --text-base: var(--text-10px);
+  --text-md: var(--text-12px);
+  --text-lg: var(--text-14px);
+  --text-xl: var(--text-16px);
+  --text-2xl: var(--text-20px);
 
-  /* ── Spacing ──────────────────────────────── */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-7: 32px;
-  --space-8: 40px;
+  --space-1: var(--spacing-4);
+  --space-2: var(--spacing-8);
+  --space-3: var(--spacing-12);
+  --space-4: var(--spacing-16);
+  --space-5: var(--spacing-20);
+  --space-6: var(--spacing-24);
+  --space-7: var(--spacing-32);
+  --space-8: var(--spacing-40);
 
   /* ── Layout ───────────────────────────────── */
   --toolbar-height: 70px;   /* 18px HUD 状态条 + 52px tab 栏 */
@@ -126,7 +120,7 @@
 
   --pixel-border: var(--border-thick) solid var(--color-border);
   --pixel-border-soft: var(--border-thick) solid var(--color-border-soft);
-  --pixel-shadow: calc(var(--px-bit) * 2) calc(var(--px-bit) * 2) 0 var(--map-shadow);
+  --pixel-shadow: var(--shadow-dialog);
 
   /* ── Z-index layers ───────────────────────── */
   --z-map:     1;
@@ -176,9 +170,14 @@ body,
 
 body {
   font-family: var(--font-body);
-  background:
-    linear-gradient(180deg, #d9efe9 0%, #b5dbce 48%, #95c4b1 100%);
+  background: linear-gradient(
+    180deg,
+    var(--teal-1) 0%,
+    var(--teal-2) 42%,
+    color-mix(in srgb, var(--teal-4) 55%, var(--map-grass)) 100%
+  );
   color: var(--color-text);
+  line-height: 1.6;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -209,13 +208,13 @@ a {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--px-teal-5);
-  border: 2px solid var(--px-ink-3);
+  background: var(--teal-5);
+  border: 2px solid var(--ink-3);
 }
 
 ::selection {
-  background: var(--px-teal-5);
-  color: var(--color-text-inverse);
+  background: var(--teal-5);
+  color: var(--paper-0);
 }
 
 /* ── Global Keyframes ─────────────────────────────────────────────────── */
@@ -530,7 +529,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(180deg, #d9efe9 0%, #b5dbce 48%, #95c4b1 100%);
+  background: linear-gradient(180deg, var(--teal-1) 0%, var(--teal-2) 48%, var(--teal-4) 100%);
 }
 
 .route-fallback-dot {

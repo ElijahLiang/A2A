@@ -1,0 +1,47 @@
+/* ── Post Office / Inbox Dialog ─────────────────────────────────────────── */
+
+.post-office-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-8) 0;
+  text-align: center;
+}
+
+.post-office-empty-icon {
+  font-size: 40px;
+  line-height: 1;
+}
+
+.post-office-empty-text {
+  font-family: var(--font-pixel);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.post-report-activity {
+  font-size: var(--text-lg);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.post-notice-confirmed {
+  padding: var(--space-3) var(--space-4);
+  background: var(--px-teal-2);
+  border: var(--pixel-border);
+  font-size: var(--text-lg);
+  line-height: 1.7;
+}
+
+.post-notice-snoozed {
+  padding: var(--space-3) var(--space-4);
+  background: var(--px-paper-2);
+  border: var(--pixel-border);
+  font-size: var(--text-lg);
+  line-height: 1.7;
+}
+
+.post-resonance-title {
+  margin-top: var(--space-2);
+}

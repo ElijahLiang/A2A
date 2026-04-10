@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import './PostOfficeDialog.css'
 
 type ReportStatus = 'pending' | 'confirmed' | 'snoozed' | 'rejected'
 
@@ -61,11 +62,9 @@ export function PostOfficeDialog() {
 
   if (activeReports.length === 0) {
     return (
-      <div className="dialog-stack" style={{ textAlign: 'center', padding: '32px 0' }}>
-        <div style={{ fontSize: 32 }}>📭</div>
-        <div style={{ fontFamily: 'var(--font-pixel)', fontSize: 9, color: 'var(--color-text-muted)' }}>
-          暂无待处理邀约
-        </div>
+      <div className="post-office-empty">
+        <div className="post-office-empty-icon">📭</div>
+        <div className="post-office-empty-text">暂无待处理邀约</div>
       </div>
     )
   }
@@ -83,40 +82,26 @@ export function PostOfficeDialog() {
               <div className="status-item-head">
                 <div>
                   <div className="status-item-title">{report.partner}</div>
-                  <div style={{ fontSize: 13, color: 'var(--color-text-muted)', marginTop: 2 }}>
-                    {report.activity}
-                  </div>
+                  <div className="post-report-activity">{report.activity}</div>
                 </div>
                 <span className={`pixel-badge ${badgeClass}`}>{label}</span>
               </div>
 
               {currentStatus === 'confirmed' && (
-                <div style={{
-                  padding: '10px 14px',
-                  background: 'var(--px-teal-2)',
-                  border: 'var(--pixel-border)',
-                  fontSize: 13,
-                  lineHeight: 1.7,
-                }}>
+                <div className="post-notice-confirmed">
                   已确认！Avatar 会将你的意愿转达给 {report.partner}，见面安排稍后送到你这里。
                 </div>
               )}
 
               {currentStatus === 'snoozed' && (
-                <div style={{
-                  padding: '10px 14px',
-                  background: '#f0ede0',
-                  border: 'var(--pixel-border)',
-                  fontSize: 13,
-                  lineHeight: 1.7,
-                }}>
+                <div className="post-notice-snoozed">
                   已暂缓。邀约将保留 24 小时，回来时可继续处理。
                 </div>
               )}
 
               {!isDone && (
                 <>
-                  <div className="section-title" style={{ marginTop: 8 }}>共鸣点</div>
+                  <div className="section-title post-resonance-title">共鸣点</div>
                   <div className="tag-row">
                     {report.resonance.map((item) => (
                       <span key={item} className="resonance-tag">{item}</span>

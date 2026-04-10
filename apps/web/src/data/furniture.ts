@@ -7,7 +7,7 @@ export const FURNITURE_CATALOG: FurnitureItem[] = [
     unlockCondition: '春季赛季限定',
     unlockCheck: 'season_item',
     effect: '小屋访客 +1 展示权重',
-    sprite: '/furniture/sofa.png',
+    sprite: '/furniture/sofa.svg',
   },
   {
     id: 'desk-basic',
@@ -15,13 +15,13 @@ export const FURNITURE_CATALOG: FurnitureItem[] = [
     unlockCondition: '完成首次会面',
     unlockCheck: 'meetup_once',
     effect: '展示最近访客',
-    sprite: '/furniture/desk.png',
+    sprite: '/furniture/desk.svg',
   },
   {
     id: 'lamp-teal',
     name: '青釉台灯',
     unlockCondition: '小屋等级 ≥ 3',
     unlockCheck: 'home_level_3',
-    sprite: '/furniture/lamp.png',
+    sprite: '/furniture/lamp.svg',
   },
 ]

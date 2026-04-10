@@ -24,6 +24,10 @@ function toPixel(row: number, col: number) {
   return { x: (col - 1) * TILE, y: (row - 1) * TILE }
 }
 
+function toCell(x: number, y: number) {
+  return { row: Math.round(y / TILE) + 1, col: Math.round(x / TILE) + 1 }
+}
+
 function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)]
 }
@@ -59,6 +63,7 @@ export function useAgentWalker(startRow: number, startCol: number): WalkerState 
     let targetY = startPos.y
     let curX = startPos.x
     let curY = startPos.y
+    let moveDirection: Direction = 'down'
     let phase: 'idle' | 'walking' = 'idle'
     let idleTimer = 2000 + Math.random() * 4000
     let elapsed = 0
@@ -68,7 +73,11 @@ export function useAgentWalker(startRow: number, startCol: number): WalkerState 
 
       if (phase === 'idle') {
         if (elapsed >= idleTimer) {
-          const target = pickRandom(UNIQUE_NODES)
+          const here = toCell(curX, curY)
+          const axisCandidates = UNIQUE_NODES.filter(
+            (n) => (n.row === here.row || n.col === here.col) && !(n.row === here.row && n.col === here.col),
+          )
+          const target = pickRandom(axisCandidates.length > 0 ? axisCandidates : UNIQUE_NODES)
           const tp = toPixel(target.row, target.col)
           targetX = tp.x
           targetY = tp.y
@@ -77,9 +86,10 @@ export function useAgentWalker(startRow: number, startCol: number): WalkerState 
 
           const dx = targetX - curX
           const dy = targetY - curY
+          moveDirection = getDirection(dx, dy)
           setState({
             x: curX, y: curY,
-            direction: getDirection(dx, dy),
+            direction: moveDirection,
             animState: 'walk',
           })
         }
@@ -108,7 +118,8 @@ export function useAgentWalker(startRow: number, startCol: number): WalkerState 
       setState({
         x: curX,
         y: curY,
-        direction: getDirection(nx, ny),
+        // 锁定方向直到到达目标，避免左右来回摆头。
+        direction: moveDirection,
         animState: 'walk',
       })
     }

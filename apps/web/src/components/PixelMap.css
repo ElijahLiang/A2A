@@ -6,9 +6,9 @@
   /*
    * 高度优先：shell 填满可用纵向空间，宽度超出视口时由 overflow:hidden 裁剪
    * 宽屏（1200px+）自然全图展示；窄竖屏则居中裁剪，始终让地图占满屏幕高度
-   */
+  */
   height: var(--map-available-h, calc(100dvh - 70px));
-  width: calc(var(--map-available-h, calc(100dvh - 70px)) * 1200 / 780);
+  width: calc(var(--map-available-h, calc(100dvh - 70px)) * 1376 / 768);
   max-width: 100%;          /* 宽屏不超过视口宽度 */
   margin: 0 auto;
   min-width: 0;
@@ -49,8 +49,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 1200px;
-  height: 780px;
+  width: 1376px;
+  height: 768px;
   transform-origin: top left;
   will-change: transform;
 }

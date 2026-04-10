@@ -1,26 +1,25 @@
 .building {
-  position: relative;
-  z-index: 4;
-  display: grid;
-  place-items: center;
-  align-content: start;
-  gap: var(--space-2);
+  position: absolute;
+  z-index: var(--building-z, 4);
+  display: block;
   background: transparent;
+  border: none;
   cursor: pointer;
-  padding: 4px;
+  padding: 0;
+  transform: translate(-50%, -100%);
   transition: transform 120ms steps(2, end);
 }
 
 .building:hover,
 .building-active {
-  transform: translateY(-6px);
-  z-index: 6;
+  transform: translate(-50%, calc(-100% - 6px));
+  z-index: calc(var(--building-z, 4) + 3);
 }
 
 .building-body {
   position: relative;
-  width: min(100%, 200px);
-  height: min(100%, 180px);
+  width: var(--building-w);
+  height: var(--building-h);
   display: grid;
   place-items: center;
 }
@@ -39,19 +38,16 @@
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
   filter: drop-shadow(4px 4px 0 rgba(0,0,0,0.28));
+  transition: filter 120ms steps(2, end);
 }
 
-.building-roof {
-  display: none;
+.building:hover .building-img,
+.building-active .building-img {
+  filter: drop-shadow(4px 4px 0 rgba(0,0,0,0.28))
+          drop-shadow(0 0 12px rgba(81, 183, 169, 0.7));
 }
 
-.building-icon {
-  position: relative;
-  z-index: 1;
-  font-size: clamp(32px, 4vw, 52px);
-  line-height: 1;
-}
-
+/* ── 类型角标 ── */
 .building-badge {
   position: absolute;
   right: -8px;
@@ -69,9 +65,13 @@
   text-transform: uppercase;
 }
 
+/* ── 名称标签（悬停时显示） ── */
 .building-label {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 6px);
   opacity: 0;
-  transform: translateY(-4px);
+  transform: translateX(-50%) translateY(-4px);
   min-width: 130px;
   padding: 8px 12px;
   background: rgba(23, 21, 19, 0.92);
@@ -84,7 +84,7 @@
 .building:hover .building-label,
 .building-active .building-label {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(0);
 }
 
 .building-label strong,
@@ -111,7 +111,7 @@
   }
 
   .building-body {
-    width: min(100%, 140px);
-    height: min(100%, 130px);
+    width: calc(var(--building-w) * 0.85);
+    height: calc(var(--building-h) * 0.85);
   }
 }

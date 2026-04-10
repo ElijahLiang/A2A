@@ -1,0 +1,11 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="PixelStar">
+<path id="Vector" d="M11.25 0H6.75V2.25H11.25V0Z" fill="var(--fill-0, #C87020)"/>
+<path id="Vector_2" d="M11.25 2.25H6.75V4.5H11.25V2.25Z" fill="var(--fill-0, #EBB04F)"/>
+<path id="Vector_3" d="M18 6.75H0V11.25H18V6.75Z" fill="var(--fill-0, #EBB04F)"/>
+<path id="Vector_4" d="M13.5 4.5H4.5V9H13.5V4.5Z" fill="var(--fill-0, #EBB04F)"/>
+<path id="Vector_5" d="M6.75 11.25H2.25V15.75H6.75V11.25Z" fill="var(--fill-0, #EBB04F)"/>
+<path id="Vector_6" d="M15.75 11.25H11.25V15.75H15.75V11.25Z" fill="var(--fill-0, #EBB04F)"/>
+<path id="Vector_7" d="M11.25 13.5H6.75V15.75H11.25V13.5Z" fill="var(--fill-0, #EBB04F)"/>
+</g>
+</svg>

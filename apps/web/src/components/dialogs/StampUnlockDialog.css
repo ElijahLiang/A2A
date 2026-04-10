@@ -6,7 +6,7 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-4);
-  background: rgba(10, 12, 11, 0.5);
+  background: color-mix(in srgb, var(--px-dark-1) 50%, transparent);
 }
 
 .stamp-unlock-panel {
@@ -40,11 +40,11 @@
 }
 
 .stamp-unlock-seal--bronze {
-  background: #c4a574;
+  background: var(--stamp-bronze);
 }
 
 .stamp-unlock-seal--silver {
-  background: #c8d0d4;
+  background: var(--stamp-silver);
 }
 
 .stamp-unlock-seal--gold {

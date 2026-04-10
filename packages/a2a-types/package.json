@@ -1,0 +1,10 @@
+{
+  "name": "@a2a/types",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "A2A 共享领域类型（对齐多端与未来的 apps/api）",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

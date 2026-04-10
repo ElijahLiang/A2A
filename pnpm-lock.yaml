@@ -14,6 +14,12 @@ importers:
 
   apps/web:
     dependencies:
+      '@a2a/client':
+        specifier: workspace:*
+        version: link:../../packages/a2a-client
+      '@a2a/types':
+        specifier: workspace:*
+        version: link:../../packages/a2a-types
       react:
         specifier: ^19.2.4
         version: 19.2.4
@@ -60,6 +66,10 @@ importers:
       vite:
         specifier: ^8.0.1
         version: 8.0.1(@types/node@24.12.0)
+
+  packages/a2a-client: {}
+
+  packages/a2a-types: {}
 
 packages:
 

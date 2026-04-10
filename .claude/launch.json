@@ -4,7 +4,7 @@
     {
       "name": "frontend",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "web", "dev"],
+      "runtimeArgs": ["--filter", "@a2a/web", "dev"],
       "port": 5173
     }
   ]

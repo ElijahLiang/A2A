@@ -12,19 +12,31 @@
 }
 
 .sprite-clickable:hover .sprite-layers {
-  filter: brightness(1.2) drop-shadow(0 0 6px rgba(81,183,169,0.6));
+  filter: brightness(1.2) drop-shadow(0 0 6px color-mix(in srgb, var(--teal-5) 60%, transparent));
 }
 
 .sprite-clickable:hover .sprite-label {
-  background: #51b7a9;
-  color: #fff;
-  border-color: #1f756e;
+  background: var(--teal-5);
+  color: var(--paper-0);
+  border-color: var(--teal-7);
 }
 
 .sprite-layers {
   position: relative;
   width: 64px;
   height: 64px;
+}
+
+.sprite-human-frame {
+  position: absolute;
+  inset: 0;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(0 1px 0 rgba(18, 33, 45, 0.3));
 }
 
 .sprite-layer {
@@ -54,18 +66,18 @@
 .sprite-label {
   font-family: var(--font-pixel, monospace);
   font-size: 7px;
-  color: #2b2723;
-  background: rgba(252, 252, 248, 0.92);
-  border: 1px solid #786f65;
+  color: var(--ink-3);
+  background: color-mix(in srgb, var(--paper-1) 92%, transparent);
+  border: 1px solid var(--ink-2);
   padding: 1px 6px;
 }
 
 .sprite-status {
   font-family: var(--font-pixel, monospace);
   font-size: 6px;
-  color: #1f756e;
-  background: rgba(252, 252, 248, 0.88);
-  border: 1px solid #87d0c4;
+  color: var(--teal-7);
+  background: color-mix(in srgb, var(--paper-1) 88%, transparent);
+  border: 1px solid var(--teal-4);
   padding: 1px 5px;
   animation: pixel-pulse 2.5s infinite;
 }
@@ -82,10 +94,10 @@
   font-size: 12px;
   line-height: 1.5;
   font-weight: 600;
-  color: #2b2723;
-  background: #fffef8;
-  border: 3px solid #2b2723;
-  box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+  color: var(--ink-3);
+  background: var(--paper-0);
+  border: 3px solid var(--ink-3);
+  box-shadow: var(--shadow-light);
   white-space: normal;
   word-break: break-all;
   z-index: 50;
@@ -102,7 +114,7 @@
   height: 0;
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
-  border-top: 8px solid #2b2723;
+  border-top: 8px solid var(--ink-3);
 }
 
 .sprite-dialog-bubble::before {
@@ -115,14 +127,14 @@
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  border-top: 6px solid #fffef8;
+  border-top: 6px solid var(--paper-0);
   z-index: 1;
 }
 
-.bubble-emotion-positive { border-color: #52c41a; }
-.bubble-emotion-positive::after { border-top-color: #52c41a; }
-.bubble-emotion-negative { border-color: #f5222d; }
-.bubble-emotion-negative::after { border-top-color: #f5222d; }
+.bubble-emotion-positive { border-color: var(--success); }
+.bubble-emotion-positive::after { border-top-color: var(--success); }
+.bubble-emotion-negative { border-color: var(--danger); }
+.bubble-emotion-negative::after { border-top-color: var(--danger); }
 
 @keyframes bubble-pop {
   from { transform: translateX(-50%) scale(0.7); opacity: 0; }

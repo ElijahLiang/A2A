@@ -39,6 +39,9 @@ HIDDEN_IMPORTS = [
     "anyio.abc",
     "anyio._backends._asyncio",
     "h11",
+    "asyncpg",
+    "redis",
+    "cryptography",
 ]
 
 # Include the built frontend dist/ folder as data
@@ -47,7 +50,7 @@ DATAS = [
 ]
 
 a = Analysis(
-    ["server.py"],
+    ["main.py"],
     pathex=[],
     binaries=[],
     datas=DATAS,

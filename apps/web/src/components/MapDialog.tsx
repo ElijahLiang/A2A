@@ -35,8 +35,8 @@ export function MapDialog({ title, icon, subtitle, onClose, children, layout = '
             </div>
             {subtitle ? <div className="map-dialog-subtitle">{subtitle}</div> : null}
           </div>
-          <button type="button" className="map-dialog-close" onClick={onClose}>
-            关闭
+          <button type="button" className="map-dialog-close" onClick={onClose} aria-label="关闭">
+            ✕
           </button>
         </header>
         <div className="map-dialog-body">{children}</div>

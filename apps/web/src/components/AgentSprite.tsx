@@ -22,6 +22,7 @@ export function AgentSprite({ agent, autoWalk = true, dialogBubble, dialogEmotio
         direction="down"
         animState="idle"
         layers={agent.layers}
+        spriteType={agent.spriteType}
         label={agent.name}
         statusText={agent.status}
         dialogBubble={dialogBubble}
@@ -38,6 +39,7 @@ export function AgentSprite({ agent, autoWalk = true, dialogBubble, dialogEmotio
       direction={walker.direction}
       animState={walker.animState}
       layers={agent.layers}
+      spriteType={agent.spriteType}
       label={agent.name}
       statusText={walker.animState === 'walk' ? agent.status : undefined}
       dialogBubble={dialogBubble}

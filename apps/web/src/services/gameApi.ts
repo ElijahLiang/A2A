@@ -1,5 +1,5 @@
+import type { PixelHome, Season, SquareCat, Stamp, Wish } from '../types'
 import { request } from './request'
-import type { PixelHome, Season, SquareCat, Stamp } from '../types'
 
 export async function fetchStampsRemote(userId: string): Promise<Stamp[] | null> {
   return request<Stamp[]>(`/api/stamps?userId=${encodeURIComponent(userId)}`)
@@ -24,6 +24,6 @@ export async function postWishRemote(content: string): Promise<{ id: string } | 
   })
 }
 
-export async function fetchRandomWishRemote(): Promise<import('../types').Wish | null> {
-  return request<import('../types').Wish>('/api/wish/random')
+export async function fetchRandomWishRemote(): Promise<Wish | null> {
+  return request<Wish>('/api/wish/random')
 }

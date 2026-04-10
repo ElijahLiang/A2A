@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { getHumanFrame, HUMAN_SPRITES, type HumanSpriteType } from '../data/humanSprites'
 import './SpriteCharacter.css'
 
 export type Direction = 'down' | 'up' | 'left' | 'right'
@@ -10,6 +11,7 @@ interface SpriteCharacterProps {
   direction: Direction
   animState: AnimState
   layers: string[]
+  spriteType?: HumanSpriteType
   label?: string
   statusText?: string
   dialogBubble?: string
@@ -41,29 +43,73 @@ function cellToPos(cell: number): { x: number; y: number } {
 }
 
 export function SpriteCharacter({
-  x, y, direction, animState, layers, label, statusText,
+  x, y, direction, animState, layers, spriteType, label, statusText,
   dialogBubble, dialogEmotion, onClick,
 }: SpriteCharacterProps) {
   const [frameIndex, setFrameIndex] = useState(0)
+  const [idleOverride, setIdleOverride] = useState<string | null>(null)
+  const hasHumanSprite = Boolean(spriteType)
+
+  // 方向稳定锁：行走途中锁定方向，只在 idle→walk 切换瞬间或 idle 状态下才允许更新
+  // 防止 direction prop 在行走中抖动导致左右帧切换（鬼畜摆头）
+  const lockedDirectionRef = useRef(direction)
+  const prevAnimStateRef = useRef(animState)
+  if (animState === 'idle') {
+    lockedDirectionRef.current = direction
+  } else if (animState === 'walk' && prevAnimStateRef.current === 'idle') {
+    // 刚从 idle 进入 walk，记录此刻的方向并锁定
+    lockedDirectionRef.current = direction
+  }
+  prevAnimStateRef.current = animState
+  const stableDirection = lockedDirectionRef.current
+
+  const activeWalkFrames = useMemo(() => {
+    if (spriteType) return HUMAN_SPRITES[spriteType].walk[stableDirection]
+    return WALK_FRAMES[stableDirection].map((cell) => cell.toString())
+  }, [stableDirection, spriteType])
 
   useEffect(() => {
     if (animState !== 'walk') {
       setFrameIndex(0)
       return
     }
-    const frames = WALK_FRAMES[direction]
     const interval = setInterval(() => {
-      setFrameIndex(prev => (prev + 1) % frames.length)
+      setFrameIndex((prev) => (prev + 1) % activeWalkFrames.length)
     }, 130)
     return () => clearInterval(interval)
-  }, [animState, direction])
+  }, [activeWalkFrames.length, animState])
+
+  useEffect(() => {
+    if (!spriteType || animState !== 'idle') {
+      setIdleOverride(null)
+      return
+    }
+    const specialPool = HUMAN_SPRITES[spriteType].special
+    setIdleOverride(null)
+    const interval = setInterval(
+      () => {
+        const showSpecial = Math.random() > 0.58
+        if (!showSpecial) {
+          setIdleOverride(null)
+          return
+        }
+        const frame = specialPool[Math.floor(Math.random() * specialPool.length)]
+        setIdleOverride(frame)
+      },
+      2200 + Math.floor(Math.random() * 1800),
+    )
+    return () => clearInterval(interval)
+  }, [animState, spriteType])
 
   const cell = animState === 'walk'
-    ? WALK_FRAMES[direction][frameIndex]
-    : IDLE_FRAME[direction]
+    ? WALK_FRAMES[stableDirection][frameIndex % WALK_FRAMES[stableDirection].length]
+    : IDLE_FRAME[stableDirection]
 
   const pos = cellToPos(cell)
-  const flipX = direction === 'left'
+  const flipX = !hasHumanSprite && stableDirection === 'left'
+  const humanFrame = spriteType
+    ? getHumanFrame(spriteType, stableDirection, animState, frameIndex, idleOverride)
+    : null
 
   return (
     <div
@@ -76,16 +122,20 @@ export function SpriteCharacter({
       onClick={onClick}
     >
       <div className="sprite-layers">
-        {layers.map((src, i) => (
-          <div
-            key={i}
-            className="sprite-layer"
-            style={{
-              backgroundImage: `url(${src})`,
-              backgroundPosition: `-${pos.x}px -${pos.y}px`,
-            }}
-          />
-        ))}
+        {humanFrame ? (
+          <img className="sprite-human-frame" src={humanFrame} alt="" aria-hidden />
+        ) : (
+          layers.map((src, i) => (
+            <div
+              key={i}
+              className="sprite-layer"
+              style={{
+                backgroundImage: `url(${src})`,
+                backgroundPosition: `-${pos.x}px -${pos.y}px`,
+              }}
+            />
+          ))
+        )}
       </div>
       {dialogBubble && (
         <div

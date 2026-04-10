@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "@a2a/web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@a2a/client": "workspace:*",
+    "@a2a/types": "workspace:*",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router-dom": "^7.13.1"

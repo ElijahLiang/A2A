@@ -27,12 +27,13 @@ function getTime(d: Date): string {
 
 type TabId = 'map' | 'mail' | 'square' | 'friends' | 'me'
 
-const TABS: { id: TabId; icon: string; label: string }[] = [
-  { id: 'map',     icon: '🏠', label: '小镇' },
-  { id: 'mail',    icon: '📮', label: '信箱' },
-  { id: 'square',  icon: '⛲', label: '广场' },
-  { id: 'friends', icon: '👥', label: '好友' },
-  { id: 'me',      icon: '👤', label: '我的' },
+/** 来自 `assets/figma`，复制到 `public/ui` */
+const TABS: { id: TabId; iconSrc: string; label: string }[] = [
+  { id: 'map',     iconSrc: '/ui/toolbar-map.svg',    label: '小镇' },
+  { id: 'mail',    iconSrc: '/ui/toolbar-mail.svg',   label: '信箱' },
+  { id: 'square',  iconSrc: '/ui/icon-star.svg',      label: '广场' },
+  { id: 'friends', iconSrc: '/ui/icon-user.svg',      label: '好友' },
+  { id: 'me',      iconSrc: '/ui/toolbar-profile.svg', label: '我的' },
 ]
 
 export const MapToolbar = memo(function MapToolbar({
@@ -125,7 +126,8 @@ export const MapToolbar = memo(function MapToolbar({
           <span className="navbar-hud-text">Avatar 活跃 · {period}</span>
           <span className="navbar-hud-spacer" />
           <span className="navbar-hud-token" title="小镇代币">
-            <span aria-hidden>🪙</span>{balance}
+            <img src="/ui/decor-coin-1.svg" alt="" className="navbar-hud-token-icon" width={10} height={10} draggable={false} />
+            {balance}
           </span>
           <span className="navbar-hud-time">{time}</span>
         </div>
@@ -141,7 +143,12 @@ export const MapToolbar = memo(function MapToolbar({
               aria-current={activeTab === tab.id ? 'page' : undefined}
             >
               <span className="navbar-tab-icon-wrap" aria-hidden>
-                <span className="navbar-tab-icon">{tab.icon}</span>
+                <img
+                  className="navbar-tab-icon"
+                  src={tab.iconSrc}
+                  alt=""
+                  draggable={false}
+                />
                 {tab.id === 'mail' && unreadCount > 0 && (
                   <span className="navbar-tab-badge">
                     {unreadCount > 9 ? '9+' : unreadCount}

@@ -1,9 +1,11 @@
+import './HomeDialog.css'
+
 const BIG_FIVE = [
-  { label: '开放性', description: '喜欢新鲜场景、乐于探索陌生活动。' },
-  { label: '尽责性', description: '答应了就会认真赴约，临时变动少。' },
-  { label: '外向性', description: '愿意主动破冰，但更喜欢小范围高质量交流。' },
-  { label: '宜人性', description: '对话耐心、愿意倾听，也愿意照顾对方感受。' },
-  { label: '情绪稳定', description: '偏好低压、清晰、不会过度拉扯的见面节奏。' },
+  { label: '开放性', description: '喜欢新鲜场景、乐于探索陌生活动。', score: 82 },
+  { label: '尽责性', description: '答应了就会认真赴约，临时变动少。', score: 76 },
+  { label: '外向性', description: '愿意主动破冰，但更喜欢小范围高质量交流。', score: 58 },
+  { label: '宜人性', description: '对话耐心、愿意倾听，也愿意照顾对方感受。', score: 88 },
+  { label: '情绪稳定', description: '偏好低压、清晰、不会过度拉扯的见面节奏。', score: 71 },
 ]
 
 const TAGS = ['慢热但真诚', '愿意深聊', '偏爱小局', '喜欢有主题的活动', '讨厌无效闲聊']
@@ -29,11 +31,17 @@ export function HomeDialog() {
 
       <div>
         <div className="section-title">Big Five 画像</div>
-        <div className="status-list">
+        <div className="big-five-list">
           {BIG_FIVE.map((item) => (
-            <div key={item.label} className="status-item">
-              <div className="status-item-title">{item.label}</div>
-              <div>{item.description}</div>
+            <div key={item.label} className="big-five-row">
+              <div className="big-five-header">
+                <span className="big-five-label">{item.label}</span>
+                <span className="big-five-score">{item.score}</span>
+              </div>
+              <div className="big-five-track">
+                <div className="big-five-fill" style={{ width: `${item.score}%` }} />
+              </div>
+              <div className="big-five-desc">{item.description}</div>
             </div>
           ))}
         </div>

@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react'
 import { loadState, saveState, STORAGE_KEYS } from '../services/storage'
-import { TOKEN_REASONS, type TokenReason, type TokenRecord } from '../types'
+import type { TokenReason, TokenRecord } from '../types'
 
 interface TokenState {
   balance: number

@@ -71,8 +71,27 @@
 }
 
 .pixel-home-item-sprite {
-  font-size: var(--text-2xl);
   margin-bottom: var(--space-2);
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pixel-home-item-img {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.2));
+}
+
+.pixel-home-item-locked-glyph {
+  font-family: var(--font-pixel);
+  font-size: var(--text-2xl);
+  color: var(--color-text-muted);
+  line-height: 1;
 }
 
 .pixel-home-item-name {

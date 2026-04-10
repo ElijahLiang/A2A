@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 780" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <pattern id="grass" width="40" height="40" patternUnits="userSpaceOnUse">
+      <rect width="40" height="40" fill="#a8cf72"/>
+      <rect width="20" height="20" fill="#b9dc86"/>
+      <rect x="20" y="20" width="20" height="20" fill="#c8e89a"/>
+      <rect x="20" y="0" width="20" height="20" fill="#b0d97a"/>
+      <rect x="0" y="20" width="20" height="20" fill="#9ec96a"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="780" fill="url(#grass)"/>
+  <path fill="#e8d4b8" stroke="#2b2723" stroke-width="3" opacity="0.92"
+    d="M0 520 Q200 480 400 520 T800 500 T1200 540 L1200 780 L0 780 Z"/>
+  <path fill="#e8d4b8" stroke="#2b2723" stroke-width="2.5" opacity="0.85"
+    d="M580 0 Q620 200 560 400 T600 780"/>
+  <ellipse cx="300" cy="200" rx="120" ry="70" fill="#7ec4d4" stroke="#2b2723" stroke-width="2" opacity="0.55"/>
+  <ellipse cx="920" cy="620" rx="90" ry="55" fill="#7ec4d4" stroke="#2b2723" stroke-width="2" opacity="0.45"/>
+  <g fill="#5a8f32" stroke="#2b2723" stroke-width="1.5">
+    <ellipse cx="150" cy="400" rx="35" ry="48"/>
+    <ellipse cx="1050" cy="180" rx="40" ry="52"/>
+    <ellipse cx="200" cy="650" rx="28" ry="40"/>
+  </g>
+</svg>

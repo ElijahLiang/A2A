@@ -3,7 +3,7 @@
   min-height: 100vh;
   box-sizing: border-box;
   padding: 24px 16px 32px;
-  background: #0a0a0c;
+  background: var(--px-dark-1);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -65,9 +65,9 @@
   justify-content: center;
   font-size: 32px;
   line-height: 1;
-  background: #e8d5a8;
-  border: 3px solid #2b2723;
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.25);
+  background: var(--px-envelope);
+  border: 3px solid var(--ink-3);
+  box-shadow: var(--shadow-light);
   animation: quiz-cat-pop 0.5s ease forwards;
 }
 
@@ -86,9 +86,9 @@
   flex: 1;
   min-width: 0;
   padding: 12px 14px;
-  background: rgba(255, 254, 248, 0.96);
-  border: 3px solid #2b2723;
-  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.2);
+  background: color-mix(in srgb, var(--paper-0) 96%, transparent);
+  border: 3px solid var(--ink-3);
+  box-shadow: var(--shadow-light);
   position: relative;
 }
 
@@ -101,7 +101,7 @@
   height: 0;
   border-top: 8px solid transparent;
   border-bottom: 8px solid transparent;
-  border-right: 8px solid #2b2723;
+  border-right: 8px solid var(--ink-3);
 }
 
 .quiz-dm-bubble::after {
@@ -113,7 +113,7 @@
   height: 0;
   border-top: 7px solid transparent;
   border-bottom: 7px solid transparent;
-  border-right: 7px solid rgba(255, 254, 248, 0.96);
+  border-right: 7px solid color-mix(in srgb, var(--paper-0) 96%, transparent);
 }
 
 .quiz-dm-bubble--static::before,
@@ -126,30 +126,30 @@
   font-family: var(--font-pixel, monospace);
   font-size: 8px;
   letter-spacing: 1px;
-  color: #51b7a9;
+  color: var(--teal-5);
 }
 
 .quiz-dm-text {
   margin: 0;
   font-size: 14px;
   line-height: 1.65;
-  color: #2b2723;
+  color: var(--ink-3);
 }
 
 .quiz-live-preview {
   margin: 0 0 16px;
   font-size: 12px;
-  color: #4a4540;
+  color: var(--ink-2);
   line-height: 1.5;
 }
 
 .quiz-live-mbti {
   font-family: var(--font-pixel, monospace);
   font-size: 11px;
-  color: #1f756e;
-  background: rgba(81, 183, 169, 0.15);
+  color: var(--teal-7);
+  background: color-mix(in srgb, var(--teal-5) 15%, transparent);
   padding: 2px 6px;
-  border: 1px solid #51b7a9;
+  border: 1px solid var(--teal-5);
 }
 
 /* Progress dots */
@@ -161,20 +161,20 @@
 .quiz-dot {
   width: 12px;
   height: 12px;
-  border: 2px solid #4b443d;
+  border: 2px solid var(--ink-2);
   background: transparent;
   transition: all 0.3s;
 }
 
 .quiz-dot-done {
-  background: #51b7a9;
-  border-color: #1f756e;
+  background: var(--teal-5);
+  border-color: var(--teal-7);
 }
 
 .quiz-dot-active {
-  background: #87d0c4;
-  border-color: #51b7a9;
-  box-shadow: 0 0 8px rgba(81,183,169,0.5);
+  background: var(--teal-4);
+  border-color: var(--teal-5);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--teal-5) 50%, transparent);
 }
 
 /* Question card */
@@ -186,9 +186,9 @@
 }
 
 .quiz-card-inner {
-  background: rgba(255,254,248,0.95);
-  border: 4px solid #2b2723;
-  box-shadow: 6px 6px 0 rgba(0,0,0,0.3);
+  background: color-mix(in srgb, var(--paper-0) 95%, transparent);
+  border: 4px solid var(--ink-3);
+  box-shadow: var(--shadow-dialog);
   padding: 32px 28px;
   transition: transform 0.5s;
   transform-style: preserve-3d;
@@ -202,7 +202,7 @@
   display: block;
   font-size: 20px;
   font-weight: 700;
-  color: #2b2723;
+  color: var(--ink-3);
   margin-bottom: 16px;
   line-height: 1.5;
 }
@@ -213,9 +213,9 @@
   padding: 14px 16px;
   font-size: 15px;
   line-height: 1.55;
-  color: #2b2723;
-  background: #f9f7f0;
-  border: 3px solid #2b2723;
+  color: var(--ink-3);
+  background: var(--paper-1);
+  border: 3px solid var(--ink-3);
   font-family: inherit;
   resize: vertical;
   min-height: 112px;
@@ -223,8 +223,8 @@
 
 .quiz-textarea:focus {
   outline: none;
-  border-color: #51b7a9;
-  box-shadow: 0 0 0 2px rgba(81, 183, 169, 0.35);
+  border-color: var(--teal-5);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--teal-5) 35%, transparent);
 }
 
 .quiz-textarea:disabled {
@@ -234,7 +234,7 @@
 .quiz-bio-hint {
   margin: 8px 0 20px;
   font-size: 12px;
-  color: #6b6560;
+  color: var(--ink-1);
   text-align: right;
 }
 
@@ -244,16 +244,16 @@
   font-family: var(--font-pixel, monospace);
   font-size: 12px;
   letter-spacing: 1px;
-  color: #fffef8;
-  background: #51b7a9;
-  border: 3px solid #1f756e;
+  color: var(--paper-0);
+  background: var(--teal-5);
+  border: 3px solid var(--teal-7);
   cursor: pointer;
-  box-shadow: 0 4px 0 #133f3d;
+  box-shadow: 0 4px 0 var(--teal-9);
   transition: background 0.12s, transform 0.1s;
 }
 
 .quiz-submit-bio:hover:not(:disabled) {
-  background: #87d0c4;
+  background: var(--teal-4);
 }
 
 .quiz-submit-bio:active:not(:disabled) {
@@ -273,7 +273,7 @@
 .quiz-question-num {
   font-family: var(--font-pixel, monospace);
   font-size: 8px;
-  color: #51b7a9;
+  color: var(--teal-5);
   margin-bottom: 16px;
   letter-spacing: 2px;
 }
@@ -281,7 +281,7 @@
 .quiz-question {
   font-size: 22px;
   font-weight: 700;
-  color: #2b2723;
+  color: var(--ink-3);
   margin-bottom: 28px;
   line-height: 1.5;
 }
@@ -297,8 +297,8 @@
   align-items: center;
   gap: 14px;
   padding: 14px 18px;
-  background: #f9f7f0;
-  border: 3px solid #2b2723;
+  background: var(--paper-1);
+  border: 3px solid var(--ink-3);
   cursor: pointer;
   font-size: 15px;
   text-align: left;
@@ -307,9 +307,9 @@
 }
 
 .quiz-option:hover {
-  background: #51b7a9;
-  color: #fff;
-  box-shadow: 0 3px 0 #1f756e;
+  background: var(--teal-5);
+  color: var(--paper-0);
+  box-shadow: 0 3px 0 var(--teal-7);
 }
 
 .quiz-option:active {
@@ -325,15 +325,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #2b2723;
+  border: 2px solid var(--ink-3);
   flex-shrink: 0;
-  background: #e8d5a8;
+  background: var(--px-envelope);
 }
 
 .quiz-option:hover .quiz-option-key {
-  background: #1f756e;
-  color: #fff;
-  border-color: #fff;
+  background: var(--teal-7);
+  color: var(--paper-0);
+  border-color: var(--paper-0);
 }
 
 /* Reveal phase */
@@ -347,8 +347,8 @@
 .reveal-envelope {
   width: 120px;
   height: 80px;
-  background: #e8d5a8;
-  border: 4px solid #8b6914;
+  background: var(--px-envelope);
+  border: 4px solid var(--px-envelope-border);
   position: relative;
   display: flex;
   align-items: center;
@@ -370,9 +370,9 @@
 .reveal-seal {
   font-family: var(--font-pixel, monospace);
   font-size: 10px;
-  color: #fff;
-  background: #51b7a9;
-  border: 2px solid #1f756e;
+  color: var(--paper-0);
+  background: var(--teal-5);
+  border: 2px solid var(--teal-7);
   padding: 4px 10px;
   border-radius: 50%;
 }
@@ -393,15 +393,15 @@
 .reveal-mbti {
   font-family: var(--font-pixel, monospace);
   font-size: 36px;
-  color: #51b7a9;
-  text-shadow: 3px 3px 0 #133f3d;
+  color: var(--teal-5);
+  text-shadow: 3px 3px 0 var(--teal-9);
   margin-bottom: 12px;
 }
 
 .reveal-bio-line {
   font-size: 17px;
   font-weight: 600;
-  color: #fffef8;
+  color: var(--paper-0);
   line-height: 1.55;
   max-width: min(360px, 90vw);
   margin-bottom: 16px;
@@ -410,15 +410,15 @@
 .reveal-mbti-tag {
   font-family: var(--font-pixel, monospace);
   font-size: 14px;
-  color: #51b7a9;
-  text-shadow: 2px 2px 0 #133f3d;
+  color: var(--teal-5);
+  text-shadow: 2px 2px 0 var(--teal-9);
   margin-bottom: 12px;
   letter-spacing: 2px;
 }
 
 .reveal-agent-desc {
   font-size: 13px;
-  color: #c4c3bc;
+  color: var(--paper-4);
   max-width: 340px;
   margin: 0 auto 12px;
   line-height: 1.55;
@@ -436,22 +436,22 @@
 .reveal-trait-pill {
   font-size: 11px;
   padding: 4px 10px;
-  background: rgba(81, 183, 169, 0.2);
-  border: 2px solid #1f756e;
-  color: #87d0c4;
+  background: color-mix(in srgb, var(--teal-5) 20%, transparent);
+  border: 2px solid var(--teal-7);
+  color: var(--teal-4);
   font-family: var(--font-pixel, monospace);
 }
 
 .reveal-name {
   font-family: var(--font-pixel, monospace);
   font-size: 14px;
-  color: #fffef8;
+  color: var(--paper-0);
   margin-bottom: 8px;
 }
 
 .reveal-desc {
   font-size: 14px;
-  color: #a8a7a0;
+  color: var(--paper-4);
   max-width: 320px;
   line-height: 1.6;
 }
@@ -459,19 +459,19 @@
 .reveal-enter {
   font-family: var(--font-pixel, monospace);
   font-size: 12px;
-  color: #fffef8;
-  background: #51b7a9;
-  border: 3px solid #1f756e;
+  color: var(--paper-0);
+  background: var(--teal-5);
+  border: 3px solid var(--teal-7);
   padding: 14px 40px;
   cursor: pointer;
   letter-spacing: 2px;
-  box-shadow: 0 4px 0 #133f3d;
+  box-shadow: 0 4px 0 var(--teal-9);
   animation: press-blink 1.2s step-end infinite;
   transition: transform 0.1s;
 }
 
 .reveal-enter:hover {
-  background: #87d0c4;
+  background: var(--teal-4);
 }
 
 .reveal-enter:active {

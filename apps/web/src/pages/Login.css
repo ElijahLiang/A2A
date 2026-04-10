@@ -194,7 +194,7 @@
 
 .login-avatar-opt.is-selected {
   border-color: var(--color-primary-strong);
-  box-shadow: 0 0 0 2px rgba(81, 183, 169, 0.35);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--teal-5) 35%, transparent);
   color: var(--color-primary-strong);
 }
 
@@ -206,9 +206,9 @@
 }
 
 .login-avatar-swatch--blue {
-  background: linear-gradient(145deg, #5b8cff, #3d5a9e);
+  background: linear-gradient(145deg, var(--info), var(--px-sky-7));
 }
 
 .login-avatar-swatch--green {
-  background: linear-gradient(145deg, #51b7a9, #2a6b62);
+  background: linear-gradient(145deg, var(--teal-5), var(--teal-8));
 }

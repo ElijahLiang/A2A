@@ -153,6 +153,15 @@
   overflow: hidden;
 }
 
+.letter-avatar-sprite {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
 .letter-name {
   font-family: var(--font-pixel);
   font-size: var(--text-base);

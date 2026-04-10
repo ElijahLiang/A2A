@@ -53,6 +53,13 @@
   color: var(--color-warm-strong);
 }
 
+.navbar-hud-token-icon {
+  flex-shrink: 0;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
 .navbar-hud-time {
   font-family: var(--font-pixel);
   font-size: 7px;
@@ -106,16 +113,20 @@
 }
 
 .navbar-tab-icon {
-  font-size: 20px;
-  line-height: 1;
   display: block;
-  filter: grayscale(0.2);
-  transition: filter var(--dur-instant) var(--ease-snap),
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  opacity: 0.72;
+  transition: opacity var(--dur-instant) var(--ease-snap),
               transform var(--dur-fast) var(--ease-pixel);
 }
 
 .navbar-tab--active .navbar-tab-icon {
-  filter: none;
+  opacity: 1;
   transform: translateY(-2px);
 }
 
@@ -133,7 +144,7 @@
   font-family: var(--font-pixel);
   font-size: 6px;
   font-weight: bold;
-  color: #fff;
+  color: var(--paper-0);
   background: var(--color-danger-strong);
   border: 2px solid var(--color-border);
   animation: pixel-pulse 1.8s steps(2, end) infinite;
@@ -198,6 +209,6 @@
 /* ── 窄屏微调 ───────────────────────────────────────────── */
 @media (max-width: 360px) {
   .navbar-tabs      { height: 48px; }
-  .navbar-tab-icon  { font-size: 18px; }
+  .navbar-tab-icon  { width: 20px; height: 20px; }
   .navbar-tab-label { font-size: 5px; }
 }

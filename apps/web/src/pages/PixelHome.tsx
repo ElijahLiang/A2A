@@ -45,7 +45,11 @@ export function PixelHome() {
             return (
               <li key={item.id} className={`pixel-home-item ${unlocked ? 'is-unlocked' : 'is-locked'}`}>
                 <div className="pixel-home-item-sprite" aria-hidden>
-                  {unlocked ? '🪑' : '❓'}
+                  {unlocked ? (
+                    <img src={item.sprite} alt="" className="pixel-home-item-img" width={48} height={48} draggable={false} />
+                  ) : (
+                    <span className="pixel-home-item-locked-glyph">?</span>
+                  )}
                 </div>
                 <div className="pixel-home-item-name">{item.name}</div>
                 <p className="pixel-home-item-desc">{unlocked ? item.effect ?? '已入驻小屋' : item.unlockCondition}</p>

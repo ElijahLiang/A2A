@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import './LetterDialog.css'
 import { apiUrl } from '../config/apiBase'
 import type { TownAgent } from '../data/agents'
+import { getHumanPortrait } from '../data/humanSprites'
 
 interface ChatMessage {
   role: 'user' | 'agent'
@@ -117,17 +118,21 @@ export function LetterDialog({ agent, onClose }: LetterDialogProps) {
           <div className="letter-header">
             <div className="letter-avatar-row">
               <div className="letter-avatar">
-                <div className="sprite-layers" style={{ width: 48, height: 48 }}>
-                  {agent.layers.slice(0, 3).map((src, i) => (
-                    <div key={i} style={{
-                      position: 'absolute', inset: 0, width: 48, height: 48,
-                      backgroundImage: `url(${src})`,
-                      backgroundSize: '768px 768px',
-                      backgroundPosition: '0 0',
-                      imageRendering: 'pixelated' as const,
-                    }} />
-                  ))}
-                </div>
+                {agent.spriteType ? (
+                  <img className="letter-avatar-sprite" src={getHumanPortrait(agent.spriteType)} alt="" aria-hidden />
+                ) : (
+                  <div className="sprite-layers" style={{ width: 48, height: 48 }}>
+                    {agent.layers.slice(0, 3).map((src, i) => (
+                      <div key={i} style={{
+                        position: 'absolute', inset: 0, width: 48, height: 48,
+                        backgroundImage: `url(${src})`,
+                        backgroundSize: '768px 768px',
+                        backgroundPosition: '0 0',
+                        imageRendering: 'pixelated' as const,
+                      }} />
+                    ))}
+                  </div>
+                )}
               </div>
               <div>
                 <div className="letter-name">{agent.name}</div>

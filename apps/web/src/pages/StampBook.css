@@ -40,13 +40,13 @@
 }
 
 .stamp-book-grade--bronze {
-  background: #c4a574;
-  color: var(--px-ink-3);
+  background: var(--stamp-bronze);
+  color: var(--ink-3);
 }
 
 .stamp-book-grade--silver {
-  background: #c8d0d4;
-  color: var(--px-ink-3);
+  background: var(--stamp-silver);
+  color: var(--ink-3);
 }
 
 .stamp-book-grade--gold {

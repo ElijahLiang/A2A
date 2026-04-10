@@ -5,22 +5,22 @@
   "mapCanvas": {
     "logicalSizePx": { "width": 1200, "height": 780 },
     "cssVars": ["--map-width", "--map-height"],
-    "background": "/map-bg.png"
+    "background": "/map-bg.svg"
   },
   "screens": [
     { "id": "boot-bg", "path": "/boot-bg.png", "figmaFrame": "Screen / Boot Background" },
     { "id": "boot-door", "path": "/boot-door.png", "figmaFrame": "Screen / Boot Door" }
   ],
   "buildings": [
-    { "id": "library", "path": "/buildings/library.png", "codeRef": "Building.tsx BUILDING_IMAGES" },
-    { "id": "post_office", "path": "/buildings/post_office.png", "codeRef": "Building.tsx" },
-    { "id": "restaurant", "path": "/buildings/restaurant.png", "codeRef": "Building.tsx" },
-    { "id": "town_square", "path": "/buildings/town_square.png", "codeRef": "Building.tsx" },
-    { "id": "cafe", "path": "/buildings/cafe.png", "codeRef": "Building.tsx" },
-    { "id": "gym", "path": "/buildings/gym.png", "codeRef": "Building.tsx" },
-    { "id": "cinema", "path": "/buildings/cinema.png", "codeRef": "Building.tsx" },
-    { "id": "arcade", "path": "/buildings/arcade.png", "codeRef": "Building.tsx" },
-    { "id": "home", "path": "/buildings/home.png", "codeRef": "Building.tsx" }
+    { "id": "library", "path": "/buildings/library.svg", "codeRef": "Building.tsx BUILDING_IMAGES" },
+    { "id": "post_office", "path": "/buildings/post_office.svg", "codeRef": "Building.tsx" },
+    { "id": "restaurant", "path": "/buildings/restaurant.svg", "codeRef": "Building.tsx" },
+    { "id": "town_square", "path": "/buildings/town_square.svg", "codeRef": "Building.tsx" },
+    { "id": "cafe", "path": "/buildings/cafe.svg", "codeRef": "Building.tsx" },
+    { "id": "gym", "path": "/buildings/gym.svg", "codeRef": "Building.tsx" },
+    { "id": "cinema", "path": "/buildings/cinema.svg", "codeRef": "Building.tsx" },
+    { "id": "arcade", "path": "/buildings/arcade.svg", "codeRef": "Building.tsx" },
+    { "id": "home", "path": "/buildings/home.svg", "codeRef": "Building.tsx" }
   ],
   "sprites": {
     "layerOrder": ["body", "shoes", "pants", "shirt", "hair", "hat"],
@@ -37,7 +37,8 @@
   },
   "vector": [
     { "path": "/favicon.svg", "figmaUse": "Component / App Icon" },
-    { "path": "/icons.svg", "figmaUse": "Sprite sheet 或拆 Symbol" }
+    { "path": "/icons.svg", "figmaUse": "Sprite sheet 或拆 Symbol" },
+    { "path": "/sprites/a2a-toolbar.svg", "figmaUse": "底部导航 icn-town / icn-mail / icn-plaza / icn-friends / icn-profile", "codeRef": "MapToolbar.tsx" }
   ],
   "figmaPagesSuggested": [
     "00 Foundations（Variables + Text styles）",

@@ -1,0 +1,10 @@
+{
+  "name": "@a2a/client",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "浏览器端 HTTP / 本地存储工具（对齐 Alicization-Town 的 shared/town-client 角色）",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

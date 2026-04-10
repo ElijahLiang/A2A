@@ -1,0 +1,117 @@
+/**
+ * A2A 设计系统令牌 — 自 Generatedesignsystemfile (theme.css) 迁移
+ * 不含 Tailwind @theme / @layer；供全站 CSS 变量引用
+ */
+
+:root {
+  --ds-font-size-base: 16px;
+
+  /* Pixel Art — Teal */
+  --teal-1: #d6f0ed;
+  --teal-2: #afe0db;
+  --teal-3: #88d0ca;
+  --teal-4: #65c0ba;
+  --teal-5: #51b7a9;
+  --teal-6: #3a9b90;
+  --teal-7: #2c968b;
+  --teal-8: #195a55;
+  --teal-9: #0f3a37;
+
+  /* Paper */
+  --paper-0: #fffef8;
+  --paper-1: #faf9ef;
+  --paper-2: #e8e4c8;
+  --paper-3: #e8d3c5;
+  --paper-4: #c8c0d0;
+
+  /* Semantic */
+  --success: #87bc53;
+  --warning: #ebb04f;
+  --danger: #dd6683;
+  --info: #5c9ad6;
+  --purple-accent: #9777c9;
+
+  /* Ink */
+  --ink-1: #4b5470;
+  --ink-2: #484540;
+  --ink-3: #2b2728;
+
+  /* Map (DS 命名；仅作变量，不替换 public 内图片) */
+  --map-grass: #92d685;
+  --map-grass-dark: #8bd450;
+  --map-grass-darker: #6ea343;
+  --map-path: #f4b67d;
+  --map-water: #87b0d9;
+  --map-water-dark: #6f93f0;
+  --map-water-darker: #3c6c84;
+  --map-roof: #fd6149;
+  --map-roof-dark: #ab4f31;
+  --map-wall: #f5e4c7;
+  --map-wall-dark: #b0c5a5;
+
+  /* shadcn 风格语义（供组件与后续扩展） */
+  --background: var(--paper-0);
+  --foreground: var(--ink-3);
+  --card: var(--paper-1);
+  --card-foreground: var(--ink-3);
+  --popover: var(--paper-1);
+  --popover-foreground: var(--ink-3);
+  --primary: var(--teal-6);
+  --primary-foreground: #ffffff;
+  --secondary: var(--paper-3);
+  --secondary-foreground: var(--ink-3);
+  --muted: var(--paper-2);
+  --muted-foreground: var(--ink-1);
+  --accent-ui: var(--purple-accent);
+  --accent-ui-foreground: #ffffff;
+  --destructive: var(--danger);
+  --destructive-foreground: #ffffff;
+  --border: var(--ink-3);
+  --input-background: #ffffff;
+  --switch-background: var(--teal-2);
+  --font-weight-medium: 500;
+  --font-weight-normal: 400;
+  --ring: var(--teal-6);
+
+  /* Spacing */
+  --spacing-4: 4px;
+  --spacing-8: 8px;
+  --spacing-12: 12px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-32: 32px;
+  --spacing-40: 40px;
+
+  /* Typography scale */
+  --text-7px: 7px;
+  --text-8px: 8px;
+  --text-10px: 10px;
+  --text-12px: 12px;
+  --text-14px: 14px;
+  --text-16px: 16px;
+  --text-20px: 20px;
+
+  /* Radius — 像素风以 0 为主 */
+  --radius: 0px;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+
+  /* Shadow */
+  --shadow-hard: 3px 3px 0px rgba(0, 0, 0, 0.35);
+  --shadow-light: 2px 2px 0px rgba(7, 7, 21, 0.2);
+  --shadow-dialog: 6px 6px 0px rgba(7, 7, 21, 0.3);
+  --shadow-pressed: 1px 1px 0px rgba(7, 7, 21, 0.3);
+
+  --badge-20px: 20px;
+  --avatar-small: 40px;
+  --avatar-regular: 60px;
+  --avatar-large: 88px;
+  --icon-16: 16px;
+  --icon-32: 32px;
+
+  /* 邮戳等级（界面用色，非美术素材） */
+  --stamp-bronze: #c4a574;
+  --stamp-silver: #c8d0d4;
+}

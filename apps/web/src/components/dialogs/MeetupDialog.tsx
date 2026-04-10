@@ -118,6 +118,23 @@ export function MeetupDialog() {
   return (
     <div className="meetup-overlay" role="dialog" aria-label="会面">
       <div className="meetup-panel pixel-card">
+        <div className="meetup-steps" aria-label="当前步骤">
+          <div className={`meetup-step-node ${step >= 1 ? 'is-active' : ''}`}>
+            <div className="meetup-step-num">1</div>
+            <div className="meetup-step-label">等待</div>
+          </div>
+          <div className={`meetup-step-line ${step > 1 ? 'is-done' : ''}`} />
+          <div className={`meetup-step-node ${step >= 2 ? 'is-active' : ''}`}>
+            <div className="meetup-step-num">{step > 2 ? '✓' : '2'}</div>
+            <div className="meetup-step-label">验证</div>
+          </div>
+          <div className={`meetup-step-line ${step > 2 ? 'is-done' : ''}`} />
+          <div className={`meetup-step-node ${step >= 3 ? 'is-active' : ''}`}>
+            <div className="meetup-step-num">3</div>
+            <div className="meetup-step-label">结算</div>
+          </div>
+        </div>
+
         {step === 1 ? (
           <>
             <div className="meetup-title">等待会面</div>

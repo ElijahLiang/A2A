@@ -17,7 +17,7 @@
 .sprite-head {
   width: 18px;
   height: 16px;
-  background: #f2d2af;
+  background: color-mix(in srgb, var(--paper-3) 55%, var(--warning));
   border: var(--px-bit) solid var(--color-border);
 }
 
@@ -25,7 +25,7 @@
   width: 26px;
   height: 22px;
   margin-top: -4px;
-  background: #32615c;
+  background: var(--teal-8);
   border: var(--px-bit) solid var(--color-border);
 }
 
@@ -33,7 +33,7 @@
   width: 24px;
   height: 12px;
   margin-top: -4px;
-  background: #2f4c67;
+  background: color-mix(in srgb, var(--teal-9) 70%, var(--ink-1));
   border: var(--px-bit) solid var(--color-border);
 }
 

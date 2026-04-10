@@ -1,6 +1,8 @@
 # A2A — Avatar To Avatar
 
-> AI Agent 驱动的线下社交撮合平台。用户由各自的 AI 分身（Avatar）先行沟通，在像素小镇完成破冰、匹配和邀约，最终促成真实线下见面。
+> **校园沙盒 V2**：每位用户注册后拥有一个由**自己 API Key** 驱动的具身 Agent，在像素小镇中自主社交、积累关系；达到条件时 Agent 向真实用户发信，促成线下「搭子」约定。系统侧仍保留 **4 名 NPC**（Mira / Kai / Luca / Yuki）作为世界种子。
+
+产品事实来源以 `PRD.md`、`docs/DEV_SPEC_V2.md` 为准。
 
 ---
 
@@ -13,6 +15,7 @@
   - [Windows 运行步骤](#windows-运行步骤)
 - [方式二：开发模式运行（需要完整环境）](#方式二开发模式运行需要完整环境)
   - [前置条件](#前置条件)
+  - [基础设施（PostgreSQL / Redis）](#基础设施postgresql--redis)
   - [macOS / Linux 启动步骤](#macos--linux-启动步骤)
   - [Windows 启动步骤](#windows-启动步骤)
 - [方式三：自行打包可执行文件](#方式三自行打包可执行文件)
@@ -21,6 +24,7 @@
 - [环境变量说明](#环境变量说明)
 - [核心 API 端点](#核心-api-端点)
 - [项目结构](#项目结构)
+- [用户操作指南（V2）](#用户操作指南v2)
 
 ---
 
@@ -29,12 +33,14 @@
 | 模块 | 功能描述 |
 |------|---------|
 | **开机动画** | 像素风格 Landing 页，A2A LOGO 逐步渲染，点击门进入 |
-| **小镇通行证** | 手机号 + 验证码登录（MVP 阶段本地模拟，随意填写） |
-| **人格测试** | 5 题 MBTI 快测，映射到 4 位 AI 分身（Mira / Kai / Luca / Yuki） |
-| **像素小镇** | 1200×780 像素地图，9 座放大建筑，Agent 在道路上自由行走 |
-| **建筑交互** | 图书馆 / 咖啡馆 / 餐厅等发布活动意图，邮局查看并操作匹配报告 |
-| **Agent 自主对话** | 后端多 Agent 每隔 8 秒自动两两对话，气泡实时显示在角色头上 |
-| **Agent 聊天** | 点击地图上的 Agent 角色，可与其实时对话 |
+| **小镇通行证** | 手机号 + 验证码登录（MVP 本地模拟，随意填写） |
+| **人格与注册（V2）** | 一句话 bio + **用户自带 API Key**（可选 Base URL）；服务端加密存储，LLM 生成专属分身昵称与人格；**不再使用 5 题 MBTI 映射固定四人格** |
+| **像素小镇** | 像素地图，建筑交互，Agent 在道路上行走 |
+| **NPC 种子** | 4 名固定 NPC 与注册用户 Agent 共同参与世界 |
+| **Agent 自主对话** | 后端调度多 Agent 自动两两对话；对话可走**用户 Key**（用户 Agent）或**系统 Key**（NPC / 降级） |
+| **生成式循环** | 感知 → 记忆流（PostgreSQL）→ 反思 → 好感度与关系状态机 |
+| **信件与搭子** | 关系达阈值时 Agent 向用户发 `friendship_invite` 类信件；双方确认后生成约定（`meetup_appointments`） |
+| **Agent 聊天** | 点击地图上的 Agent，与其代理对话（路由至对应 Key） |
 
 ---
 
@@ -42,40 +48,43 @@
 
 ### 前端
 
-| 技术 | 版本 | 用途 |
-|------|------|------|
-| React | 19 | UI 框架 |
-| TypeScript | 5.9 | 类型系统 |
-| Vite | 8 | 构建工具 |
-| React Router DOM | 7 | 客户端路由 |
-
-### 后端
-
-| 技术 | 版本 | 用途 |
-|------|------|------|
-| Python | 3.10+ | 运行时 |
-| FastAPI | 0.115 | API 框架 |
-| Uvicorn | 0.32 | ASGI 服务器 |
-| OpenAI SDK | 1.57 | 异步 LLM 调用 |
-| Pydantic | 2.10 | 数据校验 |
-
-### AI 模型
-
-| 模型 | 用途 |
+| 技术 | 用途 |
 |------|------|
-| DeepSeek-V3.2 | Agent 自主对话 + 用户聊天 |
+| React + TypeScript + Vite | UI 与构建 |
+| React Router DOM | 路由 |
 
-### 打包工具
+### 后端（`apps/agent`）
 
-| 工具 | 用途 |
+| 技术 | 用途 |
 |------|------|
-| PyInstaller | 将后端 + 前端静态资源打包为单个可执行文件 |
+| Python 3.10+ | 运行时 |
+| FastAPI + Uvicorn | API 服务 |
+| OpenAI SDK（兼容端点） | LLM 调用 |
+| asyncpg | PostgreSQL 异步访问 |
+| Redis（可选） | 反思计数等 |
+| cryptography | 用户 API Key AES-GCM 加密 |
+
+### 数据与 AI
+
+| 组件 | 说明 |
+|------|------|
+| PostgreSQL 16 + pgvector（推荐） | 用户、人格、记忆流、关系、信件、约定等（见 `docs/DEV_SPEC_V2.md` Schema） |
+| Redis 7 | 可选；不可用时记忆模块有进程内降级 |
+| DeepSeek / 兼容 OpenAI API | 系统 Key：人格生成、NPC、降级；**用户 Key**：该用户 Agent 的对话 |
+
+### 打包
+
+| 工具 | 说明 |
+|------|------|
+| PyInstaller | `a2a.spec` 入口为 `main.py`，单文件分发 |
 
 ---
 
 ## 方式一：运行可执行文件（推荐，无需安装环境）
 
-> 分发的可执行文件已内置 Python 解释器和完整前端，对方**不需要**安装 Node.js、Python 或任何依赖。
+> 分发的可执行文件已内置 Python 与前端静态资源，对方**不需要**安装 Node.js。
+
+**说明（V2）**：完整体验（信件持久化、记忆流、约定写入库）依赖 **PostgreSQL**（及可选 Redis）。若**未启动数据库**，后端在**更新到最新代码并重启**后，仍支持 **内存开发注册**（`/api/register` 可成功，分身进入小镇；**重启进程后用户数据丢失**，信件等仍无法落库）。生产环境请使用 Docker + Postgres。
 
 ### macOS 运行步骤
 
@@ -83,329 +92,166 @@
 
 ```
 release/
-├── A2A          ← 可执行文件（macOS arm64，M1/M2/M3 芯片）
+├── A2A          ← 可执行文件（macOS arm64）
 └── start.sh     ← 启动脚本
 ```
 
-**第 2 步：赋予执行权限**（只需第一次运行时执行）
-
-打开终端（Terminal），进入 release 目录：
+**第 2 步：赋予执行权限**（首次）
 
 ```bash
 cd /path/to/release
 chmod +x A2A start.sh
 ```
 
-**第 3 步：设置 API Key 并启动**
+**第 3 步：设置环境变量并启动**
 
 ```bash
-export DEEPSEEK_API_KEY=你的DeepSeek密钥
+export DEEPSEEK_API_KEY=你的系统侧DeepSeek密钥
+# 若已部署数据库：
+# export DATABASE_URL=postgresql://用户:密码@127.0.0.1:5432/a2a_dev
 ./start.sh
 ```
 
-或者一行命令直接运行：
+或：
 
 ```bash
-DEEPSEEK_API_KEY=你的DeepSeek密钥 ./A2A
+DEEPSEEK_API_KEY=你的密钥 ./A2A
 ```
 
-**第 4 步：在浏览器中访问**
+**第 4 步：浏览器访问** `http://127.0.0.1:8000`
 
-程序启动后会**自动打开浏览器**，若未自动打开，手动访问：
+**停止：** 终端 `Ctrl + C`
 
-```
-http://127.0.0.1:8000
-```
-
-**停止游戏：** 在终端按 `Ctrl + C`
-
----
-
-> **macOS 安全提示**：首次运行时系统可能提示"无法验证开发者"。
-> 解决方法：
-> ```bash
-> xattr -dr com.apple.quarantine ./A2A
-> ```
-> 然后再运行 `./start.sh`
-
----
+> **macOS 安全提示**：若提示无法验证开发者：`xattr -dr com.apple.quarantine ./A2A` 后再运行。
 
 ### Windows 运行步骤
 
-> ⚠️ **当前 release 目录中的 `A2A` 文件是 macOS 版本（arm64）。**
-> Windows 版本需要在 Windows 机器上自行打包（见[方式三：Windows 打包](#windows-打包)），
-> 打包完成后会生成 `A2A.exe`。
+> release 中若为 macOS 构建，Windows 需在 Windows 上按 [方式三](#windows-打包) 自行打包得到 `A2A.exe`。
 
-**第 1 步：找到可执行文件**
-
-```
-release\
-└── A2A.exe      ← 可执行文件（Windows x64）
-```
-
-**第 2 步：设置 API Key 并启动**
-
-打开「命令提示符」（CMD）或「PowerShell」，进入 release 目录：
-
-**CMD 方式：**
 ```cmd
 cd C:\path\to\release
-set DEEPSEEK_API_KEY=你的DeepSeek密钥
+set DEEPSEEK_API_KEY=你的密钥
 A2A.exe
 ```
 
-**PowerShell 方式：**
+或 PowerShell：
+
 ```powershell
-cd C:\path\to\release
-$env:DEEPSEEK_API_KEY = "你的DeepSeek密钥"
+$env:DEEPSEEK_API_KEY = "你的密钥"
 .\A2A.exe
 ```
 
-**第 3 步：在浏览器中访问**
-
-程序启动后会**自动打开浏览器**，若未自动打开，手动访问：
-
-```
-http://127.0.0.1:8000
-```
-
-**停止游戏：** 关闭命令提示符窗口，或按 `Ctrl + C`
-
----
-
-> **Windows 安全提示**：首次运行时 Windows Defender 可能拦截。
-> 点击「更多信息」→「仍要运行」即可。
+浏览器访问 `http://127.0.0.1:8000`。
 
 ---
 
 ## 方式二：开发模式运行（需要完整环境）
 
-适合开发者本地调试，前端支持热更新，后端支持 `reload`。
+适合热更新调试：前端 `pnpm dev`，后端建议 `uvicorn main:app --reload`。
 
 ### 前置条件
 
-| 工具 | 版本要求 | 下载地址 |
-|------|---------|---------|
-| Node.js | >= 20 | https://nodejs.org/ |
-| pnpm | >= 9 | `npm install -g pnpm` |
-| Python | >= 3.10 | https://www.python.org/downloads/ |
+| 工具 | 版本要求 |
+|------|---------|
+| Node.js | >= 20 |
+| pnpm | >= 9 |
+| Python | >= 3.10 |
 
-获取 DeepSeek API Key：https://platform.deepseek.com/
+系统侧 LLM Key（人格生成、NPC、用户 Key 失效时降级）：自行准备 DeepSeek 或兼容 OpenAI 的 Key。
 
----
+### 基础设施（PostgreSQL / Redis）
+
+推荐使用仓库内 Compose（仅数据库与 Redis，不含应用）：
+
+```bash
+cd infra
+docker compose -f docker-compose.dev.yml up -d
+```
+
+默认连接串示例（与 `apps/agent/config.py` 默认一致）：
+
+- `DATABASE_URL=postgresql://a2a:dev_password@127.0.0.1:5432/a2a_dev`
+- `REDIS_URL=redis://127.0.0.1:6379/0`
+
+首次启动后端成功连接数据库时会**自动执行** V2 Schema 初始化（`apps/agent/db/pg_client.py`）。
 
 ### macOS / Linux 启动步骤
 
-**第 1 步：克隆项目**
-
 ```bash
 git clone <仓库地址>
 cd A2A
+cp .env.example .env   # 若存在；否则直接设置环境变量
 ```
 
-**第 2 步：配置环境变量**
+**终端 1 — 后端**
 
 ```bash
-cp .env.example .env
-```
-
-用任意文本编辑器打开 `.env`，至少填写：
-
-```dotenv
-DEEPSEEK_API_KEY=你的DeepSeek密钥
-```
-
-**第 3 步：启动后端（打开第一个终端窗口）**
-
-```bash
-# 进入 agent 目录
 cd apps/agent
-
-# 创建 Python 虚拟环境（只需执行一次）
 python3 -m venv .venv
-
-# 激活虚拟环境
 source .venv/bin/activate
-
-# 安装依赖（只需执行一次）
 pip install -r requirements.txt
-
-# 导出环境变量并启动
-export DEEPSEEK_API_KEY=你的DeepSeek密钥
-python server.py
+export DEEPSEEK_API_KEY=你的系统密钥
+export DATABASE_URL=postgresql://a2a:dev_password@127.0.0.1:5432/a2a_dev
+# export REDIS_URL=redis://127.0.0.1:6379/0
+python main.py
+# 或：uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 ```
 
-后端运行在 `http://127.0.0.1:8000`，终端会显示：
+日志出现 PostgreSQL 已连接即表示持久化就绪。
 
-```
-INFO:     Uvicorn running on http://127.0.0.1:8000
-Initialized 4 agents
-```
-
-**第 4 步：启动前端（打开第二个终端窗口）**
+**终端 2 — 前端**
 
 ```bash
-# 回到项目根目录
 cd apps/web
-
-# 安装依赖（只需执行一次）
 pnpm install
-
-# 启动开发服务器
 pnpm dev
 ```
 
-前端运行在 `http://localhost:5173`，在浏览器打开该地址即可。
+浏览器打开 **`http://localhost:5173`**。开发模式下 API 使用**相对路径 `/api`**，由 **Vite 代理**到 `http://127.0.0.1:8000`，避免跨域与系统代理劫持本机请求（见 `vite.config.ts`、`src/config/apiBase.ts`）。
 
----
+**若注册或请求仍失败：** 先确认后端已在 8000 端口运行；不要用「只打开静态 html」的方式访问前端，须使用 `pnpm dev`。打包后的前端若与 API 不同源，可设置环境变量 `VITE_API_BASE=http://127.0.0.1:8000` 后重新 build。
 
 ### Windows 启动步骤
 
-**第 1 步：克隆项目**
-
-```cmd
-git clone <仓库地址>
-cd A2A
-```
-
-**第 2 步：配置环境变量**
-
-在项目根目录复制 `.env.example` 为 `.env`，并填写：
-
-```
-DEEPSEEK_API_KEY=你的DeepSeek密钥
-```
-
-**第 3 步：启动后端（打开第一个 CMD / PowerShell 窗口）**
-
 ```cmd
 cd apps\agent
-
-:: 创建虚拟环境（只需执行一次）
 python -m venv .venv
-
-:: 激活虚拟环境
 .venv\Scripts\activate
-
-:: 安装依赖（只需执行一次）
 pip install -r requirements.txt
-
-:: 设置 API Key（CMD 方式）
-set DEEPSEEK_API_KEY=你的DeepSeek密钥
-
-:: 启动
-python server.py
+set DEEPSEEK_API_KEY=你的系统密钥
+set DATABASE_URL=postgresql://a2a:dev_password@127.0.0.1:5432/a2a_dev
+python main.py
 ```
 
-PowerShell 方式：
-
-```powershell
-cd apps\agent
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-$env:DEEPSEEK_API_KEY = "你的DeepSeek密钥"
-python server.py
-```
-
-**第 4 步：启动前端（打开第二个 CMD / PowerShell 窗口）**
+第二终端：
 
 ```cmd
 cd apps\web
 pnpm install
 pnpm dev
 ```
-
-浏览器访问 `http://localhost:5173`
 
 ---
 
 ## 方式三：自行打包可执行文件
 
-将前端 + 后端打包成单个可独立分发的二进制文件。
-
 ### macOS / Linux 打包
 
-**前置条件：** Node.js >= 20、pnpm >= 9、Python >= 3.10
-
 ```bash
-# 在项目根目录执行
 chmod +x build.sh
 ./build.sh
+# 等价: chmod +x scripts/build-all.sh && ./scripts/build-all.sh
 ```
 
-脚本自动完成以下步骤：
-
-| 步骤 | 内容 |
-|------|------|
-| 1 | `pnpm install` + `vite build` 构建前端 |
-| 2 | 将 `dist/` 复制到 `apps/agent/dist/` |
-| 3 | 创建 Python venv，安装依赖 + PyInstaller |
-| 4 | PyInstaller 生成单文件可执行程序 |
-| 5 | 输出到 `release/A2A` |
-
-打包完成后运行：
-
-```bash
-cd release
-export DEEPSEEK_API_KEY=你的DeepSeek密钥
-./start.sh
-```
-
----
+产物见 `release/`；入口逻辑以 `apps/agent/main.py` 为准，`a2a.spec` 已指向 `main.py`。
 
 ### Windows 打包
 
-**前置条件：** Node.js >= 20、pnpm >= 9、Python >= 3.10
-
-打开 PowerShell（建议以管理员身份运行）：
-
-**第 1 步：构建前端**
-
-```powershell
-cd apps\web
-pnpm install
-pnpm run build
-```
-
-**第 2 步：复制前端产物**
-
-```powershell
-cd ..\..\        # 回到项目根目录
-Remove-Item -Recurse -Force apps\agent\dist -ErrorAction SilentlyContinue
-Copy-Item -Recurse apps\web\dist apps\agent\dist
-```
-
-**第 3 步：安装 Python 依赖和 PyInstaller**
-
-```powershell
-cd apps\agent
-python -m venv .venv
-.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
-pip install pyinstaller
-```
-
-**第 4 步：执行打包**
-
-```powershell
-pyinstaller a2a.spec --noconfirm --clean
-```
-
-**第 5 步：找到可执行文件**
-
-打包完成后，可执行文件位于：
-
-```
-apps\agent\dist\A2A.exe
-```
-
-将 `A2A.exe` 复制到任意目录即可分发运行：
-
-```powershell
-$env:DEEPSEEK_API_KEY = "你的DeepSeek密钥"
-.\A2A.exe
-```
+1. `cd apps/web && pnpm install && pnpm run build`
+2. 将 `apps/web/dist` 复制为 `apps/agent/dist`
+3. `cd apps/agent`，venv 内 `pip install -r requirements.txt pyinstaller`
+4. `pyinstaller a2a.spec --noconfirm --clean`
+5. 可执行文件通常在 `apps/agent/dist/A2A.exe`（以 spec 为准）
 
 ---
 
@@ -413,14 +259,43 @@ $env:DEEPSEEK_API_KEY = "你的DeepSeek密钥"
 
 | 变量名 | 必填 | 默认值 | 说明 |
 |--------|:----:|--------|------|
-| `DEEPSEEK_API_KEY` | ✅ | — | DeepSeek API 密钥，缺失时服务拒绝启动 |
-| `DEEPSEEK_BASE_URL` | | `https://www.aiping.cn/api/v1` | API 端点地址 |
-| `DEEPSEEK_MODEL` | | `DeepSeek-V3.2` | 使用的模型名称 |
-| `CORS_ORIGINS` | | `http://localhost:5173,...` | 允许跨域的前端地址（开发模式用） |
-| `PORT` | | `8000` | 后端监听端口 |
-| `HOST` | | `127.0.0.1` | 后端监听地址 |
+| `DEEPSEEK_API_KEY` | ✅（启动） | — | 系统侧 LLM 密钥；缺失时 `main` 入口会报错 |
+| `DEEPSEEK_BASE_URL` | | `https://www.aiping.cn/api/v1` | 兼容 OpenAI 的 Base URL |
+| `DEEPSEEK_MODEL` | | `DeepSeek-V3.2` | 系统侧默认模型名 |
+| `DATABASE_URL` | 推荐 | 见 `config.py` | PostgreSQL；不填或连接失败时仅 NPC 模式 |
+| `REDIS_URL` | | `redis://127.0.0.1:6379/0` | 可选 |
+| `KEY_VAULT_MASTER_KEY` | | 开发占位 | 加密用户 API Key 的主密钥，**生产务必更换** |
+| `CORS_ORIGINS` | | `http://localhost:5173,...` | 跨域 |
+| `PORT` | | `8000` | 监听端口 |
+| `HOST` | | `127.0.0.1` | 监听地址 |
 
-> **安全提示**：API Key 仅在服务端设置，绝不提交到代码仓库。`.env` 已加入 `.gitignore`。
+勿将任何密钥提交到 Git；`.env` 应已忽略。
+
+### Windows：`WinError 10013`（绑定端口失败）
+
+多为 **8000 等端口被占用或落入系统保留段**。当前仓库已做如下处理：
+
+1. **后端 `python main.py`（未设置 `PORT` 时）**  
+   在 Windows 上会自动从 **18080、23456、8080…** 中挑选**第一个能绑定**的端口；并**写入** `apps/web/.env.development.local`（`VITE_AGENT_PORT=实际端口`，已被 `*.local` 忽略），便于 Vite 代理一致。
+
+2. **默认关闭 uvicorn 热重载**（减少 Windows 套接字问题）。需要热重载：`set UVICORN_RELOAD=1`。
+
+3. **若仍报错**：手动指定高位端口，例如：
+
+   ```powershell
+   $env:PORT = "34567"
+   $env:DEEPSEEK_API_KEY = "你的密钥"
+   python main.py
+   ```
+
+   在 `apps/web` 的 `.env.development.local` 中写 `VITE_AGENT_PORT=34567`，再重启 `pnpm dev`。
+
+4. **查占用**：`netstat -ano | findstr :8000`（或你使用的端口），结束对应 PID 后再试。
+
+| 变量（前端 `apps/web`） | 说明 |
+|-------------------------|------|
+| `VITE_AGENT_PORT` | 与后端监听端口一致；未设置时 Windows 下 Vite 默认假设 **18080** |
+| `VITE_AGENT_API` | 完整后端根地址，如 `http://127.0.0.1:34567` |
 
 ---
 
@@ -428,10 +303,16 @@ $env:DEEPSEEK_API_KEY = "你的DeepSeek密钥"
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
-| `GET` | `/api/agents` | 获取所有 Agent 信息列表 |
-| `POST` | `/api/dialog?agent1=X&agent2=Y` | 触发两个 Agent 之间的完整对话 |
-| `GET` | `/api/events?since=N` | 轮询最新对话事件（前端每 2 秒一次） |
-| `POST` | `/api/chat` | 用户与指定 Agent 实时聊天（后端代理 LLM） |
+| `GET` | `/api/agents` | Agent 列表（含用户 Agent 与 NPC） |
+| `POST` | `/api/register` | 注册：phone、bio、`api_key`、可选 `api_base_url` / `api_model` |
+| `POST` | `/api/dialog?agent1=&agent2=` | 触发两 Agent 多轮对话（含好感与生成式循环侧效应） |
+| `GET` | `/api/events?since=` | 轮询对话事件（前端气泡） |
+| `POST` | `/api/chat` | 用户与指定 Agent 聊天（按 Agent 路由用户 Key） |
+| `GET` | `/api/letters/{user_id}` | 用户信件列表 |
+| `POST` | `/api/letters/accept` | 接受搭子邀约（body: `user_id`, `letter_id`） |
+| `POST` | `/api/letters/decline` | 拒绝邀约 |
+
+实时 **WebSocket** 与完整事件推送见 `docs/DEV_SPEC_V2.md`（当前前端对话气泡仍以轮询为主）。
 
 ---
 
@@ -440,42 +321,62 @@ $env:DEEPSEEK_API_KEY = "你的DeepSeek密钥"
 ```
 A2A/
 ├── apps/
-│   ├── web/                    # React 前端
-│   │   ├── src/
-│   │   │   ├── pages/          # Landing / Login / PersonaQuiz / TownMap
-│   │   │   ├── components/     # PixelMap / Building / AgentSprite / LetterDialog …
-│   │   │   ├── hooks/          # useAgentEvents / useAgentWalker
-│   │   │   ├── services/       # agentApi.ts（HTTP 请求封装）
-│   │   │   ├── data/           # agents.ts（小镇 NPC 配置）
-│   │   │   └── styles/         # 全局 CSS 变量与组件样式
-│   │   └── public/             # 静态资源（sprites / buildings / 地图背景）
-│   └── agent/                  # Python 后端
-│       ├── server.py           # FastAPI 主服务（Agent Runtime）
-│       ├── requirements.txt    # Python 依赖（锁定版本）
-│       └── a2a.spec            # PyInstaller 打包配置
-├── release/                    # 打包输出目录
-│   ├── A2A                     # macOS 可执行文件
-│   └── start.sh                # macOS 启动脚本
+│   ├── web/                         # React 前端（@a2a/web）
+│   │   └── src/
+│   │       ├── pages/               # Landing / Login / PersonaQuiz / TownMap …
+│   │       ├── components/
+│   │       ├── hooks/               # useAgentEvents（轮询 /api/events）
+│   │       ├── services/            # agentApi、mailApi、request
+│   │       └── contexts/            # Auth、Mail、Game …
+│   └── agent/                       # Python Agent Runtime
+│       ├── main.py                  # FastAPI 应用入口（推荐）
+│       ├── server.py                # 兼容 `from main import app`
+│       ├── config.py
+│       ├── db/                      # pg_client、redis_client
+│       ├── security/                # vault（API Key 加密）
+│       ├── llm/                     # gateway（按 agent 路由 Key）
+│       ├── agents/                  # scheduler、memory、relationship、generative_loop、persona_builder …
+│       ├── social/                  # letter_writer、meetup_manager
+│       ├── world/                   # grid、event_bus
+│       ├── requirements.txt
+│       └── a2a.spec                 # PyInstaller，入口 main.py
+├── packages/                        # 共享 TS 包（pnpm workspace）
+│   ├── a2a-types/                   # @a2a/types 领域类型
+│   └── a2a-client/                  # @a2a/client 浏览器 HTTP / 存储工具
+├── docs/
+│   ├── DEV_SPEC_V2.md               # V2 开发规格
+│   └── 信息架构-IPO.md               # 信息架构说明
+├── design/
+│   ├── figma/                       # 设计令牌、Figma 导出清单
+│   ├── ui-specs/                    # UI 规范大图（组件/色板/地图元素等）
+│   ├── reference/
+│   │   ├── building-sprites/        # 历史建筑位图参考（非线上资源）
+│   │   └── mockups/                 # 流程/mock 截图
+│   └── third-party/                 # 第三方素材许可说明（如 Mana Seed 示例）
+├── scripts/
+│   ├── build-all.sh                 # 完整打包（原根目录逻辑）
+│   └── figma-*.mjs                  # 设计令牌同步等
+├── templates/                       # 新模块脚手架模板
+├── deliverables/                    # 设计系统交付物脚本等
 ├── infra/
-│   └── docker-compose.dev.yml  # PostgreSQL + Redis + MinIO（扩展用）
-├── build.sh                    # macOS/Linux 一键打包脚本
-├── .env.example                # 环境变量模板（复制为 .env 后填写）
-├── package.json                # Monorepo 根配置（pnpm workspace）
-└── PRD.md                      # 产品需求文档（唯一事实来源）
+│   └── docker-compose.dev.yml       # Postgres + Redis + MinIO
+├── build.sh                         # 调用 scripts/build-all.sh
+├── PRD.md
+└── README.md
 ```
 
 ---
 
-## 游戏操作指南
+## 用户操作指南（V2）
 
 | 步骤 | 操作 |
 |------|------|
-| 1 | 在开机画面等待 LOGO 动画完成，点击发光的**门**进入 |
-| 2 | 输入任意 11 位数字当手机号，点"发送"后随意填 4 位验证码，点"进入人格测试" |
-| 3 | 完成 5 道 MBTI 题，等待信封动画，确认分配的 AI 分身名字，点"进入 A2A 小镇" |
-| 4 | 在像素地图中**点击建筑**打开对话框，完成发布意图、查看匹配、确认见面等操作 |
-| 5 | 点击地图上**行走的 Agent 角色**，可与其直接实时聊天 |
-| 6 | 底部工具栏点击**"离开小镇"**退出登录 |
+| 1 | Landing 等待动画，点击**门**进入 |
+| 2 | 登录页填写 **11 位手机号**（会保存用于注册），验证码可本地模拟 |
+| 3 | **人格页**：用一句话介绍自己，填写 **API Key**（及可选高级 Base URL），提交后由服务端生成专属分身与人格，进入小镇 |
+| 4 | 地图上浏览建筑、邮局信件；Agent 自动对话气泡可由 `useAgentEvents` 展示 |
+| 5 | 点击 **Agent** 可与其代理聊天（消耗用户或系统 Key 视路由而定） |
+| 6 | 收到搭子类信件时，在邮局内确认或拒绝；双方确认后生成约定（后端 `meetup_appointments`） |
 
 ---
 

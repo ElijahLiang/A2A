@@ -1,5 +1,5 @@
+import { fetchWithTimeout } from '@a2a/client'
 import { apiUrl } from '../config/apiBase'
-import { fetchWithTimeout } from '../utils/fetchWithTimeout'
 import { request } from './request'
 import type { Letter, LetterStatus } from '../types'
 

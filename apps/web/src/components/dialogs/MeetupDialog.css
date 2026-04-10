@@ -1,3 +1,67 @@
+/* ── Step indicator ────────────────────────────────────────────────────── */
+
+.meetup-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding-bottom: var(--space-4);
+  border-bottom: var(--pixel-border-soft);
+  margin-bottom: var(--space-2);
+}
+
+.meetup-step-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.meetup-step-num {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: var(--border-thin) solid var(--color-border-soft);
+  background: var(--color-panel-muted);
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  transition:
+    background-color var(--dur-fast) var(--ease-linear),
+    color var(--dur-fast) var(--ease-linear);
+}
+
+.meetup-step-node.is-active .meetup-step-num {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border-color: var(--color-primary-strong);
+}
+
+.meetup-step-label {
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  color: var(--color-text-muted);
+}
+
+.meetup-step-node.is-active .meetup-step-label {
+  color: var(--color-primary-strong);
+}
+
+.meetup-step-line {
+  flex: 1;
+  height: 2px;
+  background: var(--color-border-soft);
+  margin-bottom: 14px;
+  transition: background-color var(--dur-normal) var(--ease-linear);
+}
+
+.meetup-step-line.is-done {
+  background: var(--color-primary);
+}
+
+/* ── Overlay ───────────────────────────────────────────────────────────── */
+
 .meetup-overlay {
   position: fixed;
   inset: 0;
