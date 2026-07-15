@@ -2,7 +2,7 @@
 
 > **校园沙盒 V2**：每位用户注册后拥有一个由**自己 API Key** 驱动的具身 Agent，在像素小镇中自主社交、积累关系；达到条件时 Agent 向真实用户发信，促成线下「搭子」约定。系统侧仍保留 **4 名 NPC**（Mira / Kai / Luca / Yuki）作为世界种子。
 
-产品事实来源以 `PRD.md`、`docs/DEV_SPEC_V2.md` 为准。
+产品事实来源以 `PRD.md` 与本 README 为准（仓库内暂无独立 `docs/` 目录）。
 
 ---
 
@@ -68,7 +68,7 @@
 
 | 组件 | 说明 |
 |------|------|
-| PostgreSQL 16 + pgvector（推荐） | 用户、人格、记忆流、关系、信件、约定等（见 `docs/DEV_SPEC_V2.md` Schema） |
+| PostgreSQL 16 + pgvector（推荐） | 用户、人格、记忆流、关系、信件、约定等（Schema 见 `apps/agent` 与 `PRD.md`） |
 | Redis 7 | 可选；不可用时记忆模块有进程内降级 |
 | DeepSeek / 兼容 OpenAI API | 系统 Key：人格生成、NPC、降级；**用户 Key**：该用户 Agent 的对话 |
 
@@ -312,7 +312,7 @@ chmod +x build.sh
 | `POST` | `/api/letters/accept` | 接受搭子邀约（body: `user_id`, `letter_id`） |
 | `POST` | `/api/letters/decline` | 拒绝邀约 |
 
-实时 **WebSocket** 与完整事件推送见 `docs/DEV_SPEC_V2.md`（当前前端对话气泡仍以轮询为主）。
+实时 **WebSocket** 与完整事件推送尚未单独成文（当前前端对话气泡仍以轮询为主）。
 
 ---
 
@@ -343,26 +343,23 @@ A2A/
 ├── packages/                        # 共享 TS 包（pnpm workspace）
 │   ├── a2a-types/                   # @a2a/types 领域类型
 │   └── a2a-client/                  # @a2a/client 浏览器 HTTP / 存储工具
-├── docs/
-│   ├── DEV_SPEC_V2.md               # V2 开发规格
-│   └── 信息架构-IPO.md               # 信息架构说明
-├── design/
+├── design/                          # 设计令牌与轻量参考（仅供参考，不参与运行时）
 │   ├── figma/                       # 设计令牌、Figma 导出清单
-│   ├── ui-specs/                    # UI 规范大图（组件/色板/地图元素等）
-│   ├── reference/
-│   │   ├── building-sprites/        # 历史建筑位图参考（非线上资源）
-│   │   └── mockups/                 # 流程/mock 截图
-│   └── third-party/                 # 第三方素材许可说明（如 Mana Seed 示例）
+│   ├── reference/building-sprites/  # 建筑参考图
+│   └── third-party/                 # 第三方素材许可说明
 ├── scripts/
 │   ├── build-all.sh                 # 完整打包（原根目录逻辑）
 │   └── figma-*.mjs                  # 设计令牌同步等
 ├── templates/                       # 新模块脚手架模板
-├── deliverables/                    # 设计系统交付物脚本等
 ├── infra/
 │   └── docker-compose.dev.yml       # Postgres + Redis + MinIO
 ├── build.sh                         # 调用 scripts/build-all.sh
 ├── PRD.md
 └── README.md
+
+> 注：前端运行时图片资源全部位于 `apps/web/public/`；
+> 历史 `assets/` 目录是 `public/` 的重复副本，已从仓库中移除。
+> macOS 二进制 `release/A2A` 也已从仓库移除（请使用 `./build.sh` 自行构建）。
 ```
 
 ---

@@ -30,6 +30,9 @@ Thumbs.db
 # Logs
 *.log
 logs/
+dev-server.*.log
+*_perf_repair*.log
+*_LightInstaller*.log
 
 # Test
 coverage/
@@ -51,3 +54,10 @@ docker-compose.override.yml
 # Misc
 *.tsbuildinfo
 .turbo/
+
+# PyInstaller / build outputs
+apps/agent/dist/
+apps/agent/build/
+apps/agent/*.spec.bak
+release/A2A
+release/A2A.exe
