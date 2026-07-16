@@ -5,6 +5,8 @@ export type HumanSpriteType = 'male' | 'female'
 type HumanSpriteSet = {
   idle: Record<Direction, string>
   walk: Record<Direction, string[]>
+  /** 该方向渲染时是否水平翻转（agent garden：male left 复用 right 帧） */
+  flipX?: Partial<Record<Direction, boolean>>
   special: string[]
   portrait: string
 }
@@ -24,26 +26,31 @@ const COMMON_SPECIAL = [
   '/sprites/human/special_actions/waving_hand_f2.png',
 ]
 
+/**
+ * 帧表对齐 agent garden `assets/sprites/human`（已拷入 public/sprites/human）。
+ * male 左向无独立素材时复用 right + flipX。
+ */
 export const HUMAN_SPRITES: Record<HumanSpriteType, HumanSpriteSet> = {
   male: {
     idle: {
       down: '/sprites/human/male/idle_stand_front.png',
       up: '/sprites/human/male/idle_stand_back.png',
-      left: '/sprites/human/male/walk_left_f2.png',
+      left: '/sprites/human/male/walk_right_f2.png',
       right: '/sprites/human/male/walk_right_f2.png',
     },
     walk: {
       down: ['/sprites/human/male/walk_down_f1.png', '/sprites/human/male/walk_down_f2.png'],
       up: ['/sprites/human/male/walk_up_f1.png', '/sprites/human/male/walk_up_f2.png'],
       left: [
-        '/sprites/human/male/walk_left_f1.png',
-        '/sprites/human/male/walk_left_f2.png',
+        '/sprites/human/male/walk_right_f2.png',
+        '/sprites/human/male/walk_right_f3.png',
       ],
       right: [
-        '/sprites/human/male/walk_right_f1.png',
         '/sprites/human/male/walk_right_f2.png',
+        '/sprites/human/male/walk_right_f3.png',
       ],
     },
+    flipX: { left: true },
     special: COMMON_SPECIAL,
     portrait: '/sprites/human/variants/male_with_hat.png',
   },
@@ -51,12 +58,13 @@ export const HUMAN_SPRITES: Record<HumanSpriteType, HumanSpriteSet> = {
     idle: {
       down: '/sprites/human/female/idle_stand_front.png',
       up: '/sprites/human/female/idle_stand_back.png',
-      left: '/sprites/human/female/walk_left_f2.png',
-      right: '/sprites/human/female/walk_right_f2.png',
+      left: '/sprites/human/female/walk_left_f1.png',
+      right: '/sprites/human/female/walk_right_f1.png',
     },
     walk: {
       down: ['/sprites/human/female/walk_down_f1.png', '/sprites/human/female/walk_down_f2.png'],
-      up: ['/sprites/human/female/walk_up_f1.png', '/sprites/human/female/walk_up_f2.png'],
+      // garden 无 female walk_up，idle 背影顶替
+      up: ['/sprites/human/female/idle_stand_back.png'],
       left: [
         '/sprites/human/female/walk_left_f1.png',
         '/sprites/human/female/walk_left_f2.png',
@@ -84,6 +92,10 @@ export function getHumanFrame(
     return frames[frameIndex % frames.length]
   }
   return idleOverride ?? set.idle[direction]
+}
+
+export function getHumanFlipX(type: HumanSpriteType, direction: Direction): boolean {
+  return Boolean(HUMAN_SPRITES[type].flipX?.[direction])
 }
 
 export function getHumanPortrait(type: HumanSpriteType): string {

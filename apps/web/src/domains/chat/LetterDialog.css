@@ -1,0 +1,328 @@
+/* LetterDialog — all values reference design tokens from global.css */
+
+.letter-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 25, 24, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-letter);
+  animation: fade-in var(--dur-normal) var(--ease-smooth);
+  backdrop-filter: blur(3px);
+}
+
+.letter-container {
+  position: relative;
+  width: 400px;
+  perspective: 800px;
+}
+
+/* ── Envelope ──────────────────────────────────────────────────────────── */
+
+.letter-envelope {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  transition:
+    transform var(--dur-slow) var(--ease-smooth),
+    opacity var(--dur-normal) var(--ease-smooth);
+}
+
+.envelope-body {
+  position: absolute;
+  inset: 0;
+  background: var(--px-envelope);
+  border: var(--border-thick) solid var(--px-envelope-border);
+  box-shadow: var(--px-bit) var(--px-bit) 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  z-index: 1;
+}
+
+.envelope-stamp {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  background: var(--px-teal-5);
+  border: var(--border-base) solid var(--px-teal-7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  color: var(--color-text-inverse);
+}
+
+.envelope-to {
+  font-family: var(--font-pixel);
+  font-size: var(--text-sm);
+  color: var(--px-ink-2);
+}
+
+.envelope-from {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--px-ink-2);
+}
+
+.envelope-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: var(--px-envelope);
+  /* slightly darker than body to distinguish the flap */
+  filter: brightness(0.92);
+  border: var(--border-thick) solid var(--px-envelope-border);
+  border-bottom: none;
+  clip-path: polygon(0 0, 50% 100%, 100% 0);
+  transform-origin: top center;
+  transition: transform var(--dur-slow) var(--ease-smooth);
+  z-index: 2;
+}
+
+/* ── Chat paper ────────────────────────────────────────────────────────── */
+
+.letter-paper {
+  position: absolute;
+  top: 20px;
+  left: 6px;
+  right: 6px;
+  background: var(--px-paper-0);
+  border: var(--border-base) solid var(--color-border);
+  box-shadow: var(--px-bit) var(--px-bit) 0 rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transform: translateY(40px);
+  transition:
+    transform var(--dur-slow) var(--ease-smooth) 0.2s,
+    opacity var(--dur-normal) var(--ease-smooth) 0.2s;
+  display: flex;
+  flex-direction: column;
+}
+
+.letter-chat-paper {
+  height: 480px;
+}
+
+/* ── Phase state machine ───────────────────────────────────────────────── */
+
+.letter-phase-envelope .envelope-flap { transform: rotateX(0deg); }
+.letter-phase-opening  .envelope-flap { transform: rotateX(180deg); }
+
+.letter-phase-opening .letter-paper,
+.letter-phase-chat    .letter-paper {
+  opacity: 1;
+  transform: translateY(-100px);
+}
+
+.letter-phase-chat .letter-envelope {
+  opacity: 0;
+  transform: translateY(80px) scale(0.8);
+  pointer-events: none;
+}
+
+/* ── Letter header ─────────────────────────────────────────────────────── */
+
+.letter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 14px 14px 10px;
+  flex-shrink: 0;
+}
+
+.letter-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.letter-avatar {
+  width: 48px;
+  height: 48px;
+  border: var(--border-base) solid var(--color-border);
+  background: var(--color-primary-soft);
+  position: relative;
+  overflow: hidden;
+}
+
+.letter-avatar-sprite {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+.letter-name {
+  font-family: var(--font-pixel);
+  font-size: var(--text-base);
+  color: var(--px-teal-7);
+  margin-bottom: 3px;
+}
+
+.letter-status {
+  font-family: var(--font-pixel);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.letter-close {
+  font-family: var(--font-pixel);
+  font-size: var(--text-base);
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: var(--border-thin) solid var(--color-border-soft);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.letter-close:hover {
+  background: var(--color-danger);
+  color: var(--color-text-inverse);
+  border-color: var(--color-danger-strong);
+}
+
+.letter-divider {
+  height: 2px;
+  flex-shrink: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-border-soft) 0,
+    var(--color-border-soft) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+  margin: 0 14px;
+}
+
+/* ── Chat messages ─────────────────────────────────────────────────────── */
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-3) 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-msg {
+  display: flex;
+  flex-direction: column;
+  max-width: 80%;
+}
+
+.chat-msg-agent { align-self: flex-start; }
+.chat-msg-user  { align-self: flex-end; }
+
+.chat-msg-bubble {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-lg);
+  line-height: 1.6;
+  border: var(--border-thin) solid var(--color-border);
+  word-break: break-word;
+  /* Pixel-art: no border-radius — square corners keep the retro aesthetic */
+}
+
+.chat-msg-agent .chat-msg-bubble {
+  background: var(--px-teal-2);
+  border-color: var(--px-teal-4);
+}
+
+.chat-msg-user .chat-msg-bubble {
+  background: var(--px-paper-0);
+  border-color: var(--color-border-soft);
+}
+
+.chat-msg-time {
+  font-family: var(--font-pixel);
+  font-size: 6px;
+  color: var(--px-paper-4);
+  margin-top: 3px;
+}
+
+.chat-msg-agent .chat-msg-time { text-align: left; }
+.chat-msg-user  .chat-msg-time { text-align: right; }
+
+/* ── Typing indicator ──────────────────────────────────────────────────── */
+
+.chat-typing {
+  display: flex;
+  gap: var(--space-1);
+  padding: 10px var(--space-4);
+}
+
+.typing-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--px-teal-5);
+  border: 1px solid var(--px-teal-7);
+  animation: typing-bounce 1s infinite;
+}
+
+.typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+/* ── Input bar ─────────────────────────────────────────────────────────── */
+
+.chat-input-bar {
+  display: flex;
+  gap: 6px;
+  padding: 10px 14px;
+  border-top: var(--border-thin) solid var(--px-paper-3);
+  flex-shrink: 0;
+  background: var(--px-paper-2);
+}
+
+.chat-input {
+  flex: 1;
+  font-size: var(--text-lg);
+  padding: var(--space-2) 10px;
+  border: var(--border-thin) solid var(--color-border);
+  background: var(--px-paper-0);
+  outline: none;
+  font-family: inherit;
+}
+
+.chat-input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 var(--border-thin) rgba(44, 150, 139, 0.2);
+}
+
+.chat-input::placeholder {
+  color: var(--px-paper-4);
+}
+
+.chat-send-btn {
+  font-family: var(--font-pixel);
+  font-size: var(--text-sm);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border: var(--border-thin) solid var(--px-teal-7);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-linear);
+  white-space: nowrap;
+}
+
+.chat-send-btn:hover:not(:disabled) { background: var(--px-teal-4); }
+.chat-send-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* ── Scrollbar ─────────────────────────────────────────────────────────── */
+
+.chat-messages::-webkit-scrollbar { width: 6px; }
+.chat-messages::-webkit-scrollbar-track { background: transparent; }
+.chat-messages::-webkit-scrollbar-thumb { background: var(--color-border-soft); }

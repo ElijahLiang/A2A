@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { getHumanFrame, HUMAN_SPRITES, type HumanSpriteType } from '../data/humanSprites'
+import { useEffect, useRef, useState } from 'react'
+import { getHumanFlipX, getHumanFrame, HUMAN_SPRITES, type HumanSpriteType } from '../data/humanSprites'
+import { WALK_FRAME_MS } from '../lib/world'
 import './SpriteCharacter.css'
 
 export type Direction = 'down' | 'up' | 'left' | 'right'
@@ -10,7 +11,8 @@ interface SpriteCharacterProps {
   y: number
   direction: Direction
   animState: AnimState
-  layers: string[]
+  /** 由 town store 驱动时传入，与位移同 tick */
+  frameIndex?: number
   spriteType?: HumanSpriteType
   label?: string
   statusText?: string
@@ -19,65 +21,47 @@ interface SpriteCharacterProps {
   onClick?: () => void
 }
 
-const SHEET_COLS = 16
-const CELL_SIZE = 64
-
-const WALK_FRAMES: Record<Direction, number[]> = {
-  down:  [48, 49, 50, 51, 52, 53],
-  up:    [64, 65, 66, 67],
-  right: [52, 53, 54, 55],
-  left:  [52, 53, 54, 55],
-}
-
-const IDLE_FRAME: Record<Direction, number> = {
-  down: 0,
-  up: 64,
-  right: 52,
-  left: 52,
-}
-
-function cellToPos(cell: number): { x: number; y: number } {
-  const col = cell % SHEET_COLS
-  const row = Math.floor(cell / SHEET_COLS)
-  return { x: col * CELL_SIZE, y: row * CELL_SIZE }
-}
-
 export function SpriteCharacter({
-  x, y, direction, animState, layers, spriteType, label, statusText,
-  dialogBubble, dialogEmotion, onClick,
+  x,
+  y,
+  direction,
+  animState,
+  frameIndex: externalFrameIndex,
+  spriteType,
+  label,
+  statusText,
+  dialogBubble,
+  dialogEmotion,
+  onClick,
 }: SpriteCharacterProps) {
-  const [frameIndex, setFrameIndex] = useState(0)
+  const [internalFrameIndex, setInternalFrameIndex] = useState(0)
   const [idleOverride, setIdleOverride] = useState<string | null>(null)
-  const hasHumanSprite = Boolean(spriteType)
+  const drivenExternally = externalFrameIndex !== undefined
 
-  // 方向稳定锁：行走途中锁定方向，只在 idle→walk 切换瞬间或 idle 状态下才允许更新
-  // 防止 direction prop 在行走中抖动导致左右帧切换（鬼畜摆头）
   const lockedDirectionRef = useRef(direction)
   const prevAnimStateRef = useRef(animState)
   if (animState === 'idle') {
     lockedDirectionRef.current = direction
   } else if (animState === 'walk' && prevAnimStateRef.current === 'idle') {
-    // 刚从 idle 进入 walk，记录此刻的方向并锁定
+    lockedDirectionRef.current = direction
+  } else if (animState === 'walk' && direction !== lockedDirectionRef.current) {
     lockedDirectionRef.current = direction
   }
   prevAnimStateRef.current = animState
   const stableDirection = lockedDirectionRef.current
 
-  const activeWalkFrames = useMemo(() => {
-    if (spriteType) return HUMAN_SPRITES[spriteType].walk[stableDirection]
-    return WALK_FRAMES[stableDirection].map((cell) => cell.toString())
-  }, [stableDirection, spriteType])
+  const frameIndex = drivenExternally ? externalFrameIndex : internalFrameIndex
 
   useEffect(() => {
-    if (animState !== 'walk') {
-      setFrameIndex(0)
+    if (drivenExternally || animState !== 'walk') {
+      if (!drivenExternally) setInternalFrameIndex(0)
       return
     }
     const interval = setInterval(() => {
-      setFrameIndex((prev) => (prev + 1) % activeWalkFrames.length)
-    }, 130)
+      setInternalFrameIndex((prev) => prev + 1)
+    }, WALK_FRAME_MS)
     return () => clearInterval(interval)
-  }, [activeWalkFrames.length, animState])
+  }, [animState, drivenExternally])
 
   useEffect(() => {
     if (!spriteType || animState !== 'idle') {
@@ -88,8 +72,7 @@ export function SpriteCharacter({
     setIdleOverride(null)
     const interval = setInterval(
       () => {
-        const showSpecial = Math.random() > 0.58
-        if (!showSpecial) {
+        if (Math.random() > 0.58) {
           setIdleOverride(null)
           return
         }
@@ -101,12 +84,7 @@ export function SpriteCharacter({
     return () => clearInterval(interval)
   }, [animState, spriteType])
 
-  const cell = animState === 'walk'
-    ? WALK_FRAMES[stableDirection][frameIndex % WALK_FRAMES[stableDirection].length]
-    : IDLE_FRAME[stableDirection]
-
-  const pos = cellToPos(cell)
-  const flipX = !hasHumanSprite && stableDirection === 'left'
+  const flipX = spriteType ? getHumanFlipX(spriteType, stableDirection) : false
   const humanFrame = spriteType
     ? getHumanFrame(spriteType, stableDirection, animState, frameIndex, idleOverride)
     : null
@@ -118,6 +96,7 @@ export function SpriteCharacter({
         left: x,
         top: y,
         transform: flipX ? 'scaleX(-1)' : undefined,
+        zIndex: 20 + Math.round(y / 16),
       }}
       onClick={onClick}
     >
@@ -125,16 +104,7 @@ export function SpriteCharacter({
         {humanFrame ? (
           <img className="sprite-human-frame" src={humanFrame} alt="" aria-hidden />
         ) : (
-          layers.map((src, i) => (
-            <div
-              key={i}
-              className="sprite-layer"
-              style={{
-                backgroundImage: `url(${src})`,
-                backgroundPosition: `-${pos.x}px -${pos.y}px`,
-              }}
-            />
-          ))
+          <div className="sprite-placeholder" aria-hidden />
         )}
       </div>
       {dialogBubble && (

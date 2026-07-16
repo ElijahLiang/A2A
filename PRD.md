@@ -1,6 +1,9 @@
 # 产品工程开发文档：基于 A2A (Avatar To Avatar) 的真实社交匹配应用
 
-**文档状态：** 工程开发就绪  
+> **愿景文档**：描述线下撮合平台的长期产品与架构目标。  
+> **当前可运行栈**（校园像素小镇 Web + Python Agent）以根目录 [`README.md`](README.md) 与 [`.cursor/rules/project-overview.mdc`](.cursor/rules/project-overview.mdc) 为准；文中 RN / Fastify `apps/api` 等尚未落地，请勿当作实装清单。
+
+**文档状态：** 愿景 / 工程蓝图  
 **文档版本：** v1.0  
 **最后更新：** 2026-03-21  
 **核心驱动力：** AI Agent 代理社交与决策

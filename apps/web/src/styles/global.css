@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Pixelify+Sans:wght@400;700&family=Press+Start+2P&display=swap');
-@import './ds-tokens.css';
+@import './tokens.css';
 
-/* A2A · 界面层在 ds-tokens（Generatedesignsystemfile）之上做别名与业务语义 */
+/* A2A · 界面层在 tokens/ds-tokens 之上做 --px-* 别名与业务语义 */
 
 :root {
   --px-bit: 4px;

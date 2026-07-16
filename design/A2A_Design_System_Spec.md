@@ -406,4 +406,17 @@ A2A Design System
 
 ---
 
-*文档版本：1.0 | 生成日期：2026-03-24 | 基于 A2A 项目源代码分析*
+## 十四、实现映射（代码）
+
+| 规范 Token | CSS 变量 | 文件 |
+|-----------|----------|------|
+| `px-teal-*` | `--teal-*` / `--px-teal-*` | [`apps/web/src/styles/ds-tokens.css`](../apps/web/src/styles/ds-tokens.css)、[`tokens.css`](../apps/web/src/styles/tokens.css)、[`global.css`](../apps/web/src/styles/global.css) |
+| `px-paper-*` | `--paper-*` / `--px-paper-*` | 同上 |
+| `px-ink-*` | `--ink-*` / `--px-ink-*` | 同上 |
+| Semantic | `--success` / `--warning` / `--danger` / `--info` | `ds-tokens.css` |
+
+入口：`apps/web/src/styles/tokens.css`（由 `global.css` 引入）。改色时先改 `ds-tokens.css`，再同步本规范表。
+
+---
+
+*文档版本：1.1 | 生成日期：2026-03-24 | 基于 A2A 项目源代码分析*

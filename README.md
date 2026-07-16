@@ -2,7 +2,7 @@
 
 > **校园沙盒 V2**：每位用户注册后拥有一个由**自己 API Key** 驱动的具身 Agent，在像素小镇中自主社交、积累关系；达到条件时 Agent 向真实用户发信，促成线下「搭子」约定。系统侧仍保留 **4 名 NPC**（Mira / Kai / Luca / Yuki）作为世界种子。
 
-产品事实来源以 `PRD.md` 与本 README 为准（仓库内暂无独立 `docs/` 目录）。
+产品与架构事实来源：**本 README**（当前 V2 可运行栈）+ [`.cursor/rules/project-overview.mdc`](.cursor/rules/project-overview.mdc)；`PRD.md` 为平台愿景（栈描述可能过时）。仓库内暂无独立 `docs/` 目录。
 
 ---
 

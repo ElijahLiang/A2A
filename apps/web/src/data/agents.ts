@@ -4,7 +4,8 @@ export interface TownAgent {
   id: string
   name: string
   status: string
-  layers: string[]
+  /** @deprecated 旧 LPC 层叠路径已失效；优先使用 spriteType 单帧序列 */
+  layers?: string[]
   spriteType?: HumanSpriteType
   startRow: number
   startCol: number
@@ -15,13 +16,6 @@ export const TOWN_AGENTS: TownAgent[] = [
     id: 'agent-mira',
     name: 'Mira',
     status: '去餐厅觅食中',
-    layers: [
-      '/sprites/body.png',
-      '/sprites/shoes.png',
-      '/sprites/pants.png',
-      '/sprites/shirt.png',
-      '/sprites/hair-bob.png',
-    ],
     spriteType: 'female',
     startRow: 4,
     startCol: 3,
@@ -30,13 +24,6 @@ export const TOWN_AGENTS: TownAgent[] = [
     id: 'agent-kai',
     name: 'Kai',
     status: '前往图书馆',
-    layers: [
-      '/sprites/body.png',
-      '/sprites/shoes.png',
-      '/sprites/pants.png',
-      '/sprites/shirt.png',
-      '/sprites/hair-dapper.png',
-    ],
     spriteType: 'male',
     startRow: 8,
     startCol: 10,
@@ -45,14 +32,6 @@ export const TOWN_AGENTS: TownAgent[] = [
     id: 'agent-luca',
     name: 'Luca',
     status: '在广场闲逛',
-    layers: [
-      '/sprites/body.png',
-      '/sprites/shoes.png',
-      '/sprites/pants.png',
-      '/sprites/shirt.png',
-      '/sprites/hair-dapper.png',
-      '/sprites/hat-cowboy.png',
-    ],
     spriteType: 'male',
     startRow: 11,
     startCol: 6,
@@ -61,13 +40,6 @@ export const TOWN_AGENTS: TownAgent[] = [
     id: 'agent-yuki',
     name: 'Yuki',
     status: '去咖啡馆坐坐',
-    layers: [
-      '/sprites/body.png',
-      '/sprites/shoes.png',
-      '/sprites/pants.png',
-      '/sprites/shirt.png',
-      '/sprites/hair-bob.png',
-    ],
     spriteType: 'female',
     startRow: 4,
     startCol: 12,
@@ -78,13 +50,6 @@ export const PLAYER_AGENT: TownAgent = {
   id: 'player',
   name: '你',
   status: 'Avatar 待命中',
-  layers: [
-    '/sprites/body.png',
-    '/sprites/shoes.png',
-    '/sprites/pants.png',
-    '/sprites/shirt.png',
-    '/sprites/hair-dapper.png',
-  ],
   spriteType: 'male',
   startRow: 8,
   startCol: 8,

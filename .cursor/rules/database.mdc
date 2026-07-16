@@ -1,10 +1,12 @@
 ---
 description: 数据库操作与 Migration 规范
-globs: apps/api/src/repositories/**/*.ts,apps/api/migrations/**/*.sql
+globs: apps/api/src/repositories/**/*.ts,apps/api/migrations/**/*.sql,apps/agent/db/**/*.py
 alwaysApply: false
 ---
 
 # 数据库规范
+
+> 当前 V2：Schema 由 [`apps/agent/db/pg_client.py`](apps/agent/db/pg_client.py) 在连接时初始化。下方 migration 约定面向未落地的 `apps/api`。
 
 ## Migration
 

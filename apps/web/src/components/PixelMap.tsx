@@ -1,17 +1,23 @@
-import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { Building, type BuildingId } from './Building'
 import { AgentSprite } from './AgentSprite'
-import { LetterDialog } from './LetterDialog'
-import { TOWN_AGENTS, PLAYER_AGENT, type TownAgent } from '../data/agents'
+import { PLAYER_AGENT, type TownAgent } from '../data/agents'
+import { listTownAgents } from '../data/townActors'
 import { useAgentEvents } from '../hooks/useAgentEvents'
 import type { BuildingConfig } from '../data/buildings'
 import type { SquareCat } from '../types'
 import { CatSprite } from './CatSprite'
+import {
+  MAP_H,
+  MAP_W,
+  TILE,
+  clearActors,
+  seedActors,
+  startTownLoop,
+  stopTownLoop,
+  updatePlayerPose,
+} from '../lib/world'
 import './PixelMap.css'
-
-const MAP_W = 1376
-const MAP_H = 768
-const TILE = 64
 
 type PixelMapProps = {
   buildings: BuildingConfig[]
@@ -19,6 +25,7 @@ type PixelMapProps = {
   activeBuilding: BuildingId | null
   onBuildingClick: (buildingId: BuildingId) => void
   onCatClick?: (cat: SquareCat) => void
+  onAgentClick?: (agent: TownAgent) => void
   style?: React.CSSProperties
 }
 
@@ -28,28 +35,31 @@ export const PixelMap = memo(function PixelMap({
   activeBuilding,
   onBuildingClick,
   onCatClick,
+  onAgentClick,
   style,
 }: PixelMapProps) {
   const bubbles = useAgentEvents()
-  const [letterAgent, setLetterAgent] = useState<TownAgent | null>(null)
-  const [playerRow, setPlayerRow] = useState(PLAYER_AGENT.startRow)
-  const [playerCol, setPlayerCol] = useState(PLAYER_AGENT.startCol)
   const [camera] = useState({ tx: 0, ty: 0, scale: 1 })
   const viewportRef = useRef<HTMLDivElement>(null)
   const [fitScale, setFitScale] = useState(1)
+  const agents = listTownAgents()
 
-  const playerAgent = useMemo(
-    () => ({ ...PLAYER_AGENT, startRow: playerRow, startCol: playerCol }),
-    [playerRow, playerCol],
-  )
+  useEffect(() => {
+    seedActors(agents, cats, PLAYER_AGENT)
+    startTownLoop()
+    return () => {
+      stopTownLoop()
+      clearActors()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cats.map((c) => c.id).join(','), agents.map((a) => a.id).join(',')])
 
   const handleBuildingClick = (id: BuildingId) => {
     const b = buildings.find((x) => x.id === id)
     if (b) {
       const rowC = Math.max(1, Math.round((b.y - 24) / TILE))
       const colC = Math.max(1, Math.round(b.x / TILE))
-      setPlayerRow(rowC)
-      setPlayerCol(colC)
+      updatePlayerPose(PLAYER_AGENT.id, rowC, colC)
     }
     onBuildingClick(id)
   }
@@ -66,10 +76,7 @@ export const PixelMap = memo(function PixelMap({
       const w = el.clientWidth
       const h = el.clientHeight
       if (w <= 0 || h <= 0) return
-      // 用 cover 逻辑：取 width/height 中较大的 scale，让地图填满 viewport
-      const scaleByW = w / MAP_W
-      const scaleByH = h / MAP_H
-      setFitScale(Math.max(scaleByW, scaleByH))
+      setFitScale(Math.max(w / MAP_W, h / MAP_H))
     }
     const ro = new ResizeObserver(update)
     ro.observe(el)
@@ -87,10 +94,6 @@ export const PixelMap = memo(function PixelMap({
               transform: `translate(${camera.tx}px, ${camera.ty}px) scale(${camera.scale})`,
             }}
           >
-            {Array.from({ length: 15 * 15 }, (_, i) => (
-              <div key={i} className="pixel-map-tile tile-grass" />
-            ))}
-
             {buildings.map((b) => (
               <Building key={b.id} {...b} active={b.id === activeBuilding} onClick={handleBuildingClick} />
             ))}
@@ -99,7 +102,7 @@ export const PixelMap = memo(function PixelMap({
               <CatSprite key={cat.id} cat={cat} onClick={onCatClick} />
             ))}
 
-            {TOWN_AGENTS.map((agent) => {
+            {agents.map((agent) => {
               const bubble = getBubble(agent.name)
               return (
                 <AgentSprite
@@ -108,17 +111,15 @@ export const PixelMap = memo(function PixelMap({
                   autoWalk
                   dialogBubble={bubble?.content}
                   dialogEmotion={bubble?.emotion}
-                  onClick={() => setLetterAgent(agent)}
+                  onClick={onAgentClick ? () => onAgentClick(agent) : undefined}
                 />
               )
             })}
 
-            <AgentSprite agent={playerAgent} autoWalk={false} />
+            <AgentSprite agent={PLAYER_AGENT} autoWalk={false} />
           </div>
         </div>
       </div>
-
-      {letterAgent ? <LetterDialog agent={letterAgent} onClose={() => setLetterAgent(null)} /> : null}
     </div>
   )
 })

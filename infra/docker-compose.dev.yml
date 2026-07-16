@@ -28,7 +28,9 @@ services:
       timeout: 5s
       retries: 5
 
+  # MinIO：可选对象存储，当前 Agent/Web 运行时未强依赖；需要时再 up
   minio:
+    profiles: ["minio"]
     image: minio/minio
     ports:
       - "9000:9000"

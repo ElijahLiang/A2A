@@ -5,30 +5,39 @@ alwaysApply: true
 
 # A2A 项目概览
 
-A2A (Avatar To Avatar) 是一款 AI Agent 驱动的线下社交撮合平台。
+A2A (Avatar To Avatar) 是一款 AI Agent 驱动的线下社交撮合平台。  
+**当前可运行产品线**：校园像素小镇 Web 沙盒（V2）——用户自带 API Key 的具身 Agent 在小镇中社交，促成线下「搭子」。
 
-## 技术栈
+## 技术栈（当前实装）
 
-- **移动端**: React Native (Expo) + Zustand + React Query
-- **API 层**: Node.js (Fastify) + TypeScript
-- **Agent 层**: Python (FastAPI) + LangChain
-- **数据库**: PostgreSQL 16 (pgvector) + Redis 7
-- **LLM**: GPT-4o (高质量) / DeepSeek-V3 (成本优化)
+- **前端**: React 19 + TypeScript + Vite（`apps/web`）
+- **Agent 层**: Python FastAPI（`apps/agent`）
+- **共享包**: `@a2a/types`、`@a2a/client`（pnpm workspace）
+- **数据库**: PostgreSQL 16（推荐 pgvector）+ Redis 7（可选；无库时内存降级）
+- **LLM**: DeepSeek / OpenAI 兼容端点（系统 Key + 用户自带 Key）
 
 ## Monorepo 结构
 
 ```
-apps/mobile   → React Native 移动端
-apps/api      → Fastify API 服务 (TypeScript)
-apps/agent    → FastAPI Agent Runtime (Python)
-packages/     → 共享类型、UI Kit、工具函数
-infra/        → Docker、K8s、Helm 配置
+apps/web      → React 像素小镇前端
+apps/agent    → FastAPI Agent Runtime
+packages/     → 共享 TS 类型与客户端工具
+infra/        → docker-compose.dev.yml（Postgres / Redis / 可选 MinIO）
+design/       → 设计规范与参考（不参与运行时）
 ```
+
+未落地（勿按此改代码）：`apps/mobile`、`apps/api`、K8s/Helm。相关规则见 `react-native.mdc` / `typescript-backend.mdc` / `api-design.mdc`（已降级为蓝图）。
+
+## 事实来源
+
+1. **当前可运行栈与操作**：以根目录 `README.md` 与本规则为准
+2. **产品愿景 / 撮合平台长期设计**：`PRD.md`（愿景文档，栈描述可能过时）
+3. **设计 token**：`apps/web/src/styles/tokens.css`（或 `ds-tokens.css`）↔ `design/A2A_Design_System_Spec.md`
 
 ## 核心原则
 
 1. **所有功能导向线下见面** — 拒绝无目的闲聊功能
-2. **Agent 代理社交** — 用户不直接对话，Agent 前置沟通
+2. **Agent 代理社交** — 用户不直接闲聊撮合，Agent 前置沟通
 3. **可解释的匹配** — 每次匹配必须附带原因说明
 4. **隐私优先** — 数据最小化采集，明确授权
-5. **PRD.md 是唯一事实来源** — 功能设计以 PRD.md 为准
+5. **小镇运动在前端** — 寻路/动画由 `apps/web` town loop 执行；后端负责人格、记忆、对话、信件

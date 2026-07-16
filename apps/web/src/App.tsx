@@ -1,9 +1,8 @@
 import { lazy, Suspense } from 'react'
 import { Navigate, Route, Routes } from 'react-router-dom'
-import { AuthProvider } from './contexts/AuthContext'
-import { TokenProvider } from './contexts/TokenContext'
-import { MailProvider } from './contexts/MailContext'
-import { GameProvider } from './contexts/GameContext'
+import { AuthProvider } from './domains/auth'
+import { TokenProvider, GameProvider } from './domains/game'
+import { MailProvider } from './domains/mail'
 
 const TownMap = lazy(() => import('./pages/TownMap').then((m) => ({ default: m.TownMap })))
 const StampBook = lazy(() => import('./pages/StampBook').then((m) => ({ default: m.StampBook })))

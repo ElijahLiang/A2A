@@ -1,8 +1,10 @@
 ---
-description: API 接口设计规范
+description: API 接口设计规范（未落地蓝图，目标 apps/api）
 globs: apps/api/src/routes/**/*.ts
 alwaysApply: false
 ---
+
+> **未落地蓝图**：当前可运行 API 以 `apps/agent` 的 `/api/*` 与 README「核心 API 端点」为准。本规范仅供未来独立 `apps/api` 参考。
 
 # API 设计规范
 

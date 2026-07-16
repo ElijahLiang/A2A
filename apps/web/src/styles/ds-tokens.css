@@ -6,35 +6,35 @@
 :root {
   --ds-font-size-base: 16px;
 
-  /* Pixel Art — Teal */
+  /* Pixel Art — Teal（对齐 design/A2A_Design_System_Spec.md） */
   --teal-1: #d6f0ed;
-  --teal-2: #afe0db;
-  --teal-3: #88d0ca;
-  --teal-4: #65c0ba;
+  --teal-2: #aeddd9;
+  --teal-3: #87c9c4;
+  --teal-4: #6cbbb5;
   --teal-5: #51b7a9;
-  --teal-6: #3a9b90;
-  --teal-7: #2c968b;
+  --teal-6: #2c968b;
+  --teal-7: #217870;
   --teal-8: #195a55;
   --teal-9: #0f3a37;
 
   /* Paper */
   --paper-0: #fffef8;
-  --paper-1: #faf9ef;
-  --paper-2: #e8e4c8;
-  --paper-3: #e8d3c5;
-  --paper-4: #c8c0d0;
+  --paper-1: #faf7ef;
+  --paper-2: #f3f0e8;
+  --paper-3: #e8e4d8;
+  --paper-4: #d8d3c5;
 
   /* Semantic */
   --success: #87bc53;
-  --warning: #ebb04f;
-  --danger: #dd6683;
+  --warning: #d8b04f;
+  --danger: #d66683;
   --info: #5c9ad6;
   --purple-accent: #9777c9;
 
   /* Ink */
-  --ink-1: #4b5470;
-  --ink-2: #484540;
-  --ink-3: #2b2728;
+  --ink-1: #6b6560;
+  --ink-2: #4a4540;
+  --ink-3: #2b2723;
 
   /* Map (DS 命名；仅作变量，不替换 public 内图片) */
   --map-grass: #92d685;

@@ -1,0 +1,13 @@
+/**
+ * A2A 设计 Token 入口（单一事实来源）
+ *
+ * - 色值定义：./ds-tokens.css（与 design/A2A_Design_System_Spec.md 对齐）
+ * - 业务别名：./global.css 中的 --px-* / --color-*
+ *
+ * 新样式请优先使用：
+ *   var(--px-teal-5) / var(--px-paper-0) / var(--px-ink-3)
+ * 或底层：
+ *   var(--teal-5) / var(--paper-0) / var(--ink-3)
+ */
+
+@import './ds-tokens.css';

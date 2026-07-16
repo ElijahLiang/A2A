@@ -1,18 +1,16 @@
-# 代码模板
+# 代码模板（部分为未落地蓝图）
 
-本目录包含 A2A 项目的代码模板，用于规范化新功能开发。
+本目录包含历史脚手架模板。**当前实装只有 `apps/web` + `apps/agent`。**
 
-## 使用方式
+| 模板 | 状态 | 说明 |
+|------|------|------|
+| `fastapi-router.template.py` | 可用参考 | 目标宜改为 `apps/agent/` 下路由模块 |
+| `agent-module.template.py` | 可用参考 | 目标 `apps/agent/agents/` |
+| `fastify-route.template.ts` | **蓝图** | `apps/api` 未落地，勿按此创建工程 |
+| `fastify-service.template.ts` | **蓝图** | 同上 |
+| `rn-screen.template.tsx` | **蓝图** | `apps/mobile` 未落地 |
+| `rn-component.template.tsx` | **蓝图** | 同上 |
+| `zustand-store.template.ts` | **蓝图** | 同上 |
+| `migration.template.sql` | **蓝图** | Schema 现由 `apps/agent/db/pg_client.py` 初始化 |
 
-复制对应模板到目标目录，按照模板中的注释进行修改。
-
-| 模板 | 用途 | 目标目录 |
-|------|------|---------|
-| `fastify-route.template.ts` | 新建 API 路由 | `apps/api/src/routes/` |
-| `fastify-service.template.ts` | 新建业务 Service | `apps/api/src/services/` |
-| `fastapi-router.template.py` | 新建 Agent API 路由 | `apps/agent/src/api/` |
-| `agent-module.template.py` | 新建 Agent 功能模块 | `apps/agent/src/agents/` |
-| `rn-screen.template.tsx` | 新建 RN 页面 | `apps/mobile/src/screens/` |
-| `rn-component.template.tsx` | 新建 RN 组件 | `apps/mobile/src/components/` |
-| `zustand-store.template.ts` | 新建 Zustand Store | `apps/mobile/src/stores/` |
-| `migration.template.sql` | 新建数据库迁移 | `apps/api/migrations/` |
+新 Web 功能请直接在 `apps/web/src`（含 `domains/`、`lib/world/`）开发，不必套用 RN/Fastify 模板。

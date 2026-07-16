@@ -1,5 +1,7 @@
 .cat-sprite {
-  position: relative;
+  position: absolute;
+  width: 64px;
+  height: 64px;
   /* 高于建筑 (z-index 4–6)，低于 Agent 精灵 (20)，保证可点、可走可见 */
   z-index: 15;
   display: flex;

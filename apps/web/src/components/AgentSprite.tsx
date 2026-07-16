@@ -1,5 +1,6 @@
 import { SpriteCharacter } from './SpriteCharacter'
-import { useAgentWalker } from '../hooks/useAgentWalker'
+import { useTownActor } from '../hooks/useTownActor'
+import { TILE } from '../lib/world'
 import type { TownAgent } from '../data/agents'
 
 interface AgentSpriteProps {
@@ -11,17 +12,16 @@ interface AgentSpriteProps {
 }
 
 export function AgentSprite({ agent, autoWalk = true, dialogBubble, dialogEmotion, onClick }: AgentSpriteProps) {
-  const walker = useAgentWalker(agent.startRow, agent.startCol)
-  const TILE = 64
+  const actor = useTownActor(agent.id)
 
-  if (!autoWalk) {
+  if (!actor || actor.kind !== 'human') {
     return (
       <SpriteCharacter
         x={(agent.startCol - 1) * TILE}
         y={(agent.startRow - 1) * TILE}
         direction="down"
         animState="idle"
-        layers={agent.layers}
+        frameIndex={0}
         spriteType={agent.spriteType}
         label={agent.name}
         statusText={agent.status}
@@ -34,14 +34,14 @@ export function AgentSprite({ agent, autoWalk = true, dialogBubble, dialogEmotio
 
   return (
     <SpriteCharacter
-      x={walker.x}
-      y={walker.y}
-      direction={walker.direction}
-      animState={walker.animState}
-      layers={agent.layers}
-      spriteType={agent.spriteType}
-      label={agent.name}
-      statusText={walker.animState === 'walk' ? agent.status : undefined}
+      x={actor.x}
+      y={actor.y}
+      direction={actor.direction}
+      animState={autoWalk === false ? 'idle' : actor.animState}
+      frameIndex={actor.frameIndex}
+      spriteType={actor.spriteType}
+      label={actor.label}
+      statusText={actor.animState === 'walk' ? actor.status : undefined}
       dialogBubble={dialogBubble}
       dialogEmotion={dialogEmotion}
       onClick={onClick}

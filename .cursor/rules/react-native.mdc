@@ -1,8 +1,10 @@
 ---
-description: React Native 移动端开发规范
+description: React Native 移动端开发规范（未落地蓝图）
 globs: apps/mobile/**/*.{ts,tsx}
 alwaysApply: false
 ---
+
+> **未落地蓝图**：仓库中不存在 `apps/mobile`。禁止按本规则修改当前 `apps/web` / `apps/agent` 代码。仅在未来真正启动 RN 工程时启用。
 
 # React Native 规范 (Expo)
 

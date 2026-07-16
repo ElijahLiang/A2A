@@ -1,8 +1,10 @@
 ---
-description: Fastify 后端 TypeScript 编码规范
+description: Fastify 后端 TypeScript 编码规范（未落地蓝图）
 globs: apps/api/**/*.ts
 alwaysApply: false
 ---
+
+> **未落地蓝图**：仓库中不存在 `apps/api`。当前 HTTP API 在 `apps/agent`（FastAPI）。禁止按本规则新建 Fastify 服务或改写现有 Agent。
 
 # TypeScript 后端规范 (Fastify)
 
